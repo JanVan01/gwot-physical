@@ -52,8 +52,6 @@ def trigger_reading():
         
     return distance
 
-    GPIO.cleanup()
-
 
 
 # When the code is executed, __main__ will be compared to the scope from which the call came (__name__).
