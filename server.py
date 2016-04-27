@@ -1,6 +1,6 @@
 import time
 from flask import Flask
-from sensor import Sensor
+from sensor.sensor import Sensor
 
 
 app = Flask(__name__)
