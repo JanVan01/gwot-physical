@@ -26,7 +26,7 @@ class Sensor:
     # Avoid crashs
     time.sleep(0.5)
 
-    def trigger_reading():
+    def trigger_reading(self):
 
         # Send signal
         GPIO.output(17, True)
