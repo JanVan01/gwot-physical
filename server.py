@@ -1,9 +1,10 @@
 import time
 from flask import Flask
-from sensor import sensor
+from sensor import sensor.Sensor
 
 
 app = Flask(__name__)
+sensor = Sensor()
 
 
 @app.route('/api/data/trigger')
