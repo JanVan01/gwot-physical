@@ -1,7 +1,5 @@
 import configparser
 
-#TODO fix datatype errors when getting stuff that is not a number
-
 
 class ConfigManager:
     config = None
@@ -29,29 +27,41 @@ class ConfigManager:
         return float(self.config['Config']['lat'])
 
     def setLat(self, lat):
-        self.config['Config']['lat'] = lat
-        self.saveConfig()
+        try:
+            self.config['Config']['lat'] = float(lat)
+            self.saveConfig()
+        except ValueError:
+            raise
 
     def getLon(self):
         return float(self.config['Config']['lon'])
 
     def setLon(self, lon):
-        self.config['Config']['lon'] = lon
-        self.saveConfig()
+        try:
+            self.config['Config']['lon'] = float(lon)
+            self.saveConfig()
+        except ValueError:
+            raise
 
     def getHeight(self):
         return float(self.config['Config']['height'])
 
     def setHeight(self, height):
-        self.config['Config']['height'] = height
-        self.saveConfig()
+        try:
+            self.config['Config']['height'] = float(height)
+            self.saveConfig()
+        except ValueError:
+            raise
 
     def getInterval(self):
         return int(self.config['Config']['interval'])
 
     def setInterval(self, interval):
-        self.config['Config']['interval'] = interval
-        self.saveConfig()
+        try:
+            self.config['Config']['interval'] = int(interval)
+            self.saveConfig()
+        except ValueError:
+            raise
 
     def setPassword(self, pw):
         self.config['Config']['password'] = pw
