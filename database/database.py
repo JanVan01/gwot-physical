@@ -18,22 +18,59 @@ class Database:
         data = cur.fetchone();
         return data;
 
-    def get_last_measurement(self):
+    def get_last_measurement(self, filter):
         cur = self.connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-        cur.execute("SELECT * FROM Measurements ORDER BY id DESC LIMIT 1")
+        filterSql = self.build_filter(filter, "WHERE")
+        cur.execute("SELECT * FROM Measurements " + filterSql + " ORDER BY id DESC LIMIT 1")
         return cur.fetchone();
     
-    def get_measurement_list(self):
+    def get_measurement_list(self, filter):
         cur = self.connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-        cur.execute("SELECT * FROM Measurements ORDER BY datetime, id")
+        filterSql = self.build_filter(filter, "WHERE")
+        cur.execute("SELECT * FROM Measurements " + filterSql + " ORDER BY id")
         return cur.fetchall();
     
-    def get_min_measuremen(self):
+    def get_min_measuremen(self, filter):
         cur = self.connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-        cur.execute("SELECT * FROM Measurements ORDER BY value ASC LIMIT 1")
+        filterSql = self.build_filter(filter, "WHERE")
+        cur.execute("SELECT * FROM Measurements " + filterSql + " ORDER BY value ASC LIMIT 1")
         return cur.fetchone();
     
-    def get_max_measurement(self):
+    def get_max_measurement(self, filter):
         cur = self.connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
-        cur.execute("SELECT * FROM Measurements ORDER BY value DESC LIMIT 1")
+        filterSql = self.build_filter(filter, "WHERE")
+        cur.execute("SELECT * FROM Measurements " + filterSql + " ORDER BY value DESC LIMIT 1")
         return cur.fetchone();
+    
+    def get_location_list(self):
+        cur = self.connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+        cur.execute("SELECT * FROM Locations ORDER BY id")
+        return cur.fetchall();
+
+    def build_filter(self, args, prefix):
+        conditions = []
+
+        if args['outliers'] == 0:
+            conditions.append("quality > 0.5") # ToDo: What is a good quality?
+
+# ToDo
+#        if args['start'] != None:
+#            conditions.append("datetime >= " + args['start'])
+
+
+#        if args['end'] != None:
+#            conditions.append("datetime <= " + args['end'])
+
+        if args['location'] != None:
+            conditions.append("location = " + args['location'])
+
+#        if args['coordinates'] != None:
+#            conditions.append("location = " + args['coordinates'])
+        
+        if len(conditions) > 0:
+            op = " AND ";
+            return prefix + " " + op.join(conditions)
+        else:
+            return ""
+        
+        
