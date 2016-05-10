@@ -1,31 +1,55 @@
-import time
-import psycopg2
-import sys
-from flask import Flask
+import json
+from datetime import datetime
+from flask import Flask, Response
+from database.database import Database
 from sensor.sensor import Sensor
 
 
 app = Flask(__name__)
 sensor = Sensor()
+db = Database()
 
 
 @app.route('/api/data/trigger')
-def trigger():
+def data_trigger():
+    location = 1 # ToDO: to be set properly
+    value = sensor.trigger_reading()
+    data = db.save_measurement(value, location)
+    return send_json(data)
 
-        try:
-                conn = psycopg2.connect("dbname='data' user='postgres' host='localhost' password=''")
-                print "Connected!\n"
-        except:
-                print "I am unable to connect to the database"
-        cur = conn.cursor()
-        currenttime = time.strftime("%a %d %b %Y %H:%M:%S +0000", time.localtime())
-        currentvalue = sensor.trigger_reading()
-        cur.execute("INSERT into Measurements (datetime, value) values (\'%s\', %f)" % (currenttime, currentvalue))
-        cur.execute("SELECT * FROM Measurements")
-        print  cur.fetchall()
-        conn.commit()
-        return currenttime + '  :  ' + str(currentvalue)
+@app.route('/api/data/last')
+def data_last():
+    data = db.get_last_measurement()
+    return send_json(data)
+
+@app.route('/api/data/list')
+def data_list():
+    data = db.get_measurement_list()
+    return send_json(data)
+
+@app.route('/api/data/min')
+def data_min():
+    data = db.get_min_measuremen()
+    return send_json(data)
+
+@app.route('/api/data/max')
+def data_max():
+    data = db.get_max_measurement()
+    return send_json(data)
+
+
+def send_json(data):
+    body = json.dumps(data, default=json_serial)
+    resp = Response(body, status=200, mimetype='application/json')
+    return resp;
+
+# JSON serializer for objects not serializable by default json code
+def json_serial(obj):
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
 
 
 if __name__ == '__main__':
-        app.run(debug=False, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')
