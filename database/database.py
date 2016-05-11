@@ -8,8 +8,8 @@ class Database:
             self.connection.autocommit = True # We might want to remove that and switch to transactions
         except:
             self.connection = None
-            print "I am unable to connect to the database.\n"
-    
+            print("I am unable to connect to the database.\n")
+
     def save_measurement(self, value, location):
         cur = self.connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         cur.execute("INSERT INTO Measurements (value, location) VALUES (%s, %s) RETURNING id", (value, location)) # Datetime is added by PostgreSQL
@@ -23,25 +23,25 @@ class Database:
         filterSql = self.build_filter(filter, "WHERE")
         cur.execute("SELECT * FROM Measurements " + filterSql + " ORDER BY id DESC LIMIT 1")
         return cur.fetchone();
-    
+
     def get_measurement_list(self, filter):
         cur = self.connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         filterSql = self.build_filter(filter, "WHERE")
         cur.execute("SELECT * FROM Measurements " + filterSql + " ORDER BY id")
         return cur.fetchall();
-    
+
     def get_min_measuremen(self, filter):
         cur = self.connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         filterSql = self.build_filter(filter, "WHERE")
         cur.execute("SELECT * FROM Measurements " + filterSql + " ORDER BY value ASC LIMIT 1")
         return cur.fetchone();
-    
+
     def get_max_measurement(self, filter):
         cur = self.connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         filterSql = self.build_filter(filter, "WHERE")
         cur.execute("SELECT * FROM Measurements " + filterSql + " ORDER BY value DESC LIMIT 1")
         return cur.fetchone();
-    
+
     def get_location_list(self):
         cur = self.connection.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
         cur.execute("SELECT * FROM Locations ORDER BY id")
@@ -66,11 +66,9 @@ class Database:
 
 #        if args['coordinates'] != None:
 #            conditions.append("location = " + args['coordinates'])
-        
+
         if len(conditions) > 0:
             op = " AND ";
             return prefix + " " + op.join(conditions)
         else:
             return ""
-        
-        
