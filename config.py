@@ -8,61 +8,61 @@ class ConfigManager:
         self.config = configparser.ConfigParser()
         self.config.read('config.ini')
 
-    def saveConfig(self):
+    def save_config(self):
         with open('config.ini', 'w') as c:
             self.config.write(c)
 
-    def resetDefault(self):
+    def reset_default(self):
         self.config['Config'] = self.config['Default']
-        self.saveConfig()
+        self.save_config()
 
-    def getName(self):
+    def get_name(self):
         return self.config['Config']['name']
 
-    def setName(self, name):
+    def set_name(self, name):
         self.config['Config']['name'] = name
-        self.saveConfig()
+        self.save_config()
 
-    def getLat(self):
+    def get_lat(self):
         return float(self.config['Config']['lat'])
 
-    def setLat(self, lat):
+    def set_lat(self, lat):
         try:
             self.config['Config']['lat'] = float(lat)
-            self.saveConfig()
+            self.save_config()
         except ValueError:
             raise
 
-    def getLon(self):
+    def get_lon(self):
         return float(self.config['Config']['lon'])
 
-    def setLon(self, lon):
+    def set_lon(self, lon):
         try:
             self.config['Config']['lon'] = float(lon)
-            self.saveConfig()
+            self.save_config()
         except ValueError:
             raise
 
-    def getHeight(self):
+    def get_height(self):
         return float(self.config['Config']['height'])
 
-    def setHeight(self, height):
+    def set_height(self, height):
         try:
             self.config['Config']['height'] = float(height)
-            self.saveConfig()
+            self.save_config()
         except ValueError:
             raise
 
-    def getInterval(self):
+    def get_interval(self):
         return int(self.config['Config']['interval'])
 
-    def setInterval(self, interval):
+    def set_interval(self, interval):
         try:
             self.config['Config']['interval'] = int(interval)
-            self.saveConfig()
+            self.save_config()
         except ValueError:
             raise
 
-    def setPassword(self, pw):
+    def set_password(self, pw):
         self.config['Config']['password'] = pw
-        self.saveConfig()
+        self.save_config()

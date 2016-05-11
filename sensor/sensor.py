@@ -7,10 +7,8 @@
 #           http://www.bytecreation.com/blog/2013/10/13/raspberry-pi-ultrasonic-sensor-hc-sr04
 #           and modified according purpose.
 
-
 import time
 import RPi.GPIO as GPIO
-
 
 class Sensor:
     # Warnings disabled
@@ -53,13 +51,3 @@ class Sensor:
         distance = timepassed * 17000
 
         return distance
-
-
-# When the code is executed, __main__ will be compared to the scope
-# from which the call came (__name__).
-# The terminal has the scope '__main__', so the measurement will start.
-# If the file is imported into another one, the scope changed and the file
-# will not be executed during the import.
-if __name__ == '__main__':
-    sensor = Sensor()
-    print(sensor.trigger_reading())
