@@ -1,0 +1,29 @@
+CREATE DATABASE data;
+CREATE EXTENSION postgis;
+
+DROP TABLE IF EXISTS Measurements;
+DROP TABLE IF EXISTS Locations;
+DROP TABLE IF EXISTS Subscribers;
+
+CREATE TABLE Subscribers (
+  id SERIAL PRIMARY KEY,
+  connector TEXT NOT NULL,
+  type TEXT NOT NULL,
+  name TEXT NOT NULL,
+  confirmed BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE Locations (
+  id SERIAL PRIMARY KEY,
+  name TEXT DEFAULT NULL,
+  geom GEOMETRY,
+  height float NOT NULL
+);
+
+CREATE TABLE Measurements (
+  id SERIAL PRIMARY KEY,
+  datetime TIMESTAMP DEFAULT NOW(),
+  value FLOAT NOT NULL,
+  quality FLOAT DEFAULT NULL,
+  location INTEGER NOT NULL REFERENCES Locations(id)
+);
