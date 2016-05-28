@@ -20,6 +20,10 @@ def get_filter():
 
     return args
 
+def send_json(data):
+    body = json.dumps(data, default=json_serial)
+    resp = Response(body, status=200, mimetype='application/json')
+    return resp;
 
 
 db = Database()
