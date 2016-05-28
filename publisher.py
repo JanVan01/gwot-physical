@@ -4,7 +4,9 @@ from datetime import datetime
 from database.database import Database
 from flask import Flask, Response, request
 
-
+################################################
+# Duplicated: Has to be solved
+################################################
 def get_filter():
 
 
@@ -32,10 +34,14 @@ def json_serial(obj):
         return serial
     raise TypeError ("Type not serializable")
 
+##################################################################################################
+
+
+
 db = Database()
 
 data = db.get_last_measurement(get_filter())
-publish.single("everyMinute", send_json(data), hostname="localhost")
+publish("everyMinute", data, hostname="localhost")
 
 
 # publish.single("everyMeasurement","everyMeasurementMessage", hostname="localhost")
