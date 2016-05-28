@@ -1,5 +1,14 @@
 import paho.mqtt.publish as publish
+import json
+from datetime import datetime
+from flask import Flask, Response, request
 from database.database import Database
+from sensor.sensor import Sensor
+from flask.ext.negotiation import provides
+
+
+app = Flask(__name__)
+sensor = Sensor()
 db = Database()
 
 data = db.get_last_measurement()
