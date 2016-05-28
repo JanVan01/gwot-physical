@@ -22,18 +22,6 @@ def get_filter():
 
     return args
 
-def send_json(data):
-    body = json.dumps(data, default=json_serial)
-    resp = Response(body, status=200, mimetype='application/json')
-    return resp;
-
-# JSON serializer for objects not serializable by default json code
-def json_serial(obj):
-    if isinstance(obj, datetime):
-        serial = obj.isoformat()
-        return serial
-    raise TypeError ("Type not serializable")
-
 ##################################################################################################
 
 
@@ -41,7 +29,7 @@ def json_serial(obj):
 db = Database()
 
 data = db.get_last_measurement(get_filter())
-message = str(send_json(data)).encode('string_escape')
+message = str(data).encode('string_escape')
 
 publish.single("everyMinute", message, hostname="localhost")
 
