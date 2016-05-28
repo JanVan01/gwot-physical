@@ -11,7 +11,7 @@ app = Flask(__name__)
 sensor = Sensor()
 db = Database()
 
-data = db.get_last_measurement()
+data = db.get_last_measurement(get_filter())
 publish.single("everyMinute", "send_json(data)", hostname="localhost")
 
 
