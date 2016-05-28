@@ -41,7 +41,7 @@ def json_serial(obj):
 db = Database()
 
 data = db.get_last_measurement(get_filter())
-message = str(data).encode('string_escape')
+message = str(send_json(data)).encode('string_escape')
 
 publish.single("everyMinute", message, hostname="localhost")
 
