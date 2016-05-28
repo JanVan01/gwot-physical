@@ -42,7 +42,7 @@ db = Database()
 
 data = db.get_last_measurement(get_filter())
 #publish("everyMinute", data, hostname="localhost")
-publish("topic","Hallo", qos=0, retain=False)
+publish.publish("topic","Hallo", qos=0, retain=False)
 
 # publish.single("everyMeasurement","everyMeasurementMessage", hostname="localhost")
 #
