@@ -6,12 +6,7 @@ from flask import Flask, Response, request
 
 
 def get_filter():
-    # ToDo: Add proper variable checks / sanitation
-    outliers = request.args.get('outliers')
-    start = request.args.get('start')
-    end = request.args.get('end')
-    location = request.args.get('location')
-    coordinates = request.args.get('coordinates')
+
 
     args = {
         'outliers': None,
@@ -21,23 +16,7 @@ def get_filter():
         'coordinates': None
     }
 
-    if outliers != None and len(outliers) > 0 and (outliers == 0 or outliers == 1):
-        args['outliers'] = outliers
 
-    # ToDo
-    if start != None and len(start) > 0:
-        args['start'] = start
-
-    # ToDo
-    if end != None and len(end) > 0:
-        args['end'] = end
-
-    if location != None and location > 0:
-        args['location'] = location
-
-    # ToDo
-    if coordinates != None and len(coordinates) > 0:
-        args['coordinates'] = coordinates
 
     return args
 
@@ -45,7 +24,7 @@ def get_filter():
 
 db = Database()
 
-data = db.get_last_measurement(get_filter())
+data = db.get_last_measurement(get_filter)
 publish.single("everyMinute", "send_json(data)", hostname="localhost")
 
 
