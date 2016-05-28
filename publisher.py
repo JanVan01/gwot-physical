@@ -1,9 +1,8 @@
 import paho.mqtt.publish as publish
+import server as server
 import json
 from datetime import datetime
-from flask import Flask, Response, request
 from database.database import Database
-from sensor.sensor import Sensor
 
 
 
