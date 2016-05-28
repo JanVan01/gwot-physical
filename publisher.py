@@ -1,8 +1,5 @@
 import paho.mqtt.publish as publish
-import json
-from datetime import datetime
 from database.database import Database
-from flask import Flask, Response, request
 
 ################################################
 # Duplicated: Has to be solved
@@ -23,7 +20,6 @@ def get_filter():
     return args
 
 ##################################################################################################
-
 
 
 db = Database()
