@@ -4,10 +4,6 @@ import json
 from datetime import datetime
 from database.database import Database
 
-
-
-app = Flask(__name__)
-sensor = Sensor()
 db = Database()
 
 data = db.get_last_measurement(server.get_filter())
