@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import Flask, Response, request
 from database.database import Database
 from sensor.sensor import Sensor
-from flask.ext.negotiation import provides
+
 
 
 app = Flask(__name__)
