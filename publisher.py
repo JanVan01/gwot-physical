@@ -41,8 +41,7 @@ def json_serial(obj):
 db = Database()
 
 data = db.get_last_measurement(get_filter())
-#publish("everyMinute", data, hostname="localhost")
-publish.publish("topic","Hallo", qos=0, retain=False)
+publish.single("everyMinute", data, hostname="localhost")
 
 # publish.single("everyMeasurement","everyMeasurementMessage", hostname="localhost")
 #
