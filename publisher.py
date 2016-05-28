@@ -1,12 +1,12 @@
 import paho.mqtt.publish as publish
-import server as server
+import server.get_filter as filter
 import json
 from datetime import datetime
 from database.database import Database
 
 db = Database()
 
-data = db.get_last_measurement(server.get_filter())
+data = db.get_last_measurement(filter)
 publish.single("everyMinute", "send_json(data)", hostname="localhost")
 
 
