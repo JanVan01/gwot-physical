@@ -2,7 +2,7 @@ import paho.mqtt.publish as publish
 from database.database import Database
 db = Database()
 
-data = db.get_last_measurement(get_filter())
+data = db.get_last_measurement()
 publish.single("everyMinute", "send_json(data)", hostname="localhost")
 
 
