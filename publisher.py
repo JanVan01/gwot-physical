@@ -45,7 +45,7 @@ def get_filter():
 
 db = Database()
 
-data = db.get_last_measurement(serv.get_filter())
+data = db.get_last_measurement(get_filter())
 publish.single("everyMinute", "send_json(data)", hostname="localhost")
 
 
