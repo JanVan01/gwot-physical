@@ -25,6 +25,12 @@ def send_json(data):
     resp = Response(body, status=200, mimetype='application/json')
     return resp;
 
+# JSON serializer for objects not serializable by default json code
+def json_serial(obj):
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError ("Type not serializable")
 
 db = Database()
 
