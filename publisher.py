@@ -25,7 +25,7 @@ def get_filter():
 db = Database()
 
 data = db.get_last_measurement(get_filter())
-publish.single("everyMinute", data, hostname="localhost")
+publish.single("everyMinute", json(data), hostname="localhost")
 
 
 # publish.single("everyMeasurement","everyMeasurementMessage", hostname="localhost")
