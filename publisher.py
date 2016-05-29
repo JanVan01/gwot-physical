@@ -27,6 +27,10 @@ db = Database()
 data = db.get_last_measurement(get_filter())
 message = str(data).encode('string_escape')
 
+
+###################################################################################################
+# Channels related to Time
+####################################################################################################
 publish.single("everyMinute", message, hostname="localhost")
 
 # publish.single("everyMeasurement","everyMeasurementMessage", hostname="localhost")
@@ -42,3 +46,48 @@ publish.single("everyMinute", message, hostname="localhost")
 # publish.single("every45Minutes","every45MinutesMessage", hostname="localhost")
 #
 # publish.single("daylyReport","daylyReport", hostname="localhost")
+#####################################################################################################
+#####################################################################################################
+# Channels related to events
+#####################################################################################################
+# publish.single("IncreaseBy>=0.1mFromMean","IncreaseBy>=0.1mFromMean", hostname="localhost")
+#
+# publish.single("IncreaseBy>=0.25mFromMean","IncreaseBy>=0.25mFromMean", hostname="localhost")
+####################################################################################################
+#####################################################################################################
+# Channels related to increasing events and time
+#####################################################################################################
+# publish.single("IncreaseBy>=0.1mIn1Minute","IncreaseBy>=0.1mIn1Minute", hostname="localhost") # It can be fast: https://www.youtube.com/watch?v=dfRfE8iJPRo
+#
+# publish.single("IncreaseBy>=0.1mIn5Minute","IncreaseBy>=0.1mIn5Minute", hostname="localhost")
+#
+# publish.single("IncreaseBy>=0.1mIn10Minute","IncreaseBy>=0.1mIn10Minute", hostname="localhost")
+#
+# publish.single("IncreaseBy>=0.1mIn15Minute","IncreaseBy>=0.1mIn15Minute", hostname="localhost")
+#
+# publish.single("IncreaseBy>=0.1mIn20Minute","IncreaseBy>=0.1mIn20Minute", hostname="localhost")
+#
+# publish.single("IncreaseBy>=0.1mIn30Minute","IncreaseBy>=0.1mIn30Minute", hostname="localhost")
+#####################################################################################################
+#####################################################################################################
+# Channels related to decreasing events
+#####################################################################################################
+# publish.single("DecreaseBy>=0.25m","DecreaseBy>=0.25m", hostname="localhost")
+#
+# publish.single("DecreaseBy>=0.5m","DecreaseBy>=0.5m", hostname="localhost")
+####################################################################################################
+#####################################################################################################
+# Channels related to events and time
+#####################################################################################################
+# publish.single("DecreaseBy>=0.1mIn1Minute","DecreaseBy>=0.1mIn1Minute", hostname="localhost") 
+#
+# publish.single("DecreaseBy>=0.1mIn5Minute","DecreaseBy>=0.1mIn5Minute", hostname="localhost")
+#
+# publish.single("DecreaseBy>=0.1mIn10Minute","DecreaseBy>=0.1mIn10Minute", hostname="localhost")
+
+# publish.single("DecreaseBy>=0.1mIn15Minute","DecreaseBy>=0.1mIn15Minute", hostname="localhost")
+#
+# publish.single("DecreaseBy>=0.1mIn20Minute","DecreaseBy>=0.1mIn20Minute", hostname="localhost")
+#
+# publish.single("DecreaseBy>=0.1mIn30Minute","DecreaseBy>=0.1mIn30Minute", hostname="localhost")
+####################################################################################################
