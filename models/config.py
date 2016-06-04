@@ -6,7 +6,7 @@ class ConfigManager:
 
     def __init__(self):
         self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
+        self.config.read('../data/config.ini')
 
     def save_config(self):
         with open('config.ini', 'w') as c:
@@ -62,6 +62,9 @@ class ConfigManager:
             self.save_config()
         except ValueError:
             raise
+
+    def get_password(self):
+        return self.config['Config']['password']
 
     def set_password(self, pw):
         self.config['Config']['password'] = pw

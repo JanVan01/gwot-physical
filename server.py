@@ -1,96 +1,94 @@
-import json
-from datetime import datetime
-from flask import Flask, Response, request
-from database.database import Database
-from sensor.sensor import Sensor
+import sys
+assert sys.version_info >= (3,0)
 
+from flask import Flask
+from flask_httpauth import HTTPBasicAuth
+from controller.data import DataController
+from controller.location import LocationController
+from controller.sensor import SensorController
+from controller.config import ConfigController
 
 app = Flask(__name__)
-sensor = Sensor()
-db = Database()
-
+auth = HTTPBasicAuth()
 
 @app.route('/api/data/trigger')
+@auth.login_required
 def data_trigger():
-    location = 1 # ToDO: to be set properly
-    value = sensor.trigger_reading()
-    data = db.save_measurement(value, location)
-    return send_json(data)
+	controller = DataController()
+	return controller.trigger()
 
 @app.route('/api/data/last')
 def data_last():
-    data = db.get_last_measurement(get_filter())
-    return send_json(data)
+	controller = DataController()
+	return controller.last()
 
 @app.route('/api/data/list')
 def data_list():
-    data = db.get_measurement_list(get_filter())
-    return send_json(data)
+	controller = DataController()
+	return controller.list()
 
 @app.route('/api/data/min')
 def data_min():
-    data = db.get_min_measuremen(get_filter())
-    return send_json(data)
+	controller = DataController()
+	return controller.min()
 
 @app.route('/api/data/max')
 def data_max():
-    data = db.get_max_measurement(get_filter())
-    return send_json(data)
+	controller = DataController()
+	return controller.max()
 
 @app.route('/api/location/list')
 def location_list():
-    data = db.get_location_list()
-    return send_json(data)
+	controller = LocationController()
+	return controller.list()
 
-def get_filter():
-    # ToDo: Add proper variable checks / sanitation
-    outliers = request.args.get('outliers')
-    start = request.args.get('start')
-    end = request.args.get('end')
-    location = request.args.get('location')
-    coordinates = request.args.get('coordinates')
-    
-    args = {
-        'outliers': None,
-        'start': None,
-        'end': None,
-        'location': None,
-        'coordinates': None
-    }
+@app.route('/api/sensor/list')
+def sensor_list():
+	controller = SensorController()
+	return controller.list()
 
-    if outliers != None and len(outliers) > 0 and (outliers == 0 or outliers == 1):
-        args['outliers'] = outliers
-    
-    # ToDo
-    if start != None and len(start) > 0:
-        args['start'] = start
+@app.route('/api/config/name', methods=['GET', 'PUT'])
+@auth.login_required
+def config_name():
+	controller = ConfigController()
+	return controller.name()
 
-    # ToDo
-    if end != None and len(end) > 0:
-        args['end'] = end
+@app.route('/api/config/height', methods=['GET', 'PUT'])
+@auth.login_required
+def config_height():
+	controller = ConfigController()
+	return controller.height()
 
-    if location != None and location > 0:
-        args['location'] = location
+@app.route('/api/config/location', methods=['GET', 'PUT', 'POST', 'DELETE'])
+@auth.login_required
+def config_location():
+	controller = ConfigController()
+	return controller.location()
 
-    # ToDo
-    if coordinates != None and len(coordinates) > 0:
-        args['coordinates'] = coordinates
-        
-    return args
-        
+@app.route('/api/config/interval', methods=['GET', 'PUT'])
+@auth.login_required
+def config_interval():
+	controller = ConfigController()
+	return controller.interval()
 
-def send_json(data):
-    body = json.dumps(data, default=json_serial)
-    resp = Response(body, status=200, mimetype='application/json')
-    return resp;
+@app.route('/api/config/password', methods=['GET', 'PUT'])
+@auth.login_required
+def config_password():
+	controller = ConfigController()
+	return controller.password()
 
-# JSON serializer for objects not serializable by default json code
-def json_serial(obj):
-    if isinstance(obj, datetime):
-        serial = obj.isoformat()
-        return serial
-    raise TypeError ("Type not serializable")
+@app.route('/api/config/sensor', methods=['GET', 'PUT', 'POST', 'DELETE'])
+@auth.login_required
+def config_sensor():
+	controller = ConfigController()
+	return controller.sensor()
+
+
+@auth.get_password
+def get_password(username):
+	controller = ConfigController()
+	return controller.check_password(username)
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+	app.run(debug=True, host='0.0.0.0')
