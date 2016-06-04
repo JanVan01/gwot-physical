@@ -25,9 +25,12 @@ CREATE TABLE Locations (
 
 CREATE TABLE Sensors (
   id SERIAL PRIMARY KEY,
+  module TEXT NOT NULL,
+  class TEXT NOT NULL,
   type TEXT NOT NULL,
   description TEXT DEFAULT NULL,
-  unit TEXT NOT NULL
+  unit TEXT NOT NULL,
+  active BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE Measurements (
@@ -41,4 +44,4 @@ CREATE TABLE Measurements (
 
 -- Example data
 INSERT INTO Locations (name, geom, height) VALUES ('Wersehaus', ST_GeomFromText('POINT(7.700181 51.973387)', 4326), 4.0);
-INSERT INTO Sensors (type, description, unit) VALUES ('HC-SR04', 'Ultraschall Entfernungsmesser f√ºr Pegelme√üungen', 'cm');
+INSERT INTO Sensors (module, class, type, description, unit) VALUES ('sensors.distance', 'DistanceSensor', 'HC-SR04', 'Ultraschall Entfernungsmesser f¸r Pegelmeﬂungen', 'cm');

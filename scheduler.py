@@ -3,12 +3,15 @@
 import sys
 assert sys.version_info >= (3,0)
 
-from models.sensor import Sensor
-from models.database import Database
+from models.config import Database
+from models.sensors import Sensors
+from views.json import JSON
 
-sensor = Sensor()
-db = Database()
-
-location = 1 # ToDo add current location from config
-value = sensor.trigger_reading()
-db.save_measurement(value, location)
+if __name__ == '__main__':
+	# Connect to database; trigger and save all sensor readings
+	db = Database().connect()
+	sensors = Sensors(db)
+	data = sensors.trigger_all()
+	# Send json to cmd line for debugging
+	json = JSON()
+	print(json.build(data))

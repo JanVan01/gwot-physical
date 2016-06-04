@@ -4,6 +4,9 @@ assert sys.version_info >= (3,0)
 import paho.mqtt.publish as publish
 from models.database import Database
 
+from models.config import Database
+from models.measurements import Measurements
+
 ################################################
 # Duplicated: Has to be solved
 ################################################
@@ -24,10 +27,9 @@ def get_filter():
 
 ##################################################################################################
 
-
-db = Database()
-
-data = db.get_last_measurement(get_filter())
+db = Database().connect()
+measurements = Measurements(db)
+data = measurements.get_last(get_filter()) # ToDo: Convert data to JSON?
 message = str(data).encode('string_escape')
 
 

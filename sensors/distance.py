@@ -7,25 +7,37 @@
 #		   http://www.bytecreation.com/blog/2013/10/13/raspberry-pi-ultrasonic-sensor-hc-sr04
 #		   and modified according purpose.
 
-import time
 import RPi.GPIO as GPIO
+from sensors.base import BaseSensor
+import time
 
-class Sensor(object):
-	# Warnings disabled
-	GPIO.setwarnings(False)
+class DistanceSensor(BaseSensor):
+	
+	def __init__(self):
+		# Warnings disabled
+		GPIO.setwarnings(False)
 
-	GPIO.setmode(GPIO.BCM)
+		GPIO.setmode(GPIO.BCM)
 
-	# Define used GPIOs
-	GPIO.setup(17, GPIO.OUT)
-	GPIO.setup(27, GPIO.IN)
-	GPIO.output(17, GPIO.LOW)
+		# Define used GPIOs
+		GPIO.setup(17, GPIO.OUT)
+		GPIO.setup(27, GPIO.IN)
+		GPIO.output(17, GPIO.LOW)
 
-	# Avoid crashs
-	time.sleep(0.5)
-
-	def trigger_reading(self):
-
+		# Avoid crashs
+		time.sleep(0.5)
+		
+		
+	def get_type(self):
+		return "HC-SR04"
+	
+	def get_unit(self):
+		return "cm"
+	
+	def get_quality(self):
+		return None # ToDo: Add quality flag
+	
+	def get_measurement(self):
 		# Send signal
 		GPIO.output(17, True)
 

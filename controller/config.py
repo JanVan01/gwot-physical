@@ -1,32 +1,32 @@
 
 from models.config import ConfigManager
-from controller.base import BaseController;
+from controller.base import BaseController
 
 class ConfigController(BaseController):
 
-	def __init(self):
-		BaseController.__init__(self);
+	def __init__(self):
+		super().__init__()
 		self.config = ConfigManager()
 
 	def name(self):
-		return;
+		return
 
 	def height(self):
-		return;
+		return
 		
 	def location(self):
-		return;
+		return
 		
 	def interval(self):
-		return;
+		return
 	
 	def password(self):
-		return;
+		return
 	
 	def sensor(self):
-		return;
+		return
 	
 	def check_password(self, username):
-		if username is 'admin':
+		if username == "admin":
 			return self.config.get_password()
 		return None
