@@ -1,10 +1,8 @@
 from controller.base import BaseController
 
 class LocationController(BaseController):
-
-	def __init(self):
-		BaseController.__init__(self);
 		
 	def list(self):
-		data = self.db.get_location_list()
+		model = self.get_model('models.locations', 'Locations')
+		data = model.get_all()
 		return self.get_view().data(data)
