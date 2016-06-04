@@ -1,8 +1,11 @@
+-- sudo -u postgres psql data
+
 CREATE DATABASE data;
 CREATE EXTENSION postgis;
 
 DROP TABLE IF EXISTS Measurements;
 DROP TABLE IF EXISTS Locations;
+DROP TABLE IF EXISTS Sensors;
 DROP TABLE IF EXISTS Subscribers;
 
 CREATE TABLE Subscribers (
@@ -20,10 +23,22 @@ CREATE TABLE Locations (
   height float NOT NULL
 );
 
+CREATE TABLE Sensors (
+  id SERIAL PRIMARY KEY,
+  type TEXT NOT NULL,
+  description TEXT DEFAULT NULL,
+  unit TEXT NOT NULL
+);
+
 CREATE TABLE Measurements (
   id SERIAL PRIMARY KEY,
   datetime TIMESTAMP DEFAULT NOW(),
   value FLOAT NOT NULL,
   quality FLOAT DEFAULT NULL,
+  sensor INTEGER NOT NULL REFERENCES Sensors(id),
   location INTEGER NOT NULL REFERENCES Locations(id)
 );
+
+-- Example data
+INSERT INTO Locations (name, geom, height) VALUES ('Wersehaus', ST_GeomFromText('POINT(7.700181 51.973387)', 4326), 4.0);
+INSERT INTO Sensors (type, description, unit) VALUES ('HC-SR04', 'Ultraschall Entfernungsmesser für Pegelmeßungen', 'cm');
