@@ -14,80 +14,66 @@ auth = HTTPBasicAuth()
 @app.route('/api/data/trigger')
 @auth.login_required
 def data_trigger():
-	controller = DataController()
-	return controller.trigger()
+	return DataController().trigger()
 
 @app.route('/api/data/last')
 def data_last():
-	controller = DataController()
-	return controller.last()
+	return DataController().last()
 
 @app.route('/api/data/list')
 def data_list():
-	controller = DataController()
-	return controller.list()
+	return DataController().list()
 
 @app.route('/api/data/min')
 def data_min():
-	controller = DataController()
-	return controller.min()
+	return DataController().min()
 
 @app.route('/api/data/max')
 def data_max():
-	controller = DataController()
-	return controller.max()
+	return DataController().max()
 
 @app.route('/api/location/list')
 def location_list():
-	controller = LocationController()
-	return controller.list()
+	return LocationController().list()
 
 @app.route('/api/sensor/list')
 def sensor_list():
-	controller = SensorController()
-	return controller.list()
+	return SensorController().list()
 
 @app.route('/api/config/name', methods=['GET', 'PUT'])
 @auth.login_required
 def config_name():
-	controller = ConfigController()
-	return controller.name()
+	return ConfigController().name()
 
 @app.route('/api/config/height', methods=['GET', 'PUT'])
 @auth.login_required
 def config_height():
-	controller = ConfigController()
-	return controller.height()
+	return ConfigController().height()
 
 @app.route('/api/config/location', methods=['GET', 'PUT', 'POST', 'DELETE'])
 @auth.login_required
 def config_location():
-	controller = ConfigController()
-	return controller.location()
+	return ConfigController().location()
 
 @app.route('/api/config/interval', methods=['GET', 'PUT'])
 @auth.login_required
 def config_interval():
-	controller = ConfigController()
-	return controller.interval()
+	return ConfigController().interval()
 
 @app.route('/api/config/password', methods=['GET', 'PUT'])
 @auth.login_required
 def config_password():
-	controller = ConfigController()
-	return controller.password()
+	return ConfigController().password()
 
 @app.route('/api/config/sensor', methods=['GET', 'PUT', 'POST', 'DELETE'])
 @auth.login_required
 def config_sensor():
-	controller = ConfigController()
-	return controller.sensor()
+	return ConfigController().sensor()
 
 
 @auth.get_password
 def get_password(username):
-	controller = ConfigController()
-	return controller.check_password(username)
+	return ConfigController().check_password(username)
 
 
 if __name__ == '__main__':
