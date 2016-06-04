@@ -1,5 +1,8 @@
+import sys
+assert sys.version_info >= (3,0)
+
 import paho.mqtt.publish as publish
-from database.database import Database
+from models.database import Database
 
 ################################################
 # Duplicated: Has to be solved
