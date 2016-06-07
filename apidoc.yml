@@ -47,7 +47,7 @@ versions:
     types:
       mimeType:
         category: Headers
-        description: A mine type, one of text/html or application/json. Default: text/html
+        description: A mine type, one of text/html or application/json. Default is text/html
         item:
           type: string
           sample: application/json
