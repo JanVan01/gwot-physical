@@ -2,7 +2,7 @@ import sys
 assert sys.version_info >= (3,0)
 
 import paho.mqtt.publish as publish
-from models.database import Database
+#from models.database import Database # intentionally?
 
 from models.config import Database
 from models.measurements import Measurements
@@ -84,7 +84,7 @@ publish.single("everyMinute", message, hostname="localhost")
 #####################################################################################################
 # Channels related to events and time
 #####################################################################################################
-# publish.single("DecreaseBy>=0.1mIn1Minute","DecreaseBy>=0.1mIn1Minute", hostname="localhost") 
+# publish.single("DecreaseBy>=0.1mIn1Minute","DecreaseBy>=0.1mIn1Minute", hostname="localhost")
 #
 # publish.single("DecreaseBy>=0.1mIn5Minute","DecreaseBy>=0.1mIn5Minute", hostname="localhost")
 #
