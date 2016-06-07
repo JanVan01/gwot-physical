@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import sys
 assert sys.version_info >= (3,0)
 

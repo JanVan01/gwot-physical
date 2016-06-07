@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # Sensor trigger executed by cron job
 
 import sys
