@@ -30,35 +30,35 @@ class DataController(BaseController):
 
 	def _get_filter(self):
 		# ToDo: Add proper variable checks / sanitation
+
+		args = self.multi_model.filter_defaults()
+
 		outliers = request.args.get('outliers')
-		start = request.args.get('start')
-		end = request.args.get('end')
-		location = request.args.get('location')
-		coordinates = request.args.get('coordinates')
-
-		args = {
-			'outliers': None,
-			'start': None,
-			'end': None,
-			'location': None,
-			'coordinates': None
-		}
-
 		if outliers != None and len(outliers) > 0 and (outliers == 0 or outliers == 1):
 			args['outliers'] = outliers
 
 		# ToDo
+		start = request.args.get('start')
 		if start != None and len(start) > 0:
 			args['start'] = start
 
 		# ToDo
+		end = request.args.get('end')
 		if end != None and len(end) > 0:
 			args['end'] = end
 
-		if location != None and location > 0:
-			args['location'] = location
+		# ToDo
+		location = request.args.get('location')
+		if location != None and len(location) > 0:
+			args['location'] = location.split(',')
 
 		# ToDo
+		sensor = request.args.get('sensor')
+		if sensor != None and len(sensor) > 0:
+			args['location'] = sensor.split(',')
+
+		# ToDo, WKT parsing using https://github.com/larsbutler/geomet
+		coordinates = request.args.get('coordinates')
 		if coordinates != None and len(coordinates) > 0:
 			args['coordinates'] = coordinates
 

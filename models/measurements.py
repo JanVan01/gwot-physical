@@ -134,27 +134,42 @@ class Measurements(BaseMultiModel):
 	def get_all(self):
 		return self._get_all("SELECT * FROM Measurements ORDER BY id")
 	
-	def get_all_filtered(self, filter):
+	def get_all_filtered(self, filter = None):
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_all("SELECT * FROM Measurements " + filterSql + " ORDER BY id")
 	
-	def get_last(self, filter):
+	def get_last(self, filter = None):
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY id DESC LIMIT 1")
 	
-	def get_min(self, filter):
+	def get_min(self, filter = None):
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY value ASC LIMIT 1")
 	
-	def get_max(self, filter):
+	def get_max(self, filter = None):
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY value DESC LIMIT 1")
 
+	def filter_defaults(self, args = None):
+		defaults = {
+			'outliers': None,
+			'start': None,
+			'end': None,
+			'location': [],
+			'coordinates': None,
+			'sensor': []
+		}
+		if args is not None:
+			defaults.update(args)
+		return defaults
+
 
 	def __build_filter(self, args, prefix):
+		args = self.filter_defaults(args)
 		conditions = []
+		commaSeparator = ","
 
-		if args['outliers'] == 0:
+		if args['outliers'] != None and args['outliers'] == 1:
 			conditions.append("quality > 0.5") # ToDo: What is a good quality?
 
 # ToDo
@@ -165,8 +180,11 @@ class Measurements(BaseMultiModel):
 #		if args['end'] != None:
 #			conditions.append("datetime <= " + args['end'])
 
-		if args['location'] != None:
-			conditions.append("location = " + args['location'])
+		if len(args['location']) > 0:
+			conditions.append("location IN(" + commaSeparator.join(args['location']) + ")");
+
+		if len(args['sensor']) > 0:
+			conditions.append("sensor IN(" + commaSeparator.join(args['sensor']) + ")");
 
 #		if args['coordinates'] != None:
 #			conditions.append("location = " + args['coordinates'])
