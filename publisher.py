@@ -30,7 +30,7 @@ def get_filter():
 db = Database().connect()
 measurements = Measurements(db)
 data = measurements.get_last(get_filter()) # ToDo: Convert data to JSON?
-message = str(data).encode('string_escape')
+message = str(data).encode('unicode_escape')
 
 
 ###################################################################################################
