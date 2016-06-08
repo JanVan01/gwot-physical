@@ -8,7 +8,7 @@ class ConfigManager(object):
 		self.config.read('data/config.ini')
 
 	def save_config(self):
-		with open('config.ini', 'w') as c:
+		with open('data/config.ini', 'w') as c:
 			self.config.write(c)
 
 	def reset_default(self):
