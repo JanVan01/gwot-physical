@@ -9,7 +9,10 @@ from controller.data import DataController
 from controller.location import LocationController
 from controller.sensor import SensorController
 from controller.config import ConfigController
+from utils.utils import OS
 
+
+OS().cwd(__file__)
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 
