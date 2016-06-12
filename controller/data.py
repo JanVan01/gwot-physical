@@ -1,6 +1,6 @@
 from flask import request
 from controller.base import BaseController
-
+from Notification import publishEveryMeasurement
 class DataController(BaseController):
 
 	def __init__(self):
@@ -10,7 +10,7 @@ class DataController(BaseController):
 	def trigger(self):
 		sensors = self.get_model('models.sensors', 'Sensors')
 		data = sensors.trigger_all()
-		Notification.publishEveryMeasurement("HELLO") # should pass data to mqttbroker
+		publishEveryMeasurement("HELLO") # should pass data to mqttbroker
 		return self.get_view().data(data)
 
 	def last(self):
