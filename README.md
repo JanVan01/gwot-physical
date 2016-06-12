@@ -1,11 +1,15 @@
-# GWOT Smart Physical Device
+# GWOT Physical Smart Device
 
-Currently tested under Raspbian only.
+## Installation
 
-To install it download these files and give the file setup/setup.sh rights to be eceuted:
+Currently tested using Raspbian only.
 
-`chmod +x setup/setup.sh`
+To install it download these files as ZIP file or get them using git. 
 
-Afterwards execute the automatic setup and specify the wanted database name and a new database password for postgreSQL as first and second parameter, e.g.:
+Give the file setup/setup.sh rights to be executable:
 
-`setup/setup.sh data myS3cretP@ssword`
+`sudo chmod +x setup/setup.sh`
+
+Afterwards execute the setup and as arguments specify the desired database name (here: `data`) and a database password for PostgreSQL (here: `myS3cretP@ssword`), e.g.:
+
+`sudo setup/setup.sh data myS3cretP@ssword`
