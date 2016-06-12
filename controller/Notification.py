@@ -14,6 +14,6 @@ def publishEveryMeasurement(data):
     publish.single("everyMeasurement", message, hostname="localhost")
 
 def publishByThreshold(data):
-    if(data[0].value > 200)
+    if data[0].value > 200:
         message = str(data[0].value).encode('unicode_escape')
         publish.single("publishByThreshold", message, hostname="localhost")
