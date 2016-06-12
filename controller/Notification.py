@@ -2,6 +2,6 @@ import paho.mqtt.publish as publish
 
     # Takes some input (data) and pushs it to the MQTT-broker 'mosquitto'.
     # Subscrubers of the channel 'everyMeasurement' will recieve
-    def publishEveryMeasurement(self, data):
-        message = str(data).encode('unicode_escape')
-        publish.single("everyMeasurement", message, hostname="localhost")
+def publishEveryMeasurement(data):
+    message = str(data).encode('unicode_escape')
+    publish.single("everyMeasurement", message, hostname="localhost")
