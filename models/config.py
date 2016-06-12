@@ -1,5 +1,4 @@
 import configparser
-import psycopg2
 
 class ConfigManager(object):
 
@@ -82,11 +81,3 @@ class ConfigManager(object):
 		return self.config['Config']['dbhost']
 
 
-class Database:
-	
-	def connect(self):
-		config = ConfigManager()
-		db = psycopg2.connect("dbname='" + config.get_dbname() + "' user='" + config.get_dbuser() + "' host='" + config.get_dbhost() + "' password='" + config.get_dbpw() + "'")
-		db.autocommit = True # We might want to remove that and switch to transactions
-		return db
-		

@@ -1,7 +1,7 @@
 import importlib
 from views.json import JsonView
 from views.html import HtmlView
-from models.config import Database
+from utils.utils import Database
 from flask import request
 
 class BaseController(object):

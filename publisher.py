@@ -4,12 +4,12 @@ import sys
 assert sys.version_info >= (3,0)
 
 import paho.mqtt.publish as publish
-
-from models.config import Database
+from utils.utils import Database, OS
 from models.measurements import Measurements
 
 ##################################################################################################
 
+OS().cwd(self, __file__)
 db = Database().connect()
 measurements = Measurements(db)
 data = measurements.get_last() # ToDo: Convert data to JSON?
