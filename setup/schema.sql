@@ -1,6 +1,3 @@
--- sudo -u postgres psql data
-
-CREATE DATABASE data;
 CREATE EXTENSION postgis;
 
 DROP TABLE IF EXISTS Measurements;
@@ -42,6 +39,5 @@ CREATE TABLE Measurements (
   location INTEGER NOT NULL REFERENCES Locations(id)
 );
 
--- Example data
-INSERT INTO Locations (name, geom, height) VALUES ('Wersehaus', ST_GeomFromText('POINT(7.700181 51.973387)', 4326), 4.0);
-INSERT INTO Sensors (module, class, type, description, unit) VALUES ('sensors.distance', 'DistanceSensor', 'HC-SR04', 'Ultraschall Entfernungsmesser für Pegelmeßungen', 'cm');
+-- Default data for ultrasonic distance sensor
+INSERT INTO Sensors (module, class, type, description, unit) VALUES ('sensors.distance', 'DistanceSensor', 'HC-SR04', 'Ultrasonic distance sensor for water gauges', 'cm');
