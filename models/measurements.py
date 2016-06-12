@@ -34,7 +34,7 @@ class Measurement(BaseModel):
 			return True
 		else:
 			return False
-	
+
 	def read(self):
 		if self.id is None:
 			return False
@@ -46,7 +46,7 @@ class Measurement(BaseModel):
 			return True
 		else:
 			return False
-	
+
 	def update(self):
 		if self.id is None or self.sensor is None or self.location is None or self.value is None:
 			return False
@@ -57,7 +57,7 @@ class Measurement(BaseModel):
 			return True
 		else:
 			return False
-	
+
 	def delete(self):
 		if self.id is None:
 			return False
@@ -69,83 +69,83 @@ class Measurement(BaseModel):
 			return True
 		else:
 			return False
-		
+
 	def get_id(self):
 		return self.id
-	
+
 	def set_id(self, id):
 		self.id = id
-		
+
 	def get_datetime(self):
 		return self.datetime
-	
+
 	def set_datetime(self, datetime):
 		self.datetime = datetime
-		
+
 	def get_value(self):
 		return self.value
-	
+
 	def set_value(self, value):
 		self.value = value
-		
+
 	def get_quality(self):
 		return self.quality
-	
+
 	def set_quality(self, quality):
 		self.quality = quality
-		
+
 	def get_sensor(self):
 		return self.sensor
 
 	def get_sensor_object(self):
 		from models.sensors import Sensors
 		return Sensors(self.db).get(self.sensor)
-	
+
 	def set_sensor(self, sensor):
 		from models.sensors import Sensor
 		if isinstance(sensor, Sensor):
 			self.sensor = sensor.get_id()
 		else:
 			self.sensor = sensor
-		
+
 	def get_location(self):
 		return self.location
-	
+
 	def get_location_object(self):
 		from models.locations import Locations
 		return Locations(self.db).get(self.location)
-	
+
 	def set_location(self, location):
 		from models.locations import Location
 		if isinstance(location, Location):
 			self.location = location.get_id()
 		else:
 			self.location = location
-	
-	
+
+
 class Measurements(BaseMultiModel):
 
 	def __init__(self, db):
 		super().__init__(db)
-	
+
 	def create(self, pk = None):
 		return Measurement(self.db, pk)
-	
+
 	def get_all(self):
 		return self._get_all("SELECT * FROM Measurements ORDER BY id")
-	
+
 	def get_all_filtered(self, filter = None):
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_all("SELECT * FROM Measurements " + filterSql + " ORDER BY id")
-	
+
 	def get_last(self, filter = None):
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY id DESC LIMIT 1")
-	
+
 	def get_min(self, filter = None):
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY value ASC LIMIT 1")
-	
+
 	def get_max(self, filter = None):
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY value DESC LIMIT 1")
@@ -188,12 +188,9 @@ class Measurements(BaseMultiModel):
 
 #		if args['coordinates'] != None:
 #			conditions.append("location = " + args['coordinates'])
-		
+
 		if len(conditions) > 0:
 			op = " AND "
 			return prefix + " " + op.join(conditions)
 		else:
 			return ""
-		
-		
-	
