@@ -1,6 +1,6 @@
 from flask import request
 from controller.base import BaseController
-from Notification import publishEveryMeasurement
+from controler.Notification import publishEveryMeasurement
 
 class DataController(BaseController):
 
