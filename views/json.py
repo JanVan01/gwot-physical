@@ -57,7 +57,7 @@ class JSON(object):
 				'type': obj.get_type(),
 				'description': obj.get_description(),
 				'unit': obj.get_unit(),
-				'active': obj.get_active()
+				'active': obj.is_active()
 			}
 	
 		raise TypeError ("Type not serializable")

@@ -119,7 +119,7 @@ class Sensor(BaseModel):
 	def set_unit(self, unit):
 		self.unit = unit
 		
-	def get_active(self):
+	def is_active(self):
 		return self.active
 	
 	def set_active(self, active):
@@ -145,16 +145,24 @@ class Sensors(BaseMultiModel):
 		data = []
 		measurements = Measurements(self.db)
 		for sensor in self.get_all():
+			# Sensor is disabled, ignore it
+			if not sensor.is_active():
+				continue
+			
+			# Ignore the sensor if no implementation can be found
 			impl = sensor.get_sensor_impl()
-			if impl is not None:
-				value = impl.get_measurement()
-				if value is not None:
-					measurement = measurements.create()
-					measurement.set_value(value)
-					measurement.set_quality(impl.get_quality())
-					measurement.set_sensor(sensor)
-					measurement.set_location(location)
-					measurement.create()
-					data.append(measurement)
+			if impl is None:
+				continue
+	
+			# ToDo: Check whether each sensotr should run or not (time-based)
+			value = impl.get_measurement()
+			if value is not None:
+				measurement = measurements.create()
+				measurement.set_value(value)
+				measurement.set_quality(impl.get_quality())
+				measurement.set_sensor(sensor)
+				measurement.set_location(location)
+				measurement.create()
+				data.append(measurement)
 
 		return data
