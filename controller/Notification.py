@@ -4,4 +4,4 @@ import paho.mqtt.publish as publish
     # Subscrubers of the channel 'everyMeasurement' will recieve
 def publishEveryMeasurement(data):
     message = str(data).encode('unicode_escape')
-    publish.single("everyMeasurement", message, hostname="localhost")
+    publish.single("everyMeasurement", message.value, hostname="localhost")
