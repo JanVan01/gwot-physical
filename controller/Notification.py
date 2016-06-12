@@ -5,7 +5,7 @@ import paho.mqtt.publish as publish
 
 
 # Todo: Consturct response with loop over list
-def publish Measurement(data):
+def publishMeasurement(data):
     publishEveryMeasurement(data)
     publishByThreshold(data)
 
