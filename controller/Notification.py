@@ -3,6 +3,8 @@ import paho.mqtt.publish as publish
     # Takes some input (data) and pushs it to the MQTT-broker 'mosquitto'.
     # Subscrubers of the channel 'everyMeasurement' will recieve
 
+
+# Todo: Consturct response with loop over list
 def publish Measurement(data):
     publishEveryMeasurement(data)
     publishByThreshold(data)
