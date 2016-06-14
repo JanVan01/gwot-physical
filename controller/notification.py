@@ -14,7 +14,6 @@ def publishEveryMeasurement(data):
     # for i in range(len(data)):
     #     sensor_data = {} # new object to be passed to data
     #     data[i].
-
     message = str(data).encode('unicode_escape')
     publish.single("everyMeasurement", message, hostname="localhost")
 
