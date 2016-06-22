@@ -14,17 +14,14 @@
     var chart = c3.generate({
         bindto: '#chart4',
         data: {
-            columns: [
-                ['data1', 300, 350, 300, 0, 0, 0],
-                JSON.parse({{data}})
+            json: [
+                data1: {{data}}
             ],
             types: {
                 data1: 'area',
-                data2: 'area-spline'
             },
              colors: {
                data1: 'hotpink',
-               data2: 'pink'
              }
         }
     });
