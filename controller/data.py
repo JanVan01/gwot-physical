@@ -1,6 +1,7 @@
 from flask import request
 from controller.base import BaseController
 from controller.notification import publishMeasurement
+import json
 class DataController(BaseController):
 
 	def __init__(self):
@@ -30,8 +31,9 @@ class DataController(BaseController):
 		return self.get_view().data(data)
 
 	def overview(self): # Testing pretty Dataview.
-		datalist = self.multi_model.get_all_filtered(self._get_filter())
-		return self.get_view(template_file = "overview.html").data(datalist)
+		data = []
+		data.append(self.multi_model.get_all_filtered(self._get_filter()))
+		return self.get_view(template_file = "overview.html").data(data)
 
 	def _get_filter(self):
 		# ToDo: Add proper variable checks / sanitation
