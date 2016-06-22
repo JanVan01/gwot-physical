@@ -14,19 +14,10 @@ class BaseController(object):
 			view = JsonView()
 		else:
 			view = HtmlView()
-		if template_file is None:
-			view.set_template(template_file)
-		return view
-
-
-	def get_viewNiklas(self, template_file = None):
-		if self.__is_json_request():
-			view = JsonView()
-		else:
-			view = HtmlView()
 		if template_file is not None:
 			view.set_template(template_file)
 		return view
+
 
 	def get_model(self, module_name, class_name):
 		if module_name is None or class_name is None:
