@@ -14,15 +14,9 @@
     var chart = c3.generate({
         bindto: '#chart4',
         data: {
-            json: [
+            json: {
                 data1: {{data}}
-            ],
-            types: {
-                data1: 'area',
-            },
-             colors: {
-               data1: 'hotpink',
-             }
+            }
         }
     });
 </script>
