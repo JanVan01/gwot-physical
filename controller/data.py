@@ -31,10 +31,8 @@ class DataController(BaseController):
 		return self.get_view().data(data)
 
 	def overview(self): # Testing pretty Dataview.
-		data = []
-		data.append("allData")
-		data.append(self.multi_model.get_all_filtered(self._get_filter()))
-		return self.get_view(template_file = "overview.html").data(data)
+		datalist = self.multi_model.get_all_filtered(self._get_filter())
+		return self.get_view(template_file = "overview.html").data(datalist)
 
 	def _get_filter(self):
 		# ToDo: Add proper variable checks / sanitation

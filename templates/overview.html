@@ -6,6 +6,16 @@
 </head>
 <body>
     <h1>Geospatial Web of Things: Physical Smart Device Overview</h1>
-    {{ data }}
+    <div id="chart"></div>
+    <script>
+    var data = {{ data }};
+    var chart function(){
+      bindto: '#chart',
+      data.forEach(function(entry){
+        console.log(entry);
+      })
+    }
+    </script>
+
 </body>
 </html>
