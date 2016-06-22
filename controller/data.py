@@ -34,8 +34,9 @@ class DataController(BaseController):
 		datalist = self.multi_model.get_all_filtered(self._get_filter())
 		data = []
 		data.append('data1')
-		for element in datalist:
-			data.append(round(element.value/100, 2))
+		for
+		for x in range(0, 50):
+			data.append(round(element[x].value/100, 2))
 		return self.get_view(template_file = "overview.html").data(data)
 
 	def _get_filter(self):
