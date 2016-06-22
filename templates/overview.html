@@ -10,11 +10,12 @@
     <script>
     var data = {{ data }};
     var chart function(){
-      bindto: '#chart',
+      var div = document.getElementById('chart');
       data.forEach(function(entry){
-        console.log(entry);
+        div.innerHTML = div.innerHTML + entry;
       })
     }
+    chart;
     </script>
 
 </body>
