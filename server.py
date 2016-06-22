@@ -75,6 +75,9 @@ def config_password():
 def config_sensor():
 	return ConfigController().sensor()
 
+@app.route('/api/prettyData')  #Delete it, just for testing c3js.
+def data_last():
+	return DataController().list()
 
 @auth.get_password
 def get_password(username):
