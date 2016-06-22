@@ -12,16 +12,19 @@
 
     <script>
     var chart = c3.generate({
-    bindto: '#chart4',
+    bindto: '#chart',
     data: {
         columns: [
+          ['data2', 1, 2, 3, 4]
           {{data}}
         ],
         types: {
             data1: 'area',
+            data2: 'area',
         },
          colors: {
            data1: 'hotpink',
+           data2: 'blue',
          }
     }
 });
