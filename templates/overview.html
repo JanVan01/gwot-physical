@@ -10,11 +10,12 @@
     <h1>Geospatial Web of Things: Physical Smart Device Overview</h1>
     <div id="chart4"></div>
     <script>
+    var data = ['data1', 300, 350, 300, 0, 0, 0];
     var chart = c3.generate({
     bindto: '#chart4',
     data: {
         columns: [
-            ['data1', 300, 350, 300, 0, 0, 0],
+            data,
             ['data2', 130, 100, 140, 200, 150, 50]
         ],
         types: {
@@ -24,7 +25,7 @@
          colors: {
            data1: 'black',
            data2: 'red'
-           
+
          }
     }
 });
