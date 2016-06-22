@@ -35,7 +35,7 @@ class DataController(BaseController):
 		data = []
 		data.append('data1')
 		for element in datalist:
-			data.append(element.value)
+			data.append(round(element.value/100, 2))
 		return self.get_view(template_file = "overview.html").data(data)
 
 	def _get_filter(self):
