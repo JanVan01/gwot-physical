@@ -34,8 +34,7 @@ class DataController(BaseController):
 		data = []
 		data.append("allData")
 		data.append(self.multi_model.get_all_filtered(self._get_filter()))
-		json_data = json.dumps(data)
-		return self.get_view(template_file = "overview.html").data(json_data)
+		return self.get_view(template_file = "overview.html").data(data)
 
 	def _get_filter(self):
 		# ToDo: Add proper variable checks / sanitation
