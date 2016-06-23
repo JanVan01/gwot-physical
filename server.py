@@ -75,6 +75,9 @@ def config_password():
 def config_sensor():
 	return ConfigController().sensor()
 
+@app.route('/api/1.0/overview')  #Delete it, just for testing c3js.
+def data_overview():
+	return DataController().overview()
 
 @auth.get_password
 def get_password(username):
