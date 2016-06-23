@@ -135,18 +135,22 @@ class Measurements(BaseMultiModel):
 		return self._get_all("SELECT * FROM Measurements ORDER BY id")
 
 	def get_all_filtered(self, filter = None):
+		filter = self.filter_defaults(filter)
 		filterSql = self.__build_filter(filter, "WHERE")
-		return self._get_all("SELECT * FROM Measurements " + filterSql + " ORDER BY id")
+		return self._get_all("SELECT * FROM Measurements " + filterSql + " ORDER BY id LIMIT 50")
 
 	def get_last(self, filter = None):
+		filter = self.filter_defaults(filter)
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY id DESC LIMIT 1")
 
 	def get_min(self, filter = None):
+		filter = self.filter_defaults(filter)
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY value ASC LIMIT 1")
 
 	def get_max(self, filter = None):
+		filter = self.filter_defaults(filter)
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY value DESC LIMIT 1")
 
@@ -157,7 +161,8 @@ class Measurements(BaseMultiModel):
 			'end': None,
 			'location': [],
 			'coordinates': None,
-			'sensor': []
+			'sensor': [],
+			'limit': 50
 		}
 		if args is not None:
 			defaults.update(args)
