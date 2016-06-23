@@ -1,6 +1,7 @@
 from flask import request
 from controller.base import BaseController
-from controller.Notification import publishMeasurement
+from controller.notification import publishMeasurement
+import json
 class DataController(BaseController):
 
 	def __init__(self):
@@ -28,6 +29,15 @@ class DataController(BaseController):
 	def max(self):
 		data = self.multi_model.get_max(self._get_filter())
 		return self.get_view().data(data)
+
+	def overview(self): # Testing pretty Dataview.
+		datalist = self.multi_model.get_all_filtered(self._get_filter())
+		data = []
+		data.append('data1')
+		for x in range(0, 50):
+			#data.append(round(datalist[x].value/100, 2))
+			data.append(datalist[x])
+		return self.get_view(template_file = "overview.html").data(data)
 
 	def _get_filter(self):
 		# ToDo: Add proper variable checks / sanitation
