@@ -1,16 +1,17 @@
 CREATE EXTENSION postgis;
 
 DROP TABLE IF EXISTS Measurements;
+DROP TABLE IF EXISTS Subscribers;
 DROP TABLE IF EXISTS Locations;
 DROP TABLE IF EXISTS Sensors;
-DROP TABLE IF EXISTS Subscribers;
+DROP TABLE IF EXISTS Notifiers;
 
-CREATE TABLE Subscribers (
+CREATE TABLE Notifiers (
   id SERIAL PRIMARY KEY,
-  connector TEXT NOT NULL,
+  module TEXT NOT NULL,
+  class TEXT NOT NULL,
   type TEXT NOT NULL,
-  name TEXT NOT NULL,
-  confirmed BOOLEAN DEFAULT FALSE
+  active BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE Locations (
@@ -28,6 +29,14 @@ CREATE TABLE Sensors (
   description TEXT DEFAULT NULL,
   unit TEXT NOT NULL,
   active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE Subscribers (
+  id SERIAL PRIMARY KEY,
+  notifier INTEGER NOT NULL REFERENCES Notifiers(id),
+  sensor INTEGER NOT NULL REFERENCES Sensors(id),
+  connector TEXT NOT NULL,
+  settings TEXT NOT NULL
 );
 
 CREATE TABLE Measurements (
