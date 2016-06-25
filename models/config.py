@@ -21,32 +21,12 @@ class ConfigManager(object):
 		self.config['Config']['name'] = name
 		self.save_config()
 
-	def get_lat(self):
-		return float(self.config['Config']['lat'])
+	def get_location(self):
+		return int(self.config['Config']['location'])
 
-	def set_lat(self, lat):
+	def set_location(self, id):
 		try:
-			self.config['Config']['lat'] = float(lat)
-			self.save_config()
-		except ValueError:
-			raise
-
-	def get_lon(self):
-		return float(self.config['Config']['lon'])
-
-	def set_lon(self, lon):
-		try:
-			self.config['Config']['lon'] = float(lon)
-			self.save_config()
-		except ValueError:
-			raise
-
-	def get_height(self):
-		return float(self.config['Config']['height'])
-
-	def set_height(self, height):
-		try:
-			self.config['Config']['height'] = float(height)
+			self.config['Config']['location'] = int(id)
 			self.save_config()
 		except ValueError:
 			raise
