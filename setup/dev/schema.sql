@@ -14,14 +14,6 @@ CREATE TABLE Notifiers (
   active BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE Subscribers (
-  id SERIAL PRIMARY KEY,
-  notifier INTEGER NOT NULL REFERENCES Notifiers(id),
-  sensor INTEGER NOT NULL REFERENCES Sensors(id),
-  connector TEXT NOT NULL,
-  settings TEXT NOT NULL
-);
-
 CREATE TABLE Locations (
   id SERIAL PRIMARY KEY,
   name TEXT DEFAULT NULL,
@@ -37,6 +29,14 @@ CREATE TABLE Sensors (
   description TEXT DEFAULT NULL,
   unit TEXT NOT NULL,
   active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE Subscribers (
+  id SERIAL PRIMARY KEY,
+  notifier INTEGER NOT NULL REFERENCES Notifiers(id),
+  sensor INTEGER NOT NULL REFERENCES Sensors(id),
+  connector TEXT NOT NULL,
+  settings TEXT NOT NULL
 );
 
 CREATE TABLE Measurements (
