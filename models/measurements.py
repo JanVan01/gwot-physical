@@ -5,7 +5,7 @@ from models.base import BaseModel, BaseMultiModel
 class Measurement(BaseModel):
 
 	def __init__(self, db, id = None):
-		super().__init__(db)
+		super().__init__(db, ['id', 'datetime', 'value', 'quality', 'sensor', 'location'])
 		self.id = id
 		self.datetime = None
 		self.value = None
@@ -131,38 +131,34 @@ class Measurements(BaseMultiModel):
 	def create(self, pk = None):
 		return Measurement(self.db, pk)
 
-	def get_all(self):
-		return self._get_all("SELECT * FROM Measurements ORDER BY id")
-
-	def get_all_filtered(self, filter = None):
+	def get_all(self, filter = None):
 		filter = self.filter_defaults(filter)
 		filterSql = self.__build_filter(filter, "WHERE")
-		return self._get_all("SELECT * FROM Measurements " + filterSql + " ORDER BY id LIMIT 50")
+		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.id ASC LIMIT " + str(filter['limit']))
 
 	def get_last(self, filter = None):
-		filter = self.filter_defaults(filter)
+		filter = self.filter_defaults(filter, 1)
 		filterSql = self.__build_filter(filter, "WHERE")
-		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY id DESC LIMIT 1")
+		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.id DESC LIMIT " + str(filter['limit']))
 
 	def get_min(self, filter = None):
-		filter = self.filter_defaults(filter)
+		filter = self.filter_defaults(filter, 1)
 		filterSql = self.__build_filter(filter, "WHERE")
-		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY value ASC LIMIT 1")
+		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value ASC LIMIT " + str(filter['limit']))
 
 	def get_max(self, filter = None):
-		filter = self.filter_defaults(filter)
+		filter = self.filter_defaults(filter, 1)
 		filterSql = self.__build_filter(filter, "WHERE")
-		return self._get_one("SELECT * FROM Measurements " + filterSql + " ORDER BY value DESC LIMIT 1")
+		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value DESC LIMIT " + str(filter['limit']))
 
-	def filter_defaults(self, args = None):
+	def filter_defaults(self, args = None, limit = 100):
 		defaults = {
-			'outliers': None,
 			'start': None,
 			'end': None,
 			'location': [],
-			'coordinates': None,
+			'geometry': None,
 			'sensor': [],
-			'limit': 50
+			'limit': limit
 		}
 		if args is not None:
 			defaults.update(args)
@@ -174,25 +170,21 @@ class Measurements(BaseMultiModel):
 		conditions = []
 		commaSeparator = ","
 
-		if args['outliers'] != None and args['outliers'] == 1:
-			conditions.append("quality > 0.5") # ToDo: What is a good quality?
+		if args['start'] is not None:
+			conditions.append("m.datetime >= timestamp '" + args['start'] + "'")
 
-# ToDo
-#		if args['start'] != None:
-#			conditions.append("datetime >= " + args['start'])
-
-
-#		if args['end'] != None:
-#			conditions.append("datetime <= " + args['end'])
+		if args['end'] is not None:
+			conditions.append("m.datetime <= timestamp '" + args['end'] + "'")
 
 		if len(args['location']) > 0:
-			conditions.append("location IN(" + commaSeparator.join(args['location']) + ")");
+			conditions.append("m.location IN(" + commaSeparator.join(args['location']) + ")");
 
 		if len(args['sensor']) > 0:
-			conditions.append("sensor IN(" + commaSeparator.join(args['sensor']) + ")");
+			conditions.append("m.sensor IN(" + commaSeparator.join(args['sensor']) + ")");
 
-#		if args['coordinates'] != None:
-#			conditions.append("location = " + args['coordinates'])
+		if args['geometry'] is not None:
+			prefix = " , Locations l " + prefix
+			conditions.append("ST_Intersects(l.geom, ST_GeographyFromText('" + args['geometry'] + "'))")
 
 		if len(conditions) > 0:
 			op = " AND "

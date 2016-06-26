@@ -1,12 +1,14 @@
 import psycopg2.extras
 from models.base import BaseModel, BaseMultiModel
 from models.measurements import Measurements
+from models.locations import Locations
+from models.config import ConfigManager
 from sensors.base import BaseSensor
 
 class Sensor(BaseModel):
 	
 	def __init__(self, db, id = None):
-		super().__init__(db)
+		super().__init__(db, ['id', 'module', 'class_name', 'type', 'description', 'unit', 'active'])
 		self.id = id
 		self.module = None
 		self.class_name = None
@@ -140,9 +142,13 @@ class Sensors(BaseMultiModel):
 		return self._get_all("SELECT * FROM Sensors ORDER BY id")
 	
 	def trigger_all(self):
-		location = 1 # ToDO: to be set properly from config
-
 		data = []
+
+		config = ConfigManager()
+		location = Locations.create(config.get_location());
+		if location.read() is False:
+			return data; # No location found for this id
+
 		measurements = Measurements(self.db)
 		for sensor in self.get_all():
 			# Sensor is disabled, ignore it
