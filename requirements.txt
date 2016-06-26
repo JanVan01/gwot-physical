@@ -5,3 +5,4 @@ RPi.GPIO==0.6.2
 psycopg2==2.6.1
 apidoc==1.4.0
 paho-mqtt==1.2
+pygeoif==0.6

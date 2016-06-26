@@ -1,7 +1,7 @@
 from flask import request
 from controller.base import BaseController
-from controller.notification import publishMeasurement
-import json
+from utils.utils import Validate
+
 class DataController(BaseController):
 
 	def __init__(self):
@@ -11,7 +11,6 @@ class DataController(BaseController):
 	def trigger(self):
 		sensors = self.get_model('models.sensors', 'Sensors')
 		data = sensors.trigger_all()
-		publishMeasurement(data) # should pass data to mqttbroker
 		return self.get_view().data(data)
 
 	def last(self):
@@ -19,7 +18,7 @@ class DataController(BaseController):
 		return self.get_view().data(data)
 
 	def list(self):
-		data = self.multi_model.get_all_filtered(self._get_filter())
+		data = self.multi_model.get_all(self._get_filter())
 		return self.get_view().data(data)
 
 	def min(self):
@@ -31,46 +30,44 @@ class DataController(BaseController):
 		return self.get_view().data(data)
 
 	def overview(self): # Testing pretty Dataview.
-		datalist = self.multi_model.get_all_filtered(self._get_filter())
+		datalist = self.multi_model.get_all(self._get_filter())
 		data = []
 		data.append('data1')
 		for x in range(0, 50):
-			#data.append(round(datalist[x].value/100, 2))
 			data.append(datalist[x])
 		return self.get_view(template_file = "overview.html").data(data)
 
 	def _get_filter(self):
-		# ToDo: Add proper variable checks / sanitation
+		valid = Validate()
+		args = {}
 
-		args = self.multi_model.filter_defaults()
-
+		# ToDo: How to outliers?
 		outliers = request.args.get('outliers')
 		if outliers != None and len(outliers) > 0 and (outliers == 0 or outliers == 1):
 			args['outliers'] = outliers
 
-		# ToDo
 		start = request.args.get('start')
-		if start != None and len(start) > 0:
+		if valid.iso_timestamp(start):
 			args['start'] = start
 
-		# ToDo
 		end = request.args.get('end')
-		if end != None and len(end) > 0:
+		if valid.iso_timestamp(end):
 			args['end'] = end
 
-		# ToDo
 		location = request.args.get('location')
-		if location != None and len(location) > 0:
+		if valid.comma_separated_numbers(location):
 			args['location'] = location.split(',')
 
-		# ToDo
 		sensor = request.args.get('sensor')
-		if sensor != None and len(sensor) > 0:
-			args['location'] = sensor.split(',')
+		if valid.comma_separated_numbers(sensor):
+			args['sensor'] = sensor.split(',')
 
-		# ToDo, WKT parsing using https://github.com/larsbutler/geomet
-		coordinates = request.args.get('coordinates')
-		if coordinates != None and len(coordinates) > 0:
-			args['coordinates'] = coordinates
+		geometry = request.args.get('geometry')
+		if valid.wkt(geometry):
+			args['geometry'] = geometry
+
+		limit = request.args.get('limit')
+		if valid.integer(limit) and int(limit) > 0:
+			args['limit'] = int(limit)
 
 		return args

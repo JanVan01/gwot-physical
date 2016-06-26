@@ -5,12 +5,20 @@ if [ $# != 2 ]
 	then echo "Please specify these two parameters: 1. database name, 2. database password" && exit
 fi
 
-# Set some commonly used variables
+echo "#################################################"
+echo "###                SETUP STARTED"
+echo "###"
 HOST=$(hostname)
+echo "### Hostname: $HOST"
 DBNAME=$1
+echo "### DB name: $DBNAME"
 DBPASSWORD=$2
+echo "### DB password: $DBPASSWORD"
 SETUPDIR=$(cd $(dirname "$0"); pwd)
+echo "### Setup directory: $SETUPDIR"
 APPDIR=$(dirname "$SETUPDIR")
+echo "### App directory: $APPDIR"
+echo "#################################################"
 
 # Set current working directory to folder of this file
 cd "$SETUPDIR"
@@ -70,7 +78,7 @@ crontab crontab.tmp
 rm crontab.tmp
 
 # Install as a service
-perl -pi -e 's:#__Set your program directory here__:$ENV{APPDIR}:g' dev/gwot-server
+perl -pi -e "s:#__Set your program directory here__:$APPDIR:g" dev/gwot-server
 cp dev/gwot-server /etc/init.d/
 chmod 755 /etc/init.d/gwot-server
 update-rc.d gwot-server defaults

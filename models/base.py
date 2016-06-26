@@ -1,9 +1,21 @@
 import psycopg2.extras
+from pprint import pformat
 
 class BaseModel(object):
 
-	def __init__(self, db):
+	def __init__(self, db, attrs = []):
 		self.db = db
+		self.attrs = attrs
+		
+	def __repr__(self):
+		if len(self.attrs) == 0:
+			return super().__repr__()
+
+		data = {}
+		for attr in self.attrs:
+			data[attr] = getattr(self, attr)
+		
+		return self.__module__ + '.' + self.__class__.__name__ + ':' + pformat(data)
 		
 	def from_dict(self, dict):
 		return

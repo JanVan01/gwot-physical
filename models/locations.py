@@ -4,7 +4,7 @@ from models.base import BaseModel, BaseMultiModel
 class Location(BaseModel):
 
 	def __init__(self, db, id = None):
-		super().__init__(db)
+		super().__init__(db, ['id', 'name', 'lon', 'lat', 'height'])
 		self.id = id
 		self.name = None
 		self.lon = None
