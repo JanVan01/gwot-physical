@@ -1,7 +1,7 @@
 import psycopg2.extras
 from models.base import BaseModel, BaseMultiModel
 from models.measurements import Measurements
-from models.locations import Locations
+from models.locations import Location
 from models.config import ConfigManager
 from sensors.base import BaseSensor
 
@@ -145,7 +145,7 @@ class Sensors(BaseMultiModel):
 		data = []
 
 		config = ConfigManager()
-		location = Locations.create(config.get_location());
+		location = Location(self.db, config.get_location());
 		if location.read() is False:
 			return data; # No location found for this id
 
