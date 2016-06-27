@@ -1,8 +1,8 @@
+Jinja2==2.7.3
 Flask==0.10.1
-Flask-HTTPAuth=3.1.2
-itsdangerous==0.24
-Jinja2==2.8
-MarkupSafe==0.23
+Flask-HTTPAuth==3.1.2
 RPi.GPIO==0.6.2
 psycopg2==2.6.1
-Werkzeug==0.11.8
+apidoc==1.4.0
+paho-mqtt==1.2
+pygeoif==0.6

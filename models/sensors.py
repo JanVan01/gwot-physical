@@ -1,12 +1,14 @@
 import psycopg2.extras
 from models.base import BaseModel, BaseMultiModel
 from models.measurements import Measurements
+from models.locations import Location
+from models.config import ConfigManager
 from sensors.base import BaseSensor
 
 class Sensor(BaseModel):
 	
 	def __init__(self, db, id = None):
-		super().__init__(db)
+		super().__init__(db, ['id', 'module', 'class_name', 'type', 'description', 'unit', 'active'])
 		self.id = id
 		self.module = None
 		self.class_name = None
@@ -119,7 +121,7 @@ class Sensor(BaseModel):
 	def set_unit(self, unit):
 		self.unit = unit
 		
-	def get_active(self):
+	def is_active(self):
 		return self.active
 	
 	def set_active(self, active):
@@ -140,21 +142,33 @@ class Sensors(BaseMultiModel):
 		return self._get_all("SELECT * FROM Sensors ORDER BY id")
 	
 	def trigger_all(self):
-		location = 1 # ToDO: to be set properly from config
-
 		data = []
+
+		config = ConfigManager()
+		location = Location(self.db, config.get_location());
+		if location.read() is False:
+			return data; # No location found for this id
+
 		measurements = Measurements(self.db)
 		for sensor in self.get_all():
+			# Sensor is disabled, ignore it
+			if not sensor.is_active():
+				continue
+			
+			# Ignore the sensor if no implementation can be found
 			impl = sensor.get_sensor_impl()
-			if impl is not None:
-				value = impl.get_measurement()
-				if value is not None:
-					measurement = measurements.create()
-					measurement.set_value(value)
-					measurement.set_quality(impl.get_quality())
-					measurement.set_sensor(sensor)
-					measurement.set_location(location)
-					measurement.create()
-					data.append(measurement)
+			if impl is None:
+				continue
+	
+			# ToDo: Check whether each sensotr should run or not (time-based)
+			value = impl.get_measurement()
+			if value is not None:
+				measurement = measurements.create()
+				measurement.set_value(value)
+				measurement.set_quality(impl.get_quality())
+				measurement.set_sensor(sensor)
+				measurement.set_location(location)
+				measurement.create()
+				data.append(measurement)
 
 		return data

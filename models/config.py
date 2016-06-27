@@ -1,5 +1,4 @@
 import configparser
-import psycopg2
 
 class ConfigManager(object):
 
@@ -8,7 +7,7 @@ class ConfigManager(object):
 		self.config.read('data/config.ini')
 
 	def save_config(self):
-		with open('config.ini', 'w') as c:
+		with open('data/config.ini', 'w') as c:
 			self.config.write(c)
 
 	def reset_default(self):
@@ -22,32 +21,12 @@ class ConfigManager(object):
 		self.config['Config']['name'] = name
 		self.save_config()
 
-	def get_lat(self):
-		return float(self.config['Config']['lat'])
+	def get_location(self):
+		return int(self.config['Config']['location'])
 
-	def set_lat(self, lat):
+	def set_location(self, id):
 		try:
-			self.config['Config']['lat'] = float(lat)
-			self.save_config()
-		except ValueError:
-			raise
-
-	def get_lon(self):
-		return float(self.config['Config']['lon'])
-
-	def set_lon(self, lon):
-		try:
-			self.config['Config']['lon'] = float(lon)
-			self.save_config()
-		except ValueError:
-			raise
-
-	def get_height(self):
-		return float(self.config['Config']['height'])
-
-	def set_height(self, height):
-		try:
-			self.config['Config']['height'] = float(height)
+			self.config['Config']['location'] = int(id)
 			self.save_config()
 		except ValueError:
 			raise
@@ -82,11 +61,3 @@ class ConfigManager(object):
 		return self.config['Config']['dbhost']
 
 
-class Database:
-	
-	def connect(self):
-		config = ConfigManager()
-		db = psycopg2.connect("dbname='" + config.get_dbname() + "' user='" + config.get_dbuser() + "' host='" + config.get_dbhost() + "' password='" + config.get_dbpw() + "'")
-		db.autocommit = True # We might want to remove that and switch to transactions
-		return db
-		

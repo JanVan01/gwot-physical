@@ -1,0 +1,3 @@
+# Needed for server.py as a service. Linux linebreaks are needed there.
+*.py text eol=lf
+gwot-server text eol=lf
