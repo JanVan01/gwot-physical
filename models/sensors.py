@@ -161,11 +161,11 @@ class Sensors(BaseMultiModel):
 				continue
 	
 			# ToDo: Check whether each sensotr should run or not (time-based)
-			value = impl.get_measurement()
-			if value is not None:
+			measurementObj = impl.get_measurement()
+			if measurementObj is not None:
 				measurement = measurements.create()
-				measurement.set_value(value)
-				measurement.set_quality(impl.get_quality())
+				measurement.set_value(measurementObj.get_value())
+				measurement.set_quality(measurementObj.get_quality())
 				measurement.set_sensor(sensor)
 				measurement.set_location(location)
 				measurement.create()
