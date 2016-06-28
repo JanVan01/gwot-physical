@@ -31,21 +31,15 @@ class ConfigManager(object):
 		return int(self.config['Config']['location'])
 
 	def set_location(self, id):
-		try:
-			self.config['Config']['location'] = int(id)
-			self.save_config()
-		except ValueError:
-			raise
+		self.config['Config']['location'] = str(id)
+		self.save_config()
 
 	def get_interval(self):
 		return int(self.config['Config']['interval'])
 
 	def set_interval(self, interval):
-		try:
-			self.config['Config']['interval'] = int(interval)
-			self.save_config()
-		except ValueError:
-			raise
+		self.config['Config']['interval'] = str(interval)
+		self.save_config()
 
 	def get_password(self):
 		return self.config['Config']['password']
