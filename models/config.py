@@ -16,7 +16,11 @@ class ConfigManager(object):
 		self.config['Config'] = self.config['Default']
 		self.save_config()
 
+	def get_config(self):
+		return self.config['Config']
+
 	def get_name(self):
+		print (self.config['Config']['name'])
 		return self.config['Config']['name']
 
 	def set_name(self, name):
@@ -49,17 +53,15 @@ class ConfigManager(object):
 	def set_password(self, pw):
 		self.config['Config']['password'] = pw
 		self.save_config()
-		
+
 	def get_dbname(self):
 		return self.config['Config']['dbname']
-		
+
 	def get_dbuser(self):
 		return self.config['Config']['dbuser']
-		
+
 	def get_dbpw(self):
 		return self.config['Config']['dbpw']
-		
+
 	def get_dbhost(self):
 		return self.config['Config']['dbhost']
-
-

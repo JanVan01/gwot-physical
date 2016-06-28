@@ -10,7 +10,7 @@
 # Description:       GWOT Physical Server
 ### END INIT INFO
 
-DIR=#__Set your program directory here__
+DIR=/vagrant
 DAEMON=$DIR/server.py
 DAEMON_NAME=gwot-server
 

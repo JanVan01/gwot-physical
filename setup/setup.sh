@@ -85,7 +85,7 @@ update-rc.d gwot-server defaults
 /etc/init.d/gwot-server start
 
 # Create API-DOC
-apidoc -i ./dev/apidoc.yml -o ../static/apidoc/index.html
+apidoc -i ./dev/apidoc.json -o ../static/apidoc/index.html
 
 echo "\n\n\n\n\n\n"
 echo "#################################################"
