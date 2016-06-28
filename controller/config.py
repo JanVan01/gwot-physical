@@ -4,10 +4,6 @@ from controller.base import BaseController
 
 class ConfigController(BaseController):
 
-	def __init__(self):
-		super().__init__()
-		self.config = ConfigManager()
-
 	def name(self):
 		return
 
@@ -28,5 +24,5 @@ class ConfigController(BaseController):
 	
 	def check_password(self, username):
 		if username == "admin":
-			return self.config.get_password()
+			return ConfigManager.Instance().get_password()
 		return None

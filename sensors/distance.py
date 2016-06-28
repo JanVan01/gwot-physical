@@ -2,14 +2,15 @@
 # Signatur: tirgger_reading: -> number
 # Purpose: Function triggers a distance-measurement and
 #		  returns the calculated distance in [cm].
-# Author:   Niklas Trzaska,
+# Author:   Niklas Trzaska, Oleg Stepanov
 #		   Code for function from
 #		   http://www.bytecreation.com/blog/2013/10/13/raspberry-pi-ultrasonic-sensor-hc-sr04
 #		   and modified according purpose.
-
+import math
 import RPi.GPIO as GPIO
-from sensors.base import BaseSensor
+from sensors.base import BaseSensor, SensorMeasurement
 import time
+
 
 class DistanceSensor(BaseSensor):
 	
@@ -34,32 +35,72 @@ class DistanceSensor(BaseSensor):
 	def get_unit(self):
 		return "cm"
 	
-	def get_quality(self):
-		return None # ToDo: Add quality flag
-	
 	def get_measurement(self):
-		# Send signal
-		GPIO.output(17, True)
+		raw_data = []
 
-		# Sensor expects a puls-length of 10Us
-		time.sleep(0.00001)
+		# We try 20 times and leave 10 attempts for invalid measurements
+		for i in range(20):
+			next_call = time.time() + 0.5
 
-		# Stop pulse
-		GPIO.output(17, False)
+			# Send signal
+			GPIO.output(17, True)
 
-		# listen to the input pin.
-		# 0:= no input
-		# 1:= input measured
-		while GPIO.input(27) == 0:
-			signaloff = time.time()
+			# Sensor expects a puls-length of 10Us
+			time.sleep(0.00001)
 
-		while GPIO.input(27) == 1:
-			signalon = time.time()
+			# Stop pulse
+			GPIO.output(17, False)
+			
+			signalon = None
+			signaloff = None
 
-		# calculate distance
-		timepassed = signalon - signaloff
+			# listen to the input pin.
+			# 0:= no input
+			# 1:= input measured
+			while GPIO.input(27) == 0:
+				signaloff = time.time()
 
-		# convert distance into cm
-		distance = timepassed * 17000
+			while GPIO.input(27) == 1:
+				signalon = time.time()
+			
+			# If there is no valid measurement result return
+			if signalon is None or signaloff is None:
+				continue
 
-		return distance
+			# calculate distance
+			timepassed = signalon - signaloff
+
+			# convert distance into cm
+			raw_distance = timepassed * 17000
+			if raw_distance > 3000:
+				continue
+			else:
+				# append data to the list
+				raw_data.append(raw_distance)
+
+				# wait for the time left between measurments
+				time.sleep(next_call-time.time())
+				
+				# If wen have enough measurements, break loop
+				if len(raw_data) >= 10:
+					break
+		
+		# If there is not enough data, skip
+		if len(raw_data) < 8:
+			return None
+
+		# sort the measurements
+		sorted(raw_data)
+		# delete 2 minimum and 2 max measurements
+		trimmed_data = raw_data[2:-2]
+		trimmed_data_length = len(trimmed_data)
+		#calculate mean value
+		value = sum(trimmed_data)/(trimmed_data_length)
+		
+		#calculate standard deviation
+		sd = math.sqrt(sum([(item-value)**2 for item in trimmed_data])/trimmed_data_length)
+		if sd > 5:
+			quality = 0.0
+		else:
+			quality = 1.0
+		return SensorMeasurement(value, quality)

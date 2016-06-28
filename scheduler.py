@@ -14,7 +14,7 @@ if __name__ == '__main__':
 	# Connect to database; trigger and save all sensor readings
 	db = Database().connect()
 	sensors = Sensors(db)
-	data = sensors.trigger_all()
+	data = sensors.trigger_pending()
 	# Send json to cmd line for debugging
 	json = JSON()
 	print(json.build(data))
