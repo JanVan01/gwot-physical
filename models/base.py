@@ -1,10 +1,9 @@
-import psycopg2.extras
+from utils.utils import Database
 from pprint import pformat
 
 class BaseModel(object):
 
-	def __init__(self, db, attrs = []):
-		self.db = db
+	def __init__(self, attrs = []):
 		self.attrs = attrs
 		
 	def __repr__(self):
@@ -34,9 +33,6 @@ class BaseModel(object):
 		
 	
 class BaseMultiModel(object):
-
-	def __init__(self, db):
-		self.db = db
 	
 	def to_object_list(self, list):
 		collection = []
@@ -63,7 +59,7 @@ class BaseMultiModel(object):
 		return None
 		
 	def _get_all(self, query, params = None):
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute(query, params)
 		if cur.rowcount > 0:
 			return self.to_object_list(cur.fetchall())
@@ -71,7 +67,7 @@ class BaseMultiModel(object):
 			return []
 	
 	def _get_one(self, query, params = None):
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute(query, params)
 		if cur.rowcount > 0:
 			return self.to_object(cur.fetchone())

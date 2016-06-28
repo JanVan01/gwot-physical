@@ -1,10 +1,10 @@
-import psycopg2.extras
+from utils.utils import Database
 from models.base import BaseModel, BaseMultiModel
 
 class Location(BaseModel):
 
-	def __init__(self, db, id = None):
-		super().__init__(db, ['id', 'name', 'lon', 'lat', 'height'])
+	def __init__(self, id = None):
+		super().__init__(['id', 'name', 'lon', 'lat', 'height'])
 		self.id = id
 		self.name = None
 		self.lon = None
@@ -21,7 +21,7 @@ class Location(BaseModel):
 		if self.lon is None or self.lat is None or self.height is None:
 			return False
 
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute("INSERT INTO Locations (name, geom, height) VALUES (%s, ST_GeomFromText(%s, 4326), %s) RETURNING id", [self.name, self.get_point_wkt(), self.height])
 		data = cur.fetchone()
 		self.id = data['id']
@@ -34,7 +34,7 @@ class Location(BaseModel):
 		if self.id is None:
 			return False
 
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute("SELECT *, ST_X(geom) AS lon, ST_Y(geom) AS lat FROM Locations WHERE id = %s", [self.id])
 		if cur.rowcount > 0:
 			self.from_dict(cur.fetchone())
@@ -46,7 +46,7 @@ class Location(BaseModel):
 		if self.id is None or self.lon is None or self.lat is None or self.height is None:
 			return False
 
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute("UPDATE Locations SET name = %s, geom = ST_GeomFromText(%s, 4326), height = %s WHERE id = %s", [self.name, self.get_point_wkt(), self.height, self.id])
 		if cur.rowcount > 0:
 			return True
@@ -57,7 +57,7 @@ class Location(BaseModel):
 		if self.id is None:
 			return False
 
-		cur = self.db.cursor()
+		cur = Database.Instance().cursor()
 		cur.execute("DELETE FROM Locations WHERE id = %s", [self.id])
 		if cur.rowcount > 0:
 			self.id = None
@@ -105,11 +105,8 @@ class Location(BaseModel):
 
 class Locations(BaseMultiModel):
 
-	def __init__(self, db):
-		super().__init__(db)
-
 	def create(self, pk = None):
-		return Location(self.db, pk)
+		return Location(pk)
 
 	def get_all(self):
 		return self._get_all("SELECT *, ST_X(geom) AS lon, ST_Y(geom) AS lat FROM Locations ORDER BY id")

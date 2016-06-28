@@ -1,11 +1,11 @@
-import psycopg2.extras
+from utils.utils import Database
 from models.base import BaseModel, BaseMultiModel
 
 # Todo: Check whether python datetime and postgresqlsql datetime are transfered correctly
 class Measurement(BaseModel):
 
-	def __init__(self, db, id = None):
-		super().__init__(db, ['id', 'datetime', 'value', 'quality', 'sensor', 'location'])
+	def __init__(self, id = None):
+		super().__init__(['id', 'datetime', 'value', 'quality', 'sensor', 'location'])
 		self.id = id
 		self.datetime = None
 		self.value = None
@@ -25,7 +25,7 @@ class Measurement(BaseModel):
 		if self.sensor is None or self.location is None or self.value is None:
 			return False
 
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute("INSERT INTO Measurements (value, quality, sensor, location) VALUES (%s, %s, %s, %s) RETURNING datetime, id", [self.value, self.quality, self.sensor, self.location])
 		data = cur.fetchone()
 		self.id = data['id']
@@ -39,7 +39,7 @@ class Measurement(BaseModel):
 		if self.id is None:
 			return False
 
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute("SELECT * FROM Measurements WHERE id = %s", [self.id])
 		if cur.rowcount > 0:
 			self.from_dict(cur.fetchone())
@@ -51,7 +51,7 @@ class Measurement(BaseModel):
 		if self.id is None or self.sensor is None or self.location is None or self.value is None:
 			return False
 
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute("UPDATE Measurements SET value = %s, quality = %s, sensor = %s, location = %s, datetime = %s WHERE id = %s", [self.value, self.quality, self.sensor, self.location, self.datetime, self.id])
 		if cur.rowcount > 0:
 			return True
@@ -62,7 +62,7 @@ class Measurement(BaseModel):
 		if self.id is None:
 			return False
 
-		cur = self.db.cursor()
+		cur = Database.Instance().cursor()
 		cur.execute("DELETE FROM Measurements WHERE id = %s", [self.id])
 		if cur.rowcount > 0:
 			self.id = None
@@ -99,7 +99,7 @@ class Measurement(BaseModel):
 
 	def get_sensor_object(self):
 		from models.sensors import Sensors
-		return Sensors(self.db).get(self.sensor)
+		return Sensors().get(self.sensor)
 
 	def set_sensor(self, sensor):
 		from models.sensors import Sensor
@@ -113,7 +113,7 @@ class Measurement(BaseModel):
 
 	def get_location_object(self):
 		from models.locations import Locations
-		return Locations(self.db).get(self.location)
+		return Locations().get(self.location)
 
 	def set_location(self, location):
 		from models.locations import Location
@@ -125,11 +125,8 @@ class Measurement(BaseModel):
 
 class Measurements(BaseMultiModel):
 
-	def __init__(self, db):
-		super().__init__(db)
-
 	def create(self, pk = None):
-		return Measurement(self.db, pk)
+		return Measurement(pk)
 
 	def get_all(self, filter = None):
 		filter = self.filter_defaults(filter)
