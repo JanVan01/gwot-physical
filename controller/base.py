@@ -23,9 +23,12 @@ class BaseController(object):
 		if module_name is None or class_name is None:
 			return None
 
-		module = importlib.import_module(module_name)
-		class_ = getattr(module, class_name)
-		return class_(self.db)
+		try:
+			module = importlib.import_module(module_name)
+			class_ = getattr(module, class_name)
+			return class_(self.db)
+		except:
+			raise # A wrong model is an error we can't really handle here. Abort execution.
 
 	def __is_json_request(self):
 		best = request.accept_mimetypes.best_match(['application/json', 'text/html'])

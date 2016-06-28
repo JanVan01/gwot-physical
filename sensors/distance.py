@@ -8,8 +8,7 @@
 #		   and modified according purpose.
 import math
 import RPi.GPIO as GPIO
-from sensors.base import BaseSensor
-from sensors.base import SensorMeasurement
+from sensors.base import BaseSensor, SensorMeasurement
 import time
 
 
@@ -36,12 +35,11 @@ class DistanceSensor(BaseSensor):
 	def get_unit(self):
 		return "cm"
 	
-	def get_quality(self):
-		return None # ToDo: Add quality flag
-	
 	def get_measurement(self):
 		raw_data = []
-		for i in range(10):
+
+		# We try 20 times and leave 10 attempts for invalid measurements
+		for i in range(20):
 			next_call = time.time() + 0.5
 
 			# Send signal
@@ -53,6 +51,8 @@ class DistanceSensor(BaseSensor):
 			# Stop pulse
 			GPIO.output(17, False)
 			
+			signalon = None
+			signaloff = None
 
 			# listen to the input pin.
 			# 0:= no input
@@ -62,6 +62,10 @@ class DistanceSensor(BaseSensor):
 
 			while GPIO.input(27) == 1:
 				signalon = time.time()
+			
+			# If there is no valid measurement result return
+			if signalon is None or signaloff is None:
+				continue
 
 			# calculate distance
 			timepassed = signalon - signaloff
@@ -69,13 +73,21 @@ class DistanceSensor(BaseSensor):
 			# convert distance into cm
 			raw_distance = timepassed * 17000
 			if raw_distance > 3000:
-				i -= 1
+				continue
 			else:
 				# append data to the list
 				raw_data.append(raw_distance)
 
 				# wait for the time left between measurments
 				time.sleep(next_call-time.time())
+				
+				# If wen have enough measurements, break loop
+				if len(raw_data) >= 10:
+					break
+		
+		# If there is not enough data, skip
+		if len(raw_data) < 8:
+			return None
 
 		# sort the measurements
 		sorted(raw_data)

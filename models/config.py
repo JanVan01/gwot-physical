@@ -1,5 +1,7 @@
 import configparser
+from utils.singleton import Singleton
 
+@Singleton
 class ConfigManager(object):
 
 	def __init__(self):

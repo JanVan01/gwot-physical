@@ -141,16 +141,30 @@ class Sensors(BaseMultiModel):
 	def get_all(self):
 		return self._get_all("SELECT * FROM Sensors ORDER BY id")
 	
-	def trigger_all(self):
-		data = []
+	def get_pending(self, sinceSql):
+		return self._get_all("SELECT s.* FROM Sensors s LEFT OUTER JOIN Measurements m ON m.sensor = s.id WHERE s.active = TRUE GROUP BY s.id HAVING (MAX(m.datetime) < (NOW() - interval %s) OR MAX(m.datetime) IS NULL);", [sinceSql])
+	
+	def trigger_pending(self):
+		interval = ConfigManager.Instance().get_interval()
+		if interval < 1:
+			return [] # No valid interval specified
 
-		config = ConfigManager()
-		location = Location(self.db, config.get_location());
+		sensors = self.get_pending(str(interval) + ' minutes')
+		return self.__trigger(sensors)
+		
+	
+	def trigger_all(self):
+		return self.__trigger(self.get_all())
+	
+	def __trigger(self, sensors):
+		data = []
+		
+		location = Location(self.db, ConfigManager.Instance().get_location());
 		if location.read() is False:
 			return data; # No location found for this id
 
 		measurements = Measurements(self.db)
-		for sensor in self.get_all():
+		for sensor in sensors:
 			# Sensor is disabled, ignore it
 			if not sensor.is_active():
 				continue
@@ -159,8 +173,7 @@ class Sensors(BaseMultiModel):
 			impl = sensor.get_sensor_impl()
 			if impl is None:
 				continue
-	
-			# ToDo: Check whether each sensotr should run or not (time-based)
+
 			measurementObj = impl.get_measurement()
 			if measurementObj is not None:
 				measurement = measurements.create()

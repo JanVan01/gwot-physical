@@ -41,11 +41,6 @@ class DataController(BaseController):
 		valid = Validate()
 		args = {}
 
-		# ToDo: How to outliers?
-		outliers = request.args.get('outliers')
-		if outliers != None and len(outliers) > 0 and (outliers == 0 or outliers == 1):
-			args['outliers'] = outliers
-
 		start = request.args.get('start')
 		if valid.iso_timestamp(start):
 			args['start'] = start
