@@ -183,7 +183,7 @@ class Measurements(BaseMultiModel):
 			conditions.append("m.sensor IN(" + commaSeparator.join(args['sensor']) + ")");
 
 		if args['geometry'] is not None:
-			prefix = " INNER JOIN Locations l " + prefix
+			prefix = " INNER JOIN Locations l ON m.location = l.id " + prefix
 			conditions.append("ST_Intersects(l.geom, ST_GeographyFromText('" + args['geometry'] + "'))")
 
 		if len(conditions) > 0:
