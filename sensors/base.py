@@ -16,9 +16,6 @@ class BaseSensor(object):
 	
 	def get_measurement(self):
 		return None
-	
-	def get_quality(self):
-		return None
 
 	def create_object(self, module_name, class_name):
 		if module_name is None or class_name is None:
