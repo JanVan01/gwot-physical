@@ -29,7 +29,7 @@ class Location(BaseModel):
 			return True
 		else:
 			return False
-	
+
 	def read(self):
 		if self.id is None:
 			return False
@@ -41,7 +41,7 @@ class Location(BaseModel):
 			return True
 		else:
 			return False
-	
+
 	def update(self):
 		if self.id is None or self.lon is None or self.lat is None or self.height is None:
 			return False
@@ -52,7 +52,7 @@ class Location(BaseModel):
 			return True
 		else:
 			return False
-	
+
 	def delete(self):
 		if self.id is None:
 			return False
@@ -64,52 +64,52 @@ class Location(BaseModel):
 			return True
 		else:
 			return False
-		
+
 	def get_id(self):
 		return self.id
-	
+
 	def set_id(self, id):
 		self.id = id
-		
+
 	def get_name(self):
 		return self.name
-	
+
 	def set_name(self, name):
 		self.name = name
-		
+
 	def get_position(self):
 		return {
 			'lon': self.lon,
 			'lat': self.lat
 		}
-		
+
 	def get_point_wkt(self):
-		return "POINT(" + self.lon + " " + self.lat + ")"
-		
+		return "POINT(" + str(self.lon) + " " + str(self.lat) + ")"
+
 	def get_longitude(self):
 		return self.lon
-		
+
 	def get_latitude(self):
 		return self.lat
-	
+
 	def set_position(self, lon, lat):
 		self.lon = lon
 		self.lat = lat
-		
+
 	def get_height(self):
 		return self.height
-	
+
 	def set_height(self, height):
 		self.height = height
-	
-	
+
+
 class Locations(BaseMultiModel):
 
 	def __init__(self, db):
 		super().__init__(db)
-	
+
 	def create(self, pk = None):
 		return Location(self.db, pk)
-	
+
 	def get_all(self):
 		return self._get_all("SELECT *, ST_X(geom) AS lon, ST_Y(geom) AS lat FROM Locations ORDER BY id")
