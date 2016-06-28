@@ -21,9 +21,12 @@ class BaseSensor(object):
 		if module_name is None or class_name is None:
 			return None
 		
-		module = importlib.import_module(module_name)
-		class_ = getattr(module, class_name)
-		return class_()
+		try:
+			module = importlib.import_module(module_name)
+			class_ = getattr(module, class_name)
+			return class_()
+		except:
+			return None
 		
 class SensorMeasurement(object):
 	def __init__(self, value, quality = None):
