@@ -1,13 +1,9 @@
 import importlib
 from views.json import JsonView
 from views.html import HtmlView
-from utils.utils import Database
 from flask import request
 
 class BaseController(object):
-
-	def __init__(self):
-		self.db = Database().connect()
 
 	def get_view(self, template_file = None):
 		if self.__is_json_request():
@@ -26,7 +22,7 @@ class BaseController(object):
 		try:
 			module = importlib.import_module(module_name)
 			class_ = getattr(module, class_name)
-			return class_(self.db)
+			return class_()
 		except:
 			raise # A wrong model is an error we can't really handle here. Abort execution.
 

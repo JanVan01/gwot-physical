@@ -1,4 +1,4 @@
-import psycopg2.extras
+from utils.utils import Database
 from models.base import BaseModel, BaseMultiModel
 from models.measurements import Measurements
 from models.locations import Location
@@ -7,8 +7,8 @@ from sensors.base import BaseSensor
 
 class Sensor(BaseModel):
 	
-	def __init__(self, db, id = None):
-		super().__init__(db, ['id', 'module', 'class_name', 'type', 'description', 'unit', 'active'])
+	def __init__(self, id = None):
+		super().__init__(['id', 'module', 'class_name', 'type', 'description', 'unit', 'active'])
 		self.id = id
 		self.module = None
 		self.class_name = None
@@ -32,7 +32,7 @@ class Sensor(BaseModel):
 		if impl is None:
 			return False
 
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute("INSERT INTO Sensors (module, class, type, description, unit, active) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id", [self.module, self.class_name, impl.get_type(), self.description, impl.get_unit(), self.active])
 		data = cur.fetchone()
 		self.id = data['id']
@@ -45,7 +45,7 @@ class Sensor(BaseModel):
 		if self.id is None:
 			return False
 
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute("SELECT * FROM Sensors WHERE id = %s", [self.id])
 		if cur.rowcount > 0:
 			self.from_dict(cur.fetchone())
@@ -58,7 +58,7 @@ class Sensor(BaseModel):
 		if self.id is None or impl is None:
 			return False
 
-		cur = self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+		cur = Database.Instance().dict_cursor()
 		cur.execute("UPDATE Sensors SET module = %s, class = %s, type = %s, description = %s, unit = %s, active = %s WHERE id = %s", [self.module, self.class_name, impl.get_type(), self.description, impl.get_unit(), self.active, self.id])
 		if cur.rowcount > 0:
 			return True
@@ -69,7 +69,7 @@ class Sensor(BaseModel):
 		if self.id is None:
 			return False
 
-		cur = self.db.cursor()
+		cur = Database.Instance().cursor()
 		cur.execute("DELETE FROM Sensors WHERE id = %s", [self.id])
 		if cur.rowcount > 0:
 			self.id = None
@@ -131,12 +131,9 @@ class Sensor(BaseModel):
 	
 	
 class Sensors(BaseMultiModel):
-
-	def __init__(self, db):
-		super().__init__(db)
 	
 	def create(self, pk = None):
-		return Sensor(self.db, pk)
+		return Sensor(pk)
 	
 	def get_all(self):
 		return self._get_all("SELECT * FROM Sensors ORDER BY id")
@@ -159,11 +156,11 @@ class Sensors(BaseMultiModel):
 	def __trigger(self, sensors):
 		data = []
 		
-		location = Location(self.db, ConfigManager.Instance().get_location());
+		location = Location(ConfigManager.Instance().get_location());
 		if location.read() is False:
 			return data; # No location found for this id
 
-		measurements = Measurements(self.db)
+		measurements = Measurements()
 		for sensor in sensors:
 			# Sensor is disabled, ignore it
 			if not sensor.is_active():

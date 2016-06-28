@@ -1,6 +1,8 @@
 import os
 import re
 import psycopg2
+import psycopg2.extras
+from utils.singleton import Singleton
 from models.config import ConfigManager
 from pygeoif import geometry
 
@@ -12,13 +14,22 @@ class OS:
 		os.chdir(dname)
 
 
+@Singleton
 class Database:
 	
-	def connect(self):
+	def __init__(self):
 		config = ConfigManager.Instance()
-		db = psycopg2.connect("dbname='" + config.get_dbname() + "' user='" + config.get_dbuser() + "' host='" + config.get_dbhost() + "' password='" + config.get_dbpw() + "'")
-		db.autocommit = True # We might want to remove that and switch to transactions
-		return db
+		self.db = psycopg2.connect("dbname='" + config.get_dbname() + "' user='" + config.get_dbuser() + "' host='" + config.get_dbhost() + "' password='" + config.get_dbpw() + "'")
+		self.db.autocommit = True # We might want to remove that and switch to transactions
+	
+	def get(self):
+		return self.db
+	
+	def dict_cursor(self):
+		return self.db.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
+	
+	def cursor(self):
+		return self.db.cursor()
 
 class Validate:
 	
