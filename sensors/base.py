@@ -28,3 +28,13 @@ class BaseSensor(object):
 		class_ = getattr(module, class_name)
 		return class_()
 		
+class SensorMeasurement(object):
+	def __init__(self, value, quality = None):
+		self.value = value
+		self.quality = quality
+		
+	def get_value(self):
+		return self.value
+	
+	def get_quality(self):
+		return self.quality

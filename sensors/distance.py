@@ -2,14 +2,16 @@
 # Signatur: tirgger_reading: -> number
 # Purpose: Function triggers a distance-measurement and
 #		  returns the calculated distance in [cm].
-# Author:   Niklas Trzaska,
+# Author:   Niklas Trzaska, Oleg Stepanov
 #		   Code for function from
 #		   http://www.bytecreation.com/blog/2013/10/13/raspberry-pi-ultrasonic-sensor-hc-sr04
 #		   and modified according purpose.
-
+import math
 import RPi.GPIO as GPIO
 from sensors.base import BaseSensor
+from sensors.base import SensorMeasurement
 import time
+
 
 class DistanceSensor(BaseSensor):
 	
@@ -38,28 +40,55 @@ class DistanceSensor(BaseSensor):
 		return None # ToDo: Add quality flag
 	
 	def get_measurement(self):
-		# Send signal
-		GPIO.output(17, True)
+		raw_data = []
+		for i in range(10):
+			next_call = time.time() + 0.5
 
-		# Sensor expects a puls-length of 10Us
-		time.sleep(0.00001)
+			# Send signal
+			GPIO.output(17, True)
 
-		# Stop pulse
-		GPIO.output(17, False)
+			# Sensor expects a puls-length of 10Us
+			time.sleep(0.00001)
 
-		# listen to the input pin.
-		# 0:= no input
-		# 1:= input measured
-		while GPIO.input(27) == 0:
-			signaloff = time.time()
+			# Stop pulse
+			GPIO.output(17, False)
+			
 
-		while GPIO.input(27) == 1:
-			signalon = time.time()
+			# listen to the input pin.
+			# 0:= no input
+			# 1:= input measured
+			while GPIO.input(27) == 0:
+				signaloff = time.time()
 
-		# calculate distance
-		timepassed = signalon - signaloff
+			while GPIO.input(27) == 1:
+				signalon = time.time()
 
-		# convert distance into cm
-		distance = timepassed * 17000
+			# calculate distance
+			timepassed = signalon - signaloff
 
-		return distance
+			# convert distance into cm
+			raw_distance = timepassed * 17000
+			if raw_distance > 3000:
+				i -= 1
+			else:
+				# append data to the list
+				raw_data.append(raw_distance)
+
+				# wait for the time left between measurments
+				time.sleep(next_call-time.time())
+
+		# sort the measurements
+		sorted(raw_data)
+		# delete 2 minimum and 2 max measurements
+		trimmed_data = raw_data[2:-2]
+		trimmed_data_length = len(trimmed_data)
+		#calculate mean value
+		value = sum(trimmed_data)/(trimmed_data_length)
+		
+		#calculate standard deviation
+		sd = math.sqrt(sum([(item-value)**2 for item in trimmed_data])/trimmed_data_length)
+		if sd > 5:
+			quality = 0.0
+		else:
+			quality = 1.0
+		return SensorMeasurement(value, quality)
