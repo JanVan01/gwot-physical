@@ -29,7 +29,7 @@ class Sensor(BaseModel):
 
 	def create(self):
 		impl = self.get_sensor_impl()
-		if impl is None:
+		if impl is None or self.active is None:
 			return False
 
 		cur = Database.Instance().dict_cursor()
@@ -55,7 +55,7 @@ class Sensor(BaseModel):
 	
 	def update(self):
 		impl = self.get_sensor_impl()
-		if self.id is None or impl is None:
+		if self.id is None or impl is None or self.active is None:
 			return False
 
 		cur = Database.Instance().dict_cursor()
@@ -180,5 +180,6 @@ class Sensors(BaseMultiModel):
 				measurement.set_location(location)
 				measurement.create()
 				data.append(measurement)
+				Notifiers.notify(measurement)
 
 		return data

@@ -11,6 +11,8 @@ CREATE TABLE Notifiers (
   module TEXT NOT NULL,
   class TEXT NOT NULL,
   type TEXT NOT NULL,
+  description TEXT DEFAULT NULL,
+  settings TEXT DEFAULT NULL,
   active BOOLEAN DEFAULT TRUE
 );
 
@@ -36,7 +38,7 @@ CREATE TABLE Subscribers (
   notifier INTEGER NOT NULL REFERENCES Notifiers(id),
   sensor INTEGER NOT NULL REFERENCES Sensors(id),
   connector TEXT NOT NULL,
-  settings TEXT NOT NULL
+  settings TEXT DEFAULT NULL
 );
 
 CREATE TABLE Measurements (
