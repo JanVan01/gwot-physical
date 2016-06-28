@@ -1,0 +1,19 @@
+[Config]
+name = default
+location = 1
+interval = 30
+password = admin
+dbhost = localhost
+dbuser = 
+dbpw = 
+dbname = 
+
+[Default]
+name = gwot-physical-device
+location = 0
+interval = 30
+password = admin
+dbhost = 
+dbuser = 
+dbpw = 
+dbname = 

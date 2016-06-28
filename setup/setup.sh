@@ -36,6 +36,9 @@ apt-get install -y postgresql-server-dev-9.4
 # Download dependencies from pip3
 pip3 install -r ../requirements.txt
 
+# Rename sample config.ini
+cp ../data/config.ini.sample ../data/config.ini
+
 # Write config.ini
 cat <<EOF > ../data/config.ini
 [Config]
