@@ -48,7 +48,6 @@ def sensor_list():
 @app.route('/api/1.0/config', methods=['GET', 'PUT'])
 @auth.login_required
 def config_config():
-    print('blub')
     return ConfigController().complete_config()
 
 @app.route('/api/1.0/config/location', methods=['GET', 'PUT', 'POST'])

@@ -20,7 +20,6 @@ class ConfigManager(object):
 		return self.config['Config']
 
 	def get_name(self):
-		print (self.config['Config']['name'])
 		return self.config['Config']['name']
 
 	def set_name(self, name):
