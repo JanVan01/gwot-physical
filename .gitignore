@@ -93,3 +93,6 @@ ENV/
 
 # APIdocs
 static/apidoc/
+
+# Config file
+data/config.ini
