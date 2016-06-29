@@ -30,16 +30,166 @@
             "methods": {
                 "putConfig": {
                     "category": "Config",
-                    "label": "PUT Config",
-                    "method": "put"
+                    "label": "PUT /config",
+                    "uri": "/config",
+                    "method": "put",
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "String",
+                                "optional": true
+                            },
+                            "interval": {
+                                "type": "Integer",
+                                "optional": true
+                            },
+                            "location": {
+                                "type": "Integer",
+                                "optional": true
+                            }
+                        }
+                    }
                 },
                 "getConfig": {
                     "category": "Config",
-                    "label": "GET Config",
+                    "label": "GET /config",
+                    "uri": "/config",
                     "method": "get",
-                    "response_body":{
-                      "type": "reference",
-                      "reference": "config"
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+                    "response_body": {
+                        "type": "reference",
+                        "reference": "config"
+                    }
+                },
+                "getConfigLocation": {
+                    "category": "Config",
+                    "label": "GET /config/location",
+                    "uri": "/config/location",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    }
+                },
+                "putConfigLocation": {
+                    "category": "Config",
+                    "label": "PUT /config/location",
+                    "uri": "/config/location",
+                    "method": "put",
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "String"
+                            },
+                            "name": {
+                                "type": "String"
+                            },
+                            "lat": {
+                                "type": "Number"
+                            },
+                            "lon": {
+                                "type": "Number"
+                            },
+                            "height": {
+                                "type": "Number"
+                            }
+
+                        }
+                    }
+                },
+                "postConfigLocation": {
+                    "category": "Config",
+                    "label": "POST /config/location",
+                    "uri": "/config/location",
+                    "method": "post",
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "String"
+                            },
+                            "lat": {
+                                "type": "Number"
+                            },
+                            "lon": {
+                                "type": "Number"
+                            },
+                            "height": {
+                                "type": "Number"
+                            }
+
+                        }
+                    }
+                },
+                "getConfigSensor": {
+                    "category": "Config",
+                    "label": "GET /config/sensor",
+                    "uri": "/config/sensor",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    }
+                },
+                "putConfigSensor": {
+                    "category": "Config",
+                    "label": "PUT /config/sensor",
+                    "uri": "/config/sensor",
+                    "method": "put"
+                },
+                "postConfigSensor": {
+                    "category": "Config",
+                    "label": "POST /config/sensor",
+                    "uri": "/config/sensor",
+                    "method": "post"
+                },
+                "getConfigPassword": {
+                    "category": "Config",
+                    "label": "GET /config/password",
+                    "uri": "/config/password",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    }
+                },
+                "putConfigPassword": {
+                    "category": "Config",
+                    "label": "PUT /config/password",
+                    "uri": "/config/password",
+                    "method": "put",
+                    "request_body":{
+                      "type": "object",
+                      "properties":{
+                        "password":{
+                          "type": "string"
+                        }
+                      }
                     }
                 },
                 "DataTrigger": {
