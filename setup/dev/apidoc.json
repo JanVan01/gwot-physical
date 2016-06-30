@@ -1,0 +1,317 @@
+{
+    "configuration": {
+        "title": "GWOT Physical Smart Device REST API",
+        "description": "The REST API for the Geospatial Web of Things Physical Smart Device.",
+        "uri": "http://domain.tld:5000/api"
+    },
+    "categories": {
+        "Data": {
+            "description": "Accessing the data (measurements) of the device"
+        },
+        "Config": {
+            "description": "Configure the application"
+        },
+        "Sensor": {
+            "description": "Sensors used with the device"
+        },
+        "Location": {
+            "description": "Current and past locations the device was located at"
+        },
+        "Headers": {
+            "description": "Current and past locations the device was located at"
+        }
+    },
+    "versions": {
+        "v1.0": {
+            "uri": "/1.0",
+            "major": 1,
+            "minor": 0,
+            "status": "current",
+            "methods": {
+                "putConfig": {
+                    "category": "Config",
+                    "label": "PUT /config",
+                    "uri": "/config",
+                    "method": "put",
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "String",
+                                "optional": true
+                            },
+                            "interval": {
+                                "type": "Integer",
+                                "optional": true
+                            },
+                            "location": {
+                                "type": "Integer",
+                                "optional": true
+                            }
+                        }
+                    }
+                },
+                "getConfig": {
+                    "category": "Config",
+                    "label": "GET /config",
+                    "uri": "/config",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+                    "response_body": {
+                        "type": "reference",
+                        "reference": "config"
+                    }
+                },
+                "getConfigLocation": {
+                    "category": "Config",
+                    "label": "GET /config/location",
+                    "uri": "/config/location",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    }
+                },
+                "putConfigLocation": {
+                    "category": "Config",
+                    "label": "PUT /config/location",
+                    "uri": "/config/location",
+                    "method": "put",
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "String"
+                            },
+                            "name": {
+                                "type": "String"
+                            },
+                            "lat": {
+                                "type": "Number"
+                            },
+                            "lon": {
+                                "type": "Number"
+                            },
+                            "height": {
+                                "type": "Number"
+                            }
+
+                        }
+                    }
+                },
+                "postConfigLocation": {
+                    "category": "Config",
+                    "label": "POST /config/location",
+                    "uri": "/config/location",
+                    "method": "post",
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "String"
+                            },
+                            "lat": {
+                                "type": "Number"
+                            },
+                            "lon": {
+                                "type": "Number"
+                            },
+                            "height": {
+                                "type": "Number"
+                            }
+
+                        }
+                    }
+                },
+                "getConfigSensor": {
+                    "category": "Config",
+                    "label": "GET /config/sensor",
+                    "uri": "/config/sensor",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    }
+                },
+                "putConfigSensor": {
+                    "category": "Config",
+                    "label": "PUT /config/sensor",
+                    "uri": "/config/sensor",
+                    "method": "put"
+                },
+                "postConfigSensor": {
+                    "category": "Config",
+                    "label": "POST /config/sensor",
+                    "uri": "/config/sensor",
+                    "method": "post"
+                },
+                "getConfigPassword": {
+                    "category": "Config",
+                    "label": "GET /config/password",
+                    "uri": "/config/password",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    }
+                },
+                "putConfigPassword": {
+                    "category": "Config",
+                    "label": "PUT /config/password",
+                    "uri": "/config/password",
+                    "method": "put",
+                    "request_body":{
+                      "type": "object",
+                      "properties":{
+                        "password":{
+                          "type": "string"
+                        }
+                      }
+                    }
+                },
+                "DataTrigger": {
+                    "category": "Data",
+                    "label": "/data/trigger",
+                    "description": "Triggers a sensor reading",
+                    "uri": "/data/trigger",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }, {
+                        "code": 503,
+                        "description": "Sensors are currently locked/busy. No content, but Retry-After header is returned. Please try again after the specified time.",
+                        "generic": true
+                    }],
+                    "response_body": {
+                        "type": "array",
+                        "items": {
+                            "type": null
+                        }
+                    }
+                }
+            },
+            "references": {
+                "measurement": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "number"
+                        },
+                        "datetime": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "number"
+                        },
+                        "quality": {
+                            "type": "number"
+                        },
+                        "sensor": {
+                            "type": "reference",
+                            "reference": "sensor"
+                        },
+                        "location": {
+                            "type": "reference",
+                            "reference": "location"
+                        }
+                    }
+                },
+                "config": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "location": {
+                            "type": "reference",
+                            "reference": "location"
+                        },
+                        "interval": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "location": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "number"
+                        },
+                        "name": {
+                            "type": "string",
+                            "sample": "Wersehaus"
+                        },
+                        "geometry": {
+                            "type": "string",
+                            "sample": "POINT(7.700233161449432 51.973379492826446)"
+                        },
+                        "height": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "sensor": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "number"
+                        },
+                        "type": {
+                            "type": "string"
+                        },
+                        "description": {
+                            "type": "string"
+                        },
+                        "unit": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "types": {
+                "mimeType": {
+                    "category": "Headers",
+                    "description": "A mine type, one of text/html or application/json. Default is text/html",
+                    "item": {
+                        "type": "string",
+                        "sample": "application/json"
+                    }
+                }
+            }
+        }
+    }
+}

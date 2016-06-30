@@ -45,35 +45,25 @@ def location_list():
 def sensor_list():
 	return SensorController().list()
 
-@app.route('/api/1.0/config/name', methods=['GET', 'PUT'])
+@app.route('/api/1.0/config', methods=['GET', 'PUT'])
 @auth.login_required
-def config_name():
-	return ConfigController().name()
+def config_config():
+    return ConfigController().complete_config()
 
-@app.route('/api/1.0/config/height', methods=['GET', 'PUT'])
-@auth.login_required
-def config_height():
-	return ConfigController().height()
-
-@app.route('/api/1.0/config/location', methods=['GET', 'PUT', 'POST', 'DELETE'])
+@app.route('/api/1.0/config/location', methods=['GET', 'PUT', 'POST'])
 @auth.login_required
 def config_location():
 	return ConfigController().location()
 
-@app.route('/api/1.0/config/interval', methods=['GET', 'PUT'])
-@auth.login_required
-def config_interval():
-	return ConfigController().interval()
-
-@app.route('/api/1.0/config/password', methods=['GET', 'PUT'])
-@auth.login_required
-def config_password():
-	return ConfigController().password()
-
-@app.route('/api/1.0/config/sensor', methods=['GET', 'PUT', 'POST', 'DELETE'])
+@app.route('/api/1.0/config/sensor', methods=['GET', 'PUT', 'POST'])
 @auth.login_required
 def config_sensor():
 	return ConfigController().sensor()
+
+@app.route('/api/1.0/config/password', methods=['GET', 'PUT', 'POST'])#GET for edit password html
+@auth.login_required
+def config_password():
+	return ConfigController().password()
 
 @app.route('/api/1.0/overview')  #Delete it, just for testing c3js.
 def data_overview():
