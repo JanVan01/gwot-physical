@@ -18,7 +18,7 @@
             "description": "Current and past locations the device was located at"
         },
         "Headers": {
-            "description": "Current and past locations the device was located at"
+            "description": "HTTP headers"
         }
     },
     "versions": {
@@ -171,8 +171,8 @@
                     "request_headers": {
                         "Accept": {
                             "type": "mimeType",
-                            "description": "List of accepted MimeTypes",
-                            "sample": "application/json",
+                            "description": "Accepted MimeTypes: text/html",
+                            "sample": "test/html",
                             "optional": true,
                             "generic": true
                         }
@@ -192,9 +192,9 @@
                       }
                     }
                 },
-                "DataTrigger": {
+                "getDataTrigger": {
                     "category": "Data",
-                    "label": "/data/trigger",
+                    "label": "GET /data/trigger",
                     "description": "Triggers a sensor reading",
                     "uri": "/data/trigger",
                     "method": "get",
@@ -219,7 +219,328 @@
                     "response_body": {
                         "type": "array",
                         "items": {
-                            "type": null
+							"type": "reference",
+							"reference": "measurement"
+                        }
+                    }
+                },
+                "getDataList": {
+                    "category": "Data",
+                    "label": "GET /data/list",
+                    "description": "List of sensor readings, sorted by time in ascending order.",
+                    "uri": "/data/list",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+					"request_parameters": {
+						"start": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+							"optional": true
+						},
+						"end": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+							"optional": true
+						},
+						"location": {
+							"type": "string",
+							"sample": "1,4",
+							"description": "Comma separated list of IDs from the location relation.",
+							"optional": true
+						},
+						"sensor": {
+							"type": "string",
+							"sample": "1,2,4",
+							"description": "Comma separated list of IDs from the sensor relation.",
+							"optional": true
+						},
+						"geometry": {
+                            "type": "string",
+                            "sample": "POINT(7.700233161449432 51.973379492826446)",
+							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+							"optional": true
+						},
+						"limit": {
+							"type": "integer",
+							"sample": "50",
+							"description": "Maximum number of elements that are returned. Default: 100",
+							"optional": true
+						}
+					},
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }],
+                    "response_body": {
+                        "type": "array",
+                        "items": {
+							"type": "reference",
+							"reference": "measurement"
+                        }
+                    }
+                },
+                "getDataMin": {
+                    "category": "Data",
+                    "label": "GET /data/min",
+                    "description": "Minimum sensor readings, sorted by time in ascending order.",
+                    "uri": "/data/min",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+					"request_parameters": {
+						"start": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+							"optional": true
+						},
+						"end": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+							"optional": true
+						},
+						"location": {
+							"type": "string",
+							"sample": "1,4",
+							"description": "Comma separated list of IDs from the location relation.",
+							"optional": true
+						},
+						"sensor": {
+							"type": "string",
+							"sample": "1,2,4",
+							"description": "Comma separated list of IDs from the sensor relation.",
+							"optional": true
+						},
+						"geometry": {
+                            "type": "string",
+                            "sample": "POINT(7.700233161449432 51.973379492826446)",
+							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+							"optional": true
+						},
+						"limit": {
+							"type": "integer",
+							"sample": "50",
+							"description": "Maximum number of elements that are returned. Default: 100",
+							"optional": true
+						}
+					},
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }],
+                    "response_body": {
+                        "type": "array",
+                        "items": {
+							"type": "reference",
+							"reference": "measurement"
+                        }
+                    }
+                },
+                "getDataMax": {
+                    "category": "Data",
+                    "label": "GET /data/max",
+                    "description": "Maximum sensor readings, sorted by value in descending order.",
+                    "uri": "/data/max",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+					"request_parameters": {
+						"start": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+							"optional": true
+						},
+						"end": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+							"optional": true
+						},
+						"location": {
+							"type": "string",
+							"sample": "1,4",
+							"description": "Comma separated list of IDs from the location relation.",
+							"optional": true
+						},
+						"sensor": {
+							"type": "string",
+							"sample": "1,2,4",
+							"description": "Comma separated list of IDs from the sensor relation.",
+							"optional": true
+						},
+						"geometry": {
+                            "type": "string",
+                            "sample": "POINT(7.700233161449432 51.973379492826446)",
+							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+							"optional": true
+						},
+						"limit": {
+							"type": "integer",
+							"sample": "50",
+							"description": "Maximum number of elements that are returned. Default: 100",
+							"optional": true
+						}
+					},
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }],
+                    "response_body": {
+                        "type": "array",
+                        "items": {
+							"type": "reference",
+							"reference": "measurement"
+                        }
+                    }
+                },
+                "getDataLast": {
+                    "category": "Data",
+                    "label": "GET /data/last",
+                    "description": "Temporal last sensor readings, sorted by time in descending order.",
+                    "uri": "/data/last",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+					"request_parameters": {
+						"start": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+							"optional": true
+						},
+						"end": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+							"optional": true
+						},
+						"location": {
+							"type": "string",
+							"sample": "1,4",
+							"description": "Comma separated list of IDs from the location relation.",
+							"optional": true
+						},
+						"sensor": {
+							"type": "string",
+							"sample": "1,2,4",
+							"description": "Comma separated list of IDs from the sensor relation.",
+							"optional": true
+						},
+						"geometry": {
+                            "type": "string",
+                            "sample": "POINT(7.700233161449432 51.973379492826446)",
+							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+							"optional": true
+						},
+						"limit": {
+							"type": "integer",
+							"sample": "50",
+							"description": "Maximum number of elements that are returned. Default: 100",
+							"optional": true
+						}
+					},
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }],
+                    "response_body": {
+                        "type": "array",
+                        "items": {
+							"type": "reference",
+							"reference": "measurement"
+                        }
+                    }
+                },
+                "getLocationList": {
+                    "category": "Location",
+                    "label": "GET /location/list",
+                    "description": "List of locations where the device operated.",
+                    "uri": "/location/list",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+					},
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }],
+                    "response_body": {
+                        "type": "array",
+                        "items": {
+							"type": "reference",
+							"reference": "location"
+                        }
+                    }
+                },
+                "getSensorList": {
+                    "category": "Sensor",
+                    "label": "GET /sensor/list",
+                    "description": "List of sensors.",
+                    "uri": "/sensor/list",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+					},
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }],
+                    "response_body": {
+                        "type": "array",
+                        "items": {
+							"type": "reference",
+							"reference": "sensor"
                         }
                     }
                 }
@@ -229,24 +550,37 @@
                     "type": "object",
                     "properties": {
                         "id": {
-                            "type": "number"
+                            "type": "integer",
+							"minimum": 1
                         },
                         "datetime": {
-                            "type": "string"
+                            "type": "string",
+							"format": "date-time",
+							"sample": "2016-06-28T13:52:08.504709"
                         },
                         "value": {
-                            "type": "number"
+                            "type": "number",
+							"minimum": 0
                         },
                         "quality": {
-                            "type": "number"
+                            "type": "number",
+							"sample": 1.0,
+							"minimum": 0,
+							"maximum": 1
                         },
                         "sensor": {
-                            "type": "reference",
-                            "reference": "sensor"
+                            "type": "integer",
+							"minimum": 1,
+							"constraints": {
+								"required": "Valid ID from Sensor relation"
+							}
                         },
                         "location": {
-                            "type": "reference",
-                            "reference": "location"
+                            "type": "integer",
+							"minimum": 1,
+							"constraints": {
+								"required": "Valid ID from Location relation"
+							}
                         }
                     }
                 },
@@ -254,14 +588,16 @@
                     "type": "object",
                     "properties": {
                         "name": {
-                            "type": "string"
+                            "type": "string",
+							"sample": "Device at Wersehaus"
                         },
                         "location": {
                             "type": "reference",
                             "reference": "location"
                         },
                         "interval": {
-                            "type": "number"
+                            "type": "integer",
+							"minimum": 1
                         }
                     }
                 },
@@ -269,7 +605,8 @@
                     "type": "object",
                     "properties": {
                         "id": {
-                            "type": "number"
+                            "type": "integer",
+							"minimum": 1
                         },
                         "name": {
                             "type": "string",
@@ -277,10 +614,16 @@
                         },
                         "geometry": {
                             "type": "string",
-                            "sample": "POINT(7.700233161449432 51.973379492826446)"
+                            "sample": "POINT(7.700233161449432 51.973379492826446)",
+							"constraints": {
+								"format": "Well Known Text (WKT)"
+							}
                         },
                         "height": {
-                            "type": "number"
+                            "type": "number",
+							"constraints": {
+								"unit": "meters"
+							}
                         }
                     }
                 },
@@ -288,16 +631,20 @@
                     "type": "object",
                     "properties": {
                         "id": {
-                            "type": "number"
+                            "type": "integer",
+							"minimum": 1
                         },
                         "type": {
-                            "type": "string"
+                            "type": "string",
+							"sample": "HC-SR04"
                         },
                         "description": {
-                            "type": "string"
+                            "type": "string",
+							"sample": "Ultrasonic distance sensor"
                         },
                         "unit": {
-                            "type": "string"
+                            "type": "string",
+							"sample": "cm"
                         }
                     }
                 }
