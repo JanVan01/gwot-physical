@@ -79,7 +79,25 @@ class ConfigController(BaseController):
             # TODO
             return self.get_view().success()
         elif (request.method == 'PUT'):
-            # TODO
+            input = request.get_json()
+            if(input is None):
+                return self.get_view().bad_request('expected json')
+            sensor = self.get_model('models.sensors', 'Sensor')
+            if('id' in input and 'type' in input and 'description' in input and
+                    'unit' in input and 'active' in input):
+                try:
+                    sensor.set_id(int(input['id']))
+                    sensor.set_type(str(input['type']))
+                    sensor.set_description(str(input['description']))
+                    sensor.set_unit(str(input['unit']))
+                    # TODO(complete the sensor PUT)
+                    updated = sensor.update()
+                    if not updated:
+                        return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
+                except TypeError:
+                    return self.get_view().bad_request('input not in the right format')
+            else:
+                return self.get_view().bad_request('not all necessary field set')
             return self.get_view().success()
         elif (request.method == 'POST'):
             sensor = self.get_model('models.sensors', 'Sensor')
@@ -91,10 +109,12 @@ class ConfigController(BaseController):
         if (request.method == 'GET'):
             data = {}
             return self.get_view(template_file='password.html').data(data)
-        elif (request.method == 'POST'):
-            self.config.set_password(request.form.get('password'))
-            data = {'message': 'Password was changed'}
-            return self.get_view(template_file='password.html').data(data)
+        elif (request.method == "PUT"):
+            input = request.get_json()
+            if(input is None):
+                return self.get_view().bad_request('expected json')
+            self.config.set_password(input['password'])
+            return self.get_view().success()
 
     def check_password(self, username):
         if username == "admin":
