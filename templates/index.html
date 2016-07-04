@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard Starter UI, by Keen IO</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <link rel="stylesheet" type="text/css" href="/../static/assets/lib/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="/../static/assets/css/keen-dashboards.css" />
+
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/c3/0.1.29/c3.js"></script>
+    <script type="text/javascript" src="/../static/datahandling.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/c3/0.1.29/c3.css" rel="stylesheet" type="text/css">
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+</head>
+<body class="application">
+
+  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../">
+          <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a class="navbar-brand" href="./">Dashboard Starter UI</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-left">
+          <li><a href="https://keen.io">Home</a></li>
+          <li><a href="https://keen.io/team">Team</a></li>
+          <li><a href="https://github.com/keenlabs/dashboards/tree/gh-pages/layouts/two-and-one">Source</a></li>
+          <li><a href="https://groups.google.com/forum/#!forum/keen-io-devs">Community</a></li><li><a href="http://stackoverflow.com/questions/tagged/keen-io?sort=newest&pageSize=15">Technical Support</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+
+      <div class="col-sm-6">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            Last measurement
+          </div>
+          <div class="chart-stage">
+            <div id="current"></div>
+          </div>
+          <div class="chart-notes">
+            This is a sample text region to describe this chart.
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            Location
+          </div>
+          <div class="chart-stage">
+            <div id="mapid" style="width: 600px; height: 400px"></div>
+          </div>
+          <div class="chart-notes">
+            Notes go down here
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="row">
+
+      <div class="col-sm-12">
+        <div class="chart-wrapper">
+          <div class="chart-title">
+            Impressions by advertiser
+          </div>
+          <div class="chart-stage">
+            <div id="globalview"></div>
+          </div>
+          <div class="chart-notes">
+            Notes go down here
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <hr>
+
+    <p class="small text-muted">Built with &#9829; by <a href="https://keen.io">Keen IO</a></p>
+
+  </div>
+
+  <script type="text/javascript" src="/../static/assets/lib/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="/../static/assets/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="/../static/assets/lib/holderjs/holder.js"></script>
+  <script>
+    Holder.add_theme("white", { background:"#fff", foreground:"#a7a7a7", size:10 });
+  </script>
+
+  <script type="text/javascript" src="/../static/assets/lib/keen-js/dist/keen.min.js"></script>
+  <script type="text/javascript" src="/../static/assets/js/meta.js"></script>
+
+
+  <script>
+  {% set comma = joiner(",") %}
+
+    var distance = ['distance', {% for item in data %} {{ comma() }} {{ item.get_value()|round(2) }} {% endfor %}];
+
+    var quality = [ 'quality', {% for item in data %}  {{ item.get_quality()}}  {{ comma() }} {% endfor %}];
+
+    var time = ['x' {% for item in data %} {{ comma() }}  '{{item.get_datetime().replace(microsecond=0)}}' {% endfor %}];
+
+
+  var maximals = maxim(distance, quality);
+  var minimals = min(distance, quality);
+  var uncertaintyAreas = uncertainty(time, quality);
+
+  var chart = c3.generate({
+  bindto: '#globalview',
+  data: {
+      x: 'x',
+//        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
+      columns: [
+
+            distance,
+            time,
+            maximals,
+            minimals
+      ]
+  },
+  zoom: {
+      enabled: true
+  },
+  axis: {
+      x: {
+          type: 'timeseries',
+          tick: {
+              format: '%Y-%m-%d %H-%M-%S'
+          }
+      }
+  },
+  regions: uncertaintyAreas
+});
+
+</script>
+
+<script>
+
+var current = ['last measurement', distance[distance.length-1]];
+var chart = c3.generate({
+  bindto:'#current',
+    data: {
+        columns: [
+            current
+
+        ],
+        type: 'bar'
+    },
+    bar: {
+        width: {
+            ratio: 0.5 // this makes bar width 50% of length between ticks
+        }
+        // or
+        //width: 100 // this makes bar width 100px
+    }
+});
+
+</script>
+
+
+<script>
+
+		var mymap = L.map('mapid').setView([51.805, -0.03], 13);
+
+		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
+			maxZoom: 18,
+			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+			id: 'mapbox.streets'
+		}).addTo(mymap);
+
+
+		L.marker([51.805, -0.03]).addTo(mymap)
+			.bindPopup("WATER!").openPopup();
+
+
+		mymap.on('click', onMapClick);
+
+	</script>
+
+</body>
+</html>
