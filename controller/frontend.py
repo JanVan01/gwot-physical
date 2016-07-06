@@ -1,9 +1,6 @@
 from controller.base import BaseController
 from views.html import HtmlView
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 class FrontendController(BaseController):
 
 	def __init__(self):
