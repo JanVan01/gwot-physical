@@ -1,5 +1,5 @@
 from controller.base import BaseController
-
+from views.html import HtmlView
 class FrontendController(BaseController):
 
 	def __init__(self):
@@ -34,4 +34,4 @@ class FrontendController(BaseController):
 
 	def data(self):
 		data = self.multi_model.get_all()
-		return self.get_view().data(data)
+		return self.get_view('data.html').data(data)
