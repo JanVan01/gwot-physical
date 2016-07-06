@@ -9,12 +9,42 @@ from controller.data import DataController
 from controller.location import LocationController
 from controller.sensor import SensorController
 from controller.config import ConfigController
+from controller.frontend import FrontendController
 from utils.utils import OS
 
 
 OS().cwd(__file__)
 app = Flask(__name__)
 auth = HTTPBasicAuth()
+
+@app.route('/')
+def frontend_home():
+	return FrontendController().home()
+
+@app.route('/data')
+def frontend_data():
+	return FrontendController().data()
+
+@app.route('/config')
+def frontend_config():
+	return FrontendController().config()
+
+@app.route('/config/password')
+def frontend_config_password():
+	return FrontendController().config_password()
+
+@app.route('/config/sensors')
+def frontend_config_sensors():
+	return FrontendController().config_sensors()
+
+
+@app.route('/config/locations')
+def frontend_config_locations():
+	return FrontendController().config_locations()
+
+@app.route('/about')
+def frontend_about():
+	return FrontendController().about()
 
 @app.route('/api/1.0/data/trigger')
 @auth.login_required
@@ -64,10 +94,6 @@ def config_sensor():
 @auth.login_required
 def config_password():
 	return ConfigController().password()
-
-@app.route('/api/1.0/overview')  #Delete it, just for testing c3js.
-def data_overview():
-	return DataController().overview()
 
 @auth.get_password
 def get_password(username):
