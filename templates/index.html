@@ -13,7 +13,12 @@
 
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-</head>
+
+
+
+    </head>
+
+
 <body class="application">
 
   <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -156,7 +161,7 @@
 
 <script>
 
-var current = ['last measurement', distance[distance.length-1]];
+var current = ['last measurement', distance[1]];
 var chart = c3.generate({
   bindto:'#current',
     data: {
@@ -198,6 +203,22 @@ var chart = c3.generate({
 		mymap.on('click', onMapClick);
 
 	</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </body>
 </html>
