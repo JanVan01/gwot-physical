@@ -35,8 +35,8 @@ class ConfigController(BaseController):
 
     def location(self):
         if (request.method == 'GET'):
-            # TODO
-            return self.get_view().success()
+            data = {}
+            return self.get_view(template_file='location_form.html').data(data)
         elif (request.method == 'PUT'):
             input = request.get_json()
             if(input is None):
@@ -45,6 +45,8 @@ class ConfigController(BaseController):
             if('id' in input and 'name' in input and 'lat' in input and
                     'lon' in input and 'height' in input):
                 try:
+                    # TODO(partial updates)
+                    # TODO(validation)
                     location.set_id(int(input['id']))
                     location.set_name(str(input['name']))
                     location.set_position(float(input['lat']), float(input['lon']))
@@ -67,7 +69,10 @@ class ConfigController(BaseController):
                     location.set_name(str(input['name']))
                     location.set_position(float(input['lat']), float(input['lon']))
                     location.set_height(float(input['height']))
-                    location.create()
+                    created = location.create()
+                    if not created:
+                        return self.get_view().bad_request('The location could not be created')
+
                 except TypeError:
                     return self.get_view().bad_request('input not in the right format')
             else:
@@ -76,21 +81,24 @@ class ConfigController(BaseController):
 
     def sensor(self):
         if (request.method == 'GET'):
-            # TODO
-            return self.get_view().success()
+            data = {}
+            return self.get_view(template_file='sensor_form.html').data(data)
         elif (request.method == 'PUT'):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
             sensor = self.get_model('models.sensors', 'Sensor')
             if('id' in input and 'type' in input and 'description' in input and
-                    'unit' in input and 'active' in input):
+                    'unit' in input and 'active' in input and
+                    'module' in input and 'class_name' in input):
                 try:
+                    # TODO(partial updates)
                     sensor.set_id(int(input['id']))
+                    sensor.set_module(str(input['module']))
+                    sensor.set_class(str(input['class_name']))
                     sensor.set_type(str(input['type']))
                     sensor.set_description(str(input['description']))
                     sensor.set_unit(str(input['unit']))
-                    # TODO(complete the sensor PUT)
                     updated = sensor.update()
                     if not updated:
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
@@ -100,12 +108,29 @@ class ConfigController(BaseController):
                 return self.get_view().bad_request('not all necessary field set')
             return self.get_view().success()
         elif (request.method == 'POST'):
+            input = request.get_json()
+            if(input is None):
+                return self.get_view().bad_request('expected json')
             sensor = self.get_model('models.sensors', 'Sensor')
-            # TODO
+            if('type' in input and 'description' in input and
+                    'unit' in input and 'active' in input and
+                    'module' in input and 'class_name' in input):
+                try:
+                    sensor.set_module(str(input['module']))
+                    sensor.set_class(str(input['class_name']))
+                    sensor.set_type(str(input['type']))
+                    sensor.set_description(str(input['description']))
+                    sensor.set_unit(str(input['unit']))
+                    updated = sensor.update()
+                    if not updated:
+                        return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
+                except TypeError:
+                    return self.get_view().bad_request('input not in the right format')
+            else:
+                return self.get_view().bad_request('not all necessary field set')
             return self.get_view().success()
 
     def password(self):
-        print('oops1')
         if (request.method == 'GET'):
             data = {}
             return self.get_view(template_file='password.html').data(data)
