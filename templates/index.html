@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dashboard Starter UI, by Keen IO</title>
+  <title>GWOT-Sensor</title>
   <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
   <link rel="stylesheet" type="text/css" href="/../static/assets/lib/bootstrap/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="/../static/assets/css/keen-dashboards.css" />
@@ -33,12 +33,12 @@
         <a class="navbar-brand" href="../">
           <span class="glyphicon glyphicon-chevron-left"></span>
         </a>
-        <a class="navbar-brand" href="./">Dashboard Starter UI</a>
+        <a class="navbar-brand" href="./">GWOT Sensor</a>
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-left">
           <li><a href="https://keen.io">Home</a></li>
-          <li><a href="https://keen.io/team">Team</a></li>
+          <li><a href=config>Configuration</a></li>
           <li><a href="https://github.com/keenlabs/dashboards/tree/gh-pages/layouts/two-and-one">Source</a></li>
           <li><a href="https://groups.google.com/forum/#!forum/keen-io-devs">Community</a></li><li><a href="http://stackoverflow.com/questions/tagged/keen-io?sort=newest&pageSize=15">Technical Support</a></li>
         </ul>
@@ -55,7 +55,7 @@
             Last measurement
           </div>
           <div class="chart-stage">
-            <div id="current"></div>
+            <div id="current" style="width: 100%; height: 350px;"></div>
           </div>
           <div class="chart-notes">
             This is a sample text region to describe this chart.
@@ -69,7 +69,7 @@
             Location
           </div>
           <div class="chart-stage">
-            <div id="mapid" style="width: 600px; height: 400px"></div>
+            <div id="mapid" style="width: 100%; height: 350px;"></div>
           </div>
           <div class="chart-notes">
             Notes go down here
@@ -88,7 +88,7 @@
             Impressions by advertiser
           </div>
           <div class="chart-stage">
-            <div id="globalview"></div>
+            <div id="globalview"style="width: 100%; height: 350px;"></div>
           </div>
           <div class="chart-notes">
             Notes go down here
@@ -148,11 +148,19 @@
   },
   axis: {
       x: {
+          extent: [time[time.length-2], time[time.length-1]],
           type: 'timeseries',
           tick: {
-              format: '%Y-%m-%d %H-%M-%S'
+              format: '%Y-%m-%d %H-%M-%S',
+              count: 1+Math.ceil(time.length/5)
           }
       }
+  },
+  subchart: {
+      show: true,
+      size: {
+          height: 75
+      },
   },
   regions: uncertaintyAreas
 });
@@ -161,7 +169,7 @@
 
 <script>
 
-var current = ['last measurement', distance[1]];
+var current = ['last measurement', distance[distance.length-1]];
 var chart = c3.generate({
   bindto:'#current',
     data: {
@@ -177,7 +185,7 @@ var chart = c3.generate({
         }
         // or
         //width: 100 // this makes bar width 100px
-    }
+    },
 });
 
 </script>
