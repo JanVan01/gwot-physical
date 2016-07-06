@@ -1,6 +1,9 @@
 from controller.base import BaseController
 from views.html import HtmlView
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 class FrontendController(BaseController):
 
 	def __init__(self):
@@ -33,7 +36,7 @@ class FrontendController(BaseController):
 		return self.get_view('config_locations.html').data(data)
 
 	def data(self):
-		data = {}
+		data = self.multi_model.get_all()
 		return self.get_view('data.html').data(data)
 
 	def about(self):

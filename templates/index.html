@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base/frontend.html" %}
 
 {% block resources%}
@@ -70,26 +71,34 @@ bindto: '#globalview',
 data: {
     x: 'x',
 //        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
-    columns: [
+      columns: [
 
-          distance,
-          time,
-          maximals,
-          minimals
-    ]
-},
-zoom: {
-    enabled: true
-},
-axis: {
-    x: {
-        type: 'timeseries',
-        tick: {
-            format: '%Y-%m-%d %H-%M-%S'
-        }
-    }
-},
-regions: uncertaintyAreas
+            distance,
+            time,
+            maximals,
+            minimals
+      ]
+  },
+  zoom: {
+      enabled: true
+  },
+  axis: {
+      x: {
+          extent: [time[time.length-2], time[time.length-1]],
+          type: 'timeseries',
+          tick: {
+              format: '%Y-%m-%d %H-%M-%S',
+              count: 1+Math.ceil(time.length/5)
+          }
+      }
+  },
+  subchart: {
+      show: true,
+      size: {
+          height: 75
+      },
+  },
+  regions: uncertaintyAreas
 });
 
 </script>
@@ -98,21 +107,21 @@ regions: uncertaintyAreas
 
 var current = ['last measurement', distance[distance.length-1]];
 var chart = c3.generate({
-bindto:'#current',
-  data: {
-      columns: [
-          current
+  bindto:'#current',
+    data: {
+        columns: [
+            current
 
-      ],
-      type: 'bar'
-  },
-  bar: {
-      width: {
-          ratio: 0.5 // this makes bar width 50% of length between ticks
-      }
-      // or
-      //width: 100 // this makes bar width 100px
-  }
+        ],
+        type: 'bar'
+    },
+    bar: {
+        width: {
+            ratio: 0.5 // this makes bar width 50% of length between ticks
+        }
+        // or
+        //width: 100 // this makes bar width 100px
+    },
 });
 
 </script>
