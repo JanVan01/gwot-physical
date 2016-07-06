@@ -5,6 +5,7 @@ class FrontendController(BaseController):
 
 	def __init__(self):
 		super().__init__()
+		self.multi_model = self.get_model('models.measurements', 'Measurements')
 
 	def get_view(self, template_file=None):
 		view = HtmlView()
