@@ -1,5 +1,6 @@
 from controller.base import BaseController
 from views.html import HtmlView
+import time
 
 class FrontendController(BaseController):
 
@@ -14,8 +15,31 @@ class FrontendController(BaseController):
 		return view
 
 	def home(self):
-		data = {}
+		location = 1
+		sensor = 1
+		data = {
+			"minYearly": self.__getminmaxvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor),
+			"maxYearly": self.__getminmaxvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor, False),
+			"minHourly": self.__getminmaxvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor),
+			"maxHourly": self.__getminmaxvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor, False)
+		}
 		return self.get_view('index.html').data(data)
+	
+	def __getminmaxvalue(self, start, location, sensor, min = True):
+		filterObj = {
+			'start': start,
+			'location': [str(location)],
+			'sensor': [str(sensor)],
+			'limit': 1
+		}
+		if min is True:
+			mlist = self.multi_model.get_min(filterObj)
+		else:
+			mlist = self.multi_model.get_max(filterObj)
+		if len(mlist) == 0:
+			return "None"
+		else:
+			return str(mlist[0].get_value())
 
 	def config(self):
 		data = {}

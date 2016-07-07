@@ -7,7 +7,6 @@
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/c3/0.1.29/c3.js"></script>
   <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='datahandling.js') }}"></script>
 {% endblock resources%}
 
 {% block navigation %}
@@ -18,149 +17,13 @@
 {% endblock navigation %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid" style="">
   <div class="row">
 
     <div class="col-sm-6">
-      <div class="chart-wrapper">
-        <div class="chart-title">
-          Last measurement
-        </div>
-        <div class="chart-stage">
-          <div id="current"></div>
-        </div>
-        <div class="chart-notes">
-          This is a sample text region to describe this chart.
-        </div>
-      </div>
+		Minimum yearly: {{ data.minYearly }}
     </div>
 
-    <div class="col-sm-6">
-      <div class="chart-wrapper">
-        <div class="chart-title">
-          Location
-        </div>
-        <div class="chart-stage">
-          <div id="mapid" style="width: 600px; height: 400px"></div>
-        </div>
-        <div class="chart-notes">
-          Notes go down here
-        </div>
-      </div>
-    </div>
-    <div class="row">
-
-      <div class="col-sm-12">
-        <div class="chart-wrapper">
-          <div class="chart-title">
-            Impressions by advertiser
-          </div>
-          <div class="chart-stage">
-            <div id="globalview"style="width: 100%; height: 350px;"></div>
-          </div>
-          <div class="chart-notes">
-            Notes go down here
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
-
-<script>
-{% set comma = joiner(",") %}
-
-  var distance = ['distance', {% for item in data %} {{ comma() }} {{ item.get_value()|round(2) }} {% endfor %}];
-
-  var quality = [ 'quality', {% for item in data %}  {{ item.get_quality()}}  {{ comma() }} {% endfor %}];
-
-  var time = ['x' {% for item in data %} {{ comma() }}  '{{item.get_datetime().replace(microsecond=0)}}' {% endfor %}];
-
-
-var maximals = maxim(distance, quality);
-var minimals = min(distance, quality);
-var uncertaintyAreas = uncertainty(time, quality);
-
-var chart = c3.generate({
-bindto: '#globalview',
-data: {
-    x: 'x',
-//        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
-      columns: [
-
-            distance,
-            time,
-            maximals,
-            minimals
-      ]
-  },
-  zoom: {
-      enabled: true
-  },
-  axis: {
-      x: {
-          extent: [time[time.length-2], time[time.length-1]],
-          type: 'timeseries',
-          tick: {
-              format: '%Y-%m-%d %H-%M-%S',
-              count: 1+Math.ceil(time.length/5)
-          }
-      }
-  },
-  subchart: {
-      show: true,
-      size: {
-          height: 75
-      },
-  },
-  regions: uncertaintyAreas
-});
-
-</script>
-
-<script>
-
-var current = ['last measurement', distance[distance.length-1]];
-var chart = c3.generate({
-  bindto:'#current',
-    data: {
-        columns: [
-            current
-
-        ],
-        type: 'bar'
-    },
-    bar: {
-        width: {
-            ratio: 0.5 // this makes bar width 50% of length between ticks
-        }
-        // or
-        //width: 100 // this makes bar width 100px
-    },
-});
-
-</script>
-
-
-<script>
-
-  var mymap = L.map('mapid').setView([51.805, -0.03], 13);
-
-  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
-    maxZoom: 18,
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-      'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    id: 'mapbox.streets'
-  }).addTo(mymap);
-
-
-  L.marker([51.805, -0.03]).addTo(mymap)
-    .bindPopup("WATER!").openPopup();
-
-
-  mymap.on('click', onMapClick);
-
-</script>
-
 {% endblock content %}
