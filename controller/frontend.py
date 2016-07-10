@@ -18,10 +18,16 @@ class FrontendController(BaseController):
 		location = 1
 		sensor = 1
 		data = {
+			"sensor": sensor,
+			"minHourly": self.__getminmaxvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor),
+			"maxHourly": self.__getminmaxvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor, False),
+			"minDaily": self.__getminmaxvalue(time.strftime("%Y-%m-%dT00:00:00Z"), location, sensor),
+			"maxDaily": self.__getminmaxvalue(time.strftime("%Y-%m-%dT00:00:00Z"), location, sensor, False),
+			"minMonthly": self.__getminmaxvalue(time.strftime("%Y-%m-01T00:00:00Z"), location, sensor),
+			"maxMonthly": self.__getminmaxvalue(time.strftime("%Y-%m-01T00:00:00Z"), location, sensor, False),
 			"minYearly": self.__getminmaxvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor),
 			"maxYearly": self.__getminmaxvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor, False),
-			"minHourly": self.__getminmaxvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor),
-			"maxHourly": self.__getminmaxvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor, False)
+			"last": self.multi_model.get_last({'location': [str(location)], 'sensor': [str(sensor)],'limit': 1})
 		}
 		return self.get_view('index.html').data(data)
 	
