@@ -17,10 +17,10 @@
 {% endblock navigation %}
 
 {% block content %}
-<div class="container-fluid" style="">
-  <h2>Table</h2>
-  <div class="table-responsive">
-    <table class="table">
+<div class="container-fluid">
+  <h2>Data overview for sensor {{ data.sensor }}</h2>
+  <div id="table-div">
+    <table class="table table-hover">
       <thead>
         <tr>
           <th></th>
@@ -28,6 +28,7 @@
           <th>Daily</th>
           <th>Monthly</th>
           <th>Yearly</th>
+          <th>Accumulated</th>
         </tr>
       </thead>
       <tbody>
@@ -37,6 +38,7 @@
           <td>{{ data.minDaily }}</td>
           <td>{{ data.minMonthly }}</td>
           <td>{{ data.minYearly }}</td>
+          <td>{{ data.minAccum }}</td>
         </tr>
         <tr>
           <td>Max</td>
@@ -44,20 +46,17 @@
           <td>{{ data.maxDaily }}</td>
           <td>{{ data.maxMonthly }}</td>
           <td>{{ data.maxYearly }}</td>
+          <td>{{ data.maxAccum }}</td>
         </tr>
       </tbody>
     </table>
   </div>
-  <div class="row">
-    <div class="col-sm-6">
-    sensor: {{ data.sensor }} <br>
-    last: {{ data.last }}
+  <div class="row" id="lastValue">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+    <p id="lastValue-content">Last Measurement: {{ data.last }}</p>
     </div>
-
-    <div id="mapid" style="width: 100%; height: 350px;">
+    <div id="mapid" class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="width: 50%; height: 350px;">
     </div>
-
-
   </div>
 </div>
 
@@ -71,8 +70,8 @@
     'Imagery © <a href="http://mapbox.com">Mapbox</a>',
     id: 'mapbox.streets'
   }).addTo(mymap);
-  L.marker([51.97339, 7.70035]).addTo(mymap)
-  .bindPopup("Phisical Smart Thing!").openPopup();
+  L.marker([51.97332, 7.70022]).addTo(mymap)
+  .bindPopup("Physical Smart Thing!");
   mymap.on('click', onMapClick);
 </script>
 

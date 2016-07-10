@@ -27,10 +27,25 @@ class FrontendController(BaseController):
 			"maxMonthly": self.__getminmaxvalue(time.strftime("%Y-%m-01T00:00:00Z"), location, sensor, False),
 			"minYearly": self.__getminmaxvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor),
 			"maxYearly": self.__getminmaxvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor, False),
-			"last": self.multi_model.get_last({'location': [str(location)], 'sensor': [str(sensor)],'limit': 1})
+			"minAccum": self.__getminmaxvalue(time.strftime("2015-01-01T00:00:00Z"), location, sensor),
+			"maxAccum": self.__getminmaxvalue(time.strftime("2015-01-01T00:00:00Z"), location, sensor, False),
+			"last": self.__getlastvalue(location, sensor)
 		}
 		return self.get_view('index.html').data(data)
-	
+
+	def __getlastvalue(self, location, sensor):
+		filterObj = {
+			'location': [str(location)],
+			'sensor': [str(sensor)],
+			'limit': 1
+		}
+		mlist = self.multi_model.get_last(filterObj)
+		if len(mlist) == 0:
+			return "None"
+		else:
+			return str(mlist[0].get_value())
+
+
 	def __getminmaxvalue(self, start, location, sensor, min = True):
 		filterObj = {
 			'start': start,
