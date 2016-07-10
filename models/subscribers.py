@@ -4,26 +4,24 @@ from models.base import BaseModel, BaseMultiModel
 class Subscriber(BaseModel):
 
 	def __init__(self, id = None):
-		super().__init__(['id', 'notifier', 'sensor', 'connector', 'settings'])
+		super().__init__(['id', 'notifier', 'sensor', 'settings'])
 		self.id = id
 		self.notifier = None
 		self.sensor = None
-		self.connector = None
 		self.settings = None
 
 	def from_dict(self, dict):
 		self.set_id(dict['id'])
 		self.set_notifier(dict['notifier'])
 		self.set_sensor(dict['sensor'])
-		self.set_connector(dict['connector'])
 		self.set_settings(dict['settings'])
 
 	def create(self):
-		if self.sensor is None or self.notifier is None or self.connector is None:
+		if self.sensor is None or self.notifier is None:
 			return False
 
 		cur = Database.Instance().dict_cursor()
-		cur.execute("INSERT INTO Subscribers (connector, settings, sensor, notifier) VALUES (%s, %s, %s, %s) RETURNING id", [self.connector, self.settings, self.sensor, self.notifier])
+		cur.execute("INSERT INTO Subscribers (settings, sensor, notifier) VALUES (%s, %s, %s, %s) RETURNING id", [self._settings_dump(self.settings), self.sensor, self.notifier])
 		data = cur.fetchone()
 		self.id = data['id']
 		if self.id > 0:
@@ -44,11 +42,11 @@ class Subscriber(BaseModel):
 			return False
 
 	def update(self):
-		if self.id is None or self.sensor is None or self.notifier is None or self.connector is None:
+		if self.id is None or self.sensor is None or self.notifier is None:
 			return False
 
 		cur = Database.Instance().dict_cursor()
-		cur.execute("UPDATE Subscribers SET connector = %s, settings = %s, sensor = %s, notifier = %s WHERE id = %s", [self.connector, self.settings, self.sensor, self.notifier, self.id])
+		cur.execute("UPDATE Subscribers SET settings = %s, sensor = %s, notifier = %s WHERE id = %s", [self._settings_dump(self.settings), self.sensor, self.notifier, self.id])
 		if cur.rowcount > 0:
 			return True
 		else:
@@ -71,17 +69,22 @@ class Subscriber(BaseModel):
 
 	def set_id(self, id):
 		self.id = id
-
-	def get_connector(self):
-		return self.connector
-
-	def set_connector(self, connector):
-		self.connector = connector
+		
+	def get_setting(self, key):
+		if self.settings is not None and key in self.settings:
+			return self.settings[key]
+		else:
+			return None
 
 	def get_settings(self):
-		return self.settings
+		if self.settings is None:
+			return {}
+		else:
+			return self.settings
 
 	def set_settings(self, settings):
+		if isinstance(settings, str):
+			settings = self._settings_load(settings)
 		self.settings = settings
 
 	def get_sensor(self):

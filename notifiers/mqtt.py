@@ -7,7 +7,6 @@ from notifiers.base import BaseNotifier
 class MqttNotifier(BaseNotifier):
 
 	def send(self, notifier, subscriber, measurement):
-		print("Sending MQTT notification to " + subscriber.get_connector() + " with value " + str(measurement.get_value()))
 		self._publish_every_measurement(notifier, subscriber, measurement)
 		self._publish_by_threshold(notifier, subscriber, measurement)
 	

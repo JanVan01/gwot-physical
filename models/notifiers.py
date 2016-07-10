@@ -7,13 +7,12 @@ import threading
 class Notifier(BaseModel):
 	
 	def __init__(self, id = None):
-		super().__init__(['id', 'module', 'class_name', 'type', 'description', 'settings', 'active'])
+		super().__init__(['id', 'module', 'class_name', 'description', 'settings', 'active'])
 		self.id = id
 		self.module = None
 		self.class_name = None
 		self.description = None
 		self.settings = None
-		self.type = None
 		self.active = False
 
 	def from_dict(self, dict):
@@ -22,7 +21,6 @@ class Notifier(BaseModel):
 		self.set_class(dict['class'])
 		self.set_description(dict['description'])
 		self.set_settings(dict['settings'])
-		self.set_type(dict['type'])
 		if dict['active'] is not None:
 			self.set_active(dict['active'])
 
@@ -32,7 +30,7 @@ class Notifier(BaseModel):
 			return False
 
 		cur = Database.Instance().dict_cursor()
-		cur.execute("INSERT INTO Notifiers (module, class, type, description, settings active) VALUES (%s, %s, %s, %s) RETURNING id", [self.module, self.class_name, impl.get_type(), self.description, self.settings, self.active])
+		cur.execute("INSERT INTO Notifiers (module, class, description, settings active) VALUES (%s, %s, %s, %s) RETURNING id", [self.module, self.class_name, self.description, self._settings_dump(self.settings), self.active])
 		data = cur.fetchone()
 		self.id = data['id']
 		if self.id > 0:
@@ -58,7 +56,7 @@ class Notifier(BaseModel):
 			return False
 
 		cur = Database.Instance().dict_cursor()
-		cur.execute("UPDATE Notifiers SET module = %s, class = %s, type = %s, description = %s, settings = %s, active = %s WHERE id = %s", [self.module, self.class_name, impl.get_type(), self.description, self.settings, self.active, self.id])
+		cur.execute("UPDATE Notifiers SET module = %s, class = %s, description = %s, settings = %s, active = %s WHERE id = %s", [self.module, self.class_name, self.description, self._settings_dump(self.settings), self.active, self.id])
 		if cur.rowcount > 0:
 			return True
 		else:
@@ -75,7 +73,7 @@ class Notifier(BaseModel):
 			return True
 		else:
 			return False
-		
+	
 	def get_id(self):
 		return self.id
 	
@@ -102,25 +100,27 @@ class Notifier(BaseModel):
 	def set_class(self, class_name):
 		self.class_name = class_name
 		
-	def get_type(self):
-		return self.type
-	
-	def set_type(self, type):
-		self.type = type
-		
 	def get_description(self):
 		return self.description
 	
 	def set_description(self, description):
 		self.description = description
 		
+	def get_setting(self, key):
+		if self.settings is not None and key in self.settings:
+			return self.settings[key]
+		else:
+			return None
+		
 	def get_settings(self):
-		return self.settings
+		if self.settings is None:
+			return {}
+		else:
+			return self.settings
 
 	def set_settings(self, settings):
-		self.settings = settings
-	
-	def set_type(self, settings):
+		if isinstance(settings, str):
+			settings = self._settings_load(settings)
 		self.settings = settings
 		
 	def is_active(self):
