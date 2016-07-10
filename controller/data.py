@@ -30,12 +30,8 @@ class DataController(BaseController):
 		return self.get_view().data(data)
 
 	def overview(self): # Testing pretty Dataview.
-		datalist = self.multi_model.get_all(self._get_filter())
-		data = []
-		data.append('data1')
-		for x in range(0, 50):
-			data.append(datalist[x])
-		return self.get_view(template_file = "overview.html").data(data)
+		data = self.multi_model.get_all(self._get_filter())
+		return self.get_view(template_file = "index.html").data(data)
 
 	def _get_filter(self):
 		valid = Validate()
