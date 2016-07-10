@@ -2,6 +2,7 @@ import os
 import re
 import psycopg2
 import psycopg2.extras
+import importlib
 from utils.singleton import Singleton
 from models.config import ConfigManager
 from pygeoif import geometry
@@ -12,6 +13,18 @@ class OS:
 		abspath = os.path.abspath(filepath)
 		dname = os.path.dirname(abspath)
 		os.chdir(dname)
+		
+	def create_object(self, module_name, class_name):
+		if module_name is None or class_name is None:
+			return None
+		
+		try:
+			module = importlib.import_module(module_name)
+			class_ = getattr(module, class_name)
+			return class_()
+		except:
+			print("Can't create object " + module_name + "." + class_name)
+			return None
 
 
 @Singleton

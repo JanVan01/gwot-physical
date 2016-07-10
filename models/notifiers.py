@@ -1,6 +1,8 @@
-from utils.utils import Database
+from utils.utils import Database, OS
 from models.base import BaseModel, BaseMultiModel
 from notifiers.base import BaseNotifier
+from models.subscribers import Subscribers
+import threading
 
 class Notifier(BaseModel):
 	
@@ -81,7 +83,7 @@ class Notifier(BaseModel):
 		self.id = id
 		
 	def get_notifier_impl(self):
-		return BaseNotifier().create_object(self.module, self.class_name)
+		return OS().create_object(self.module, self.class_name)
 
 	def set_notifier_impl(self, obj):
 		if isinstance(obj, BaseNotifier):
@@ -114,6 +116,9 @@ class Notifier(BaseModel):
 		
 	def get_settings(self):
 		return self.settings
+
+	def set_settings(self, settings):
+		self.settings = settings
 	
 	def set_type(self, settings):
 		self.settings = settings
@@ -136,4 +141,35 @@ class Notifiers(BaseMultiModel):
 		return self._get_all("SELECT * FROM Notifiers ORDER BY id")
 	
 	def notify(self, measurement):
-		return # ToDo
+		thread = NotificationThread(measurement)
+		thread.daemon = True
+		thread.start()
+
+
+class NotificationThread(threading.Thread):
+	
+	def __init__(self, measurement):
+		super().__init__();
+		self.measurement = measurement
+	
+	def run(self):
+		# Get all relevant subscribtions
+		subs = Subscribers().get_all_active_by_sensor(self.measurement.get_sensor())
+
+		# Return if there are no subscribers
+		if len(subs) == 0:
+			return;
+
+		# Cache all notifiers in a list with ids as keys
+		notifs = {}
+		for entry in Notifiers().get_all():
+			notifs[entry.get_id()] = entry
+
+		# Go thorugh all subscribers and send notification
+		for sub in subs:
+			notifier = notifs[sub.get_notifier()]
+			notifier_impl = notifier.get_notifier_impl()
+			if notifier_impl is not None:
+				notifier_impl.send(notifier, sub, self.measurement)
+			
+			

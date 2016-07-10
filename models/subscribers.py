@@ -101,7 +101,7 @@ class Subscriber(BaseModel):
 	def get_notifier(self):
 		return self.notifier
 
-	def set_notifier_object(self):
+	def get_notifier_object(self):
 		from models.notifiers import Notifiers
 		return Notifiers().get(self.notifier)
 
@@ -120,3 +120,6 @@ class Subscribers(BaseMultiModel):
 
 	def get_all(self):
 		return self._get_all("SELECT * FROM Subscribers ORDER BY id")
+
+	def get_all_active_by_sensor(self, sensor_id):
+		return self._get_all("SELECT s.* FROM Subscribers s INNER JOIN Notifiers n ON s.notifier = n.id WHERE n.active = true And s.sensor = %s", [sensor_id])
