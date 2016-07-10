@@ -32,6 +32,7 @@ apt-get install -y python3-rpi.gpio
 apt-get install -y mosquitto
 apt-get install -y postgresql-9.4-postgis-2.1
 apt-get install -y postgresql-server-dev-9.4
+apt-get install -y postfix # Optional, only needed for module email notification
 
 # Download dependencies from pip3
 pip3 install -r ../requirements.txt
