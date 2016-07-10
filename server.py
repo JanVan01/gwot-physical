@@ -79,6 +79,7 @@ def sensor_list():
 def sensor_subscription(id):
 	return SensorController().subscription(id)
 
+@app.route('/api/1.0/config', methods=['GET', 'PUT'])
 @auth.login_required
 def config_config():
     return ConfigController().complete_config()
