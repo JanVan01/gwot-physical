@@ -2,6 +2,22 @@ body {
 	font-family: sans-serif;
 	padding-top: 70px;
 }
-#container {
-	margin-top: 71px;
+
+.overview {
+	padding-top: 20px;
+}
+
+#table-div {
+	padding: 30px;
+	font-size: 1.3em;
+}
+
+#valueMap {
+	margin: 30px;
+	font-size: 2em
+}
+
+#value-content {
+	margin: 30px;
+	text-align: left;
 }
