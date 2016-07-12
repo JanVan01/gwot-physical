@@ -3,17 +3,21 @@ body {
 	padding-top: 70px;
 }
 
+.overview {
+	padding-top: 20px;
+}
+
 #table-div {
 	padding: 30px;
 	font-size: 1.3em;
 }
 
-#lastValue {
+#valueMap {
 	margin: 30px;
 	font-size: 2em
 }
 
-#lastValue-content {
+#value-content {
 	margin: 30px;
 	text-align: left;
 }

@@ -17,10 +17,10 @@
 {% endblock navigation %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid overview">
   <h2>Data overview for sensor {{ data.sensor }}</h2>
-  <div id="table-div">
-    <table class="table table-hover">
+  <div id="table-div" class="table-responsive">
+    <table class="table">
       <thead>
         <tr>
           <th></th>
@@ -51,11 +51,11 @@
       </tbody>
     </table>
   </div>
-  <div class="row" id="lastValue">
+  <div class="row" id="valueMap">
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-    <p id="lastValue-content">Last Measurement: {{ data.last }}</p>
+      <p id="value-content">Last Measurement: {{ data.last }}</p>
     </div>
-    <div id="mapid" class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="width: 50%; height: 350px;">
+    <div id="mapid" class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="height: 350px;">
     </div>
   </div>
 </div>
