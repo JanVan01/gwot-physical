@@ -75,6 +75,10 @@ def location_list():
 def sensor_list():
 	return SensorController().list()
 
+@app.route('/api/1.0/sensor/<int:id>/subscription', methods=['GET', 'POST', 'DELETE'])
+def sensor_subscription(id):
+	return SensorController().subscription(id)
+
 @app.route('/api/1.0/config', methods=['GET', 'PUT'])
 @auth.login_required
 def config_config():

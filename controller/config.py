@@ -87,7 +87,6 @@ class ConfigController(BaseController):
             return self.get_view().success()
 
     def password(self):
-        print('oops1')
         if (request.method == 'GET'):
             data = {}
             return self.get_view(template_file='password.html').data(data)
