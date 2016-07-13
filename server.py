@@ -11,6 +11,7 @@ from controller.sensor import SensorController
 from controller.config import ConfigController
 from controller.frontend import FrontendController
 from utils.utils import OS
+from views.json import JSON
 
 
 OS().cwd(__file__)
@@ -102,6 +103,10 @@ def config_password():
 @auth.get_password
 def get_password(username):
 	return ConfigController().check_password(username)
+
+@app.template_filter('json2table')
+def json2table(data):
+	return JSON().to_table(data)
 
 
 if __name__ == '__main__':
