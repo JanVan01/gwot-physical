@@ -1,7 +1,7 @@
 from utils.utils import Database, OS
 from models.base import BaseModel, BaseMultiModel
 from models.measurements import Measurements
-from models.locations import Location
+from models.locations import Locations
 from models.config import ConfigManager
 from models.notifiers import Notifiers
 from sensors.base import BaseSensor
@@ -157,8 +157,8 @@ class Sensors(BaseMultiModel):
 	def __trigger(self, sensors):
 		data = []
 		
-		location = Location(ConfigManager.Instance().get_location());
-		if location.read() is False:
+		location = Locations().get(ConfigManager.Instance().get_location())
+		if location is None:
 			return data; # No location found for this id
 
 		measurements = Measurements()
@@ -172,7 +172,11 @@ class Sensors(BaseMultiModel):
 			if impl is None:
 				continue
 
-			measurementObj = impl.get_measurement()
+			measurementObj = None
+			try:
+				measurementObj = impl.get_measurement()
+			except:
+				print("Could not take a measurement for sensor " + str(sensor.get_id()))
 			if measurementObj is not None:
 				measurement = measurements.create()
 				measurement.set_value(measurementObj.get_value())
