@@ -4,6 +4,7 @@ from models.measurements import Measurement
 from models.locations import Location
 from models.sensors import Sensor
 from views.base import BaseView
+from json2table import convert
 
 class JsonView(BaseView):
 
@@ -20,6 +21,23 @@ class JSON(object):
 
 	def build(self, data):
 		return json.dumps(data, default=self.__json_serial)
+	
+	def parse(self, data):
+		return json.loads(data)
+	
+	def to_table(self, data):
+		# Work around bugs in json2table:
+		if not isinstance(data, dict):
+			datatype = type(data)
+			if isinstance(data, list) and len(data) > 0:
+				datatype = type(data[0])
+			temp = {}
+			temp[datatype.__name__] = data
+			data = temp
+		# This is an ugly hack to expand the objects:
+		data = self.parse(self.build(data))
+		# Finally convert json data to a table:
+		return convert(data, build_direction="TOP_TO_BOTTOM", table_attributes={"class" : "table"})
 
 	# JSON serializer for objects not serializable by default json code
 	def __json_serial(self, obj):

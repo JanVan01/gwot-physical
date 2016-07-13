@@ -6,3 +6,4 @@ psycopg2==2.6.1
 apidoc==1.4.0
 paho-mqtt==1.2
 pygeoif==0.6
+json2table==1.1

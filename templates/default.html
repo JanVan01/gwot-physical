@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Geospatial Web of Things: Physical Smart Device</title>
-	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='layout.css') }}">
-</head>
-<body>
-    <h1>Geospatial Web of Things: Physical Smart Device</h1>
-    {{ data }}
-</body>
-</html>
+{% extends "base/frontend.html" %}
+
+{% block navigation %}
+<li><a href="/">Home</a></li>
+<li><a href="/data">Data</a></li>
+<li><a href="/config">Config</a></li>
+<li><a href="/about">About</a></li>
+{% endblock navigation %}
+
+{% block content %}
+<div class="container-fluid overview">
+  <div id="table-div" class="table-responsive">
+    {{ data | json2table | safe }}
+  </div>
+</div>
+
+{% endblock content %}
