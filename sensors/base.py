@@ -1,5 +1,3 @@
-import importlib
-
 class BaseSensor(object):
 	
 	def get_class(self):
@@ -16,17 +14,6 @@ class BaseSensor(object):
 	
 	def get_measurement(self):
 		return None
-
-	def create_object(self, module_name, class_name):
-		if module_name is None or class_name is None:
-			return None
-		
-		try:
-			module = importlib.import_module(module_name)
-			class_ = getattr(module, class_name)
-			return class_()
-		except:
-			return None
 		
 class SensorMeasurement(object):
 	def __init__(self, value, quality = None):

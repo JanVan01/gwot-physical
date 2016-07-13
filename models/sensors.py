@@ -1,8 +1,9 @@
-from utils.utils import Database
+from utils.utils import Database, OS
 from models.base import BaseModel, BaseMultiModel
 from models.measurements import Measurements
 from models.locations import Location
 from models.config import ConfigManager
+from models.notifiers import Notifiers
 from sensors.base import BaseSensor
 
 class Sensor(BaseModel):
@@ -29,7 +30,7 @@ class Sensor(BaseModel):
 
 	def create(self):
 		impl = self.get_sensor_impl()
-		if impl is None:
+		if impl is None or self.active is None:
 			return False
 
 		cur = Database.Instance().dict_cursor()
@@ -55,7 +56,7 @@ class Sensor(BaseModel):
 	
 	def update(self):
 		impl = self.get_sensor_impl()
-		if self.id is None or impl is None:
+		if self.id is None or impl is None or self.active is None:
 			return False
 
 		cur = Database.Instance().dict_cursor()
@@ -84,7 +85,7 @@ class Sensor(BaseModel):
 		self.id = id
 		
 	def get_sensor_impl(self):
-		return BaseSensor().create_object(self.module, self.class_name)
+		return OS().create_object(self.module, self.class_name)
 
 	def set_sensor_impl(self, obj):
 		if isinstance(obj, BaseSensor):
@@ -180,5 +181,6 @@ class Sensors(BaseMultiModel):
 				measurement.set_location(location)
 				measurement.create()
 				data.append(measurement)
+				Notifiers().notify(measurement)
 
 		return data

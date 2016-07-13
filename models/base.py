@@ -1,5 +1,6 @@
 from utils.utils import Database
 from pprint import pformat
+import json
 
 class BaseModel(object):
 
@@ -30,6 +31,18 @@ class BaseModel(object):
 	
 	def delete(self):
 		return
+	
+	def _settings_dump(self, settings):
+		if isinstance(settings, dict) or isinstance(settings, list):
+			return json.dumps(self.settings)
+		else:
+			return None
+
+	def _settings_load(self, settings):
+		if settings is not None and len(settings) > 1:
+			return json.loads(settings)
+		else:
+			return None
 		
 	
 class BaseMultiModel(object):

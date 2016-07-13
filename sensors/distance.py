@@ -15,15 +15,18 @@ import time
 class DistanceSensor(BaseSensor):
 	
 	def __init__(self):
+		self.trigger_pin = 17
+		self.data_pin = 27
+		
 		# Warnings disabled
 		GPIO.setwarnings(False)
 
 		GPIO.setmode(GPIO.BCM)
 
 		# Define used GPIOs
-		GPIO.setup(17, GPIO.OUT)
-		GPIO.setup(27, GPIO.IN)
-		GPIO.output(17, GPIO.LOW)
+		GPIO.setup(self.trigger_pin, GPIO.OUT)
+		GPIO.setup(self.data_pin, GPIO.IN)
+		GPIO.output(self.trigger_pin, GPIO.LOW)
 
 		# Avoid crashs
 		time.sleep(0.5)
@@ -43,13 +46,13 @@ class DistanceSensor(BaseSensor):
 			next_call = time.time() + 0.5
 
 			# Send signal
-			GPIO.output(17, True)
+			GPIO.output(self.trigger_pin, True)
 
 			# Sensor expects a puls-length of 10Us
 			time.sleep(0.00001)
 
 			# Stop pulse
-			GPIO.output(17, False)
+			GPIO.output(self.trigger_pin, False)
 			
 			signalon = None
 			signaloff = None
@@ -57,14 +60,24 @@ class DistanceSensor(BaseSensor):
 			# listen to the input pin.
 			# 0:= no input
 			# 1:= input measured
-			while GPIO.input(27) == 0:
+			begin_time = time.time()
+			while GPIO.input(self.data_pin) == 0:
 				signaloff = time.time()
+				if (signaloff - begin_time) > 2: # Don't run into endless loops
+					signaloff = None
+					break
+					
+			if signaloff is None:
+				continue
 
-			while GPIO.input(27) == 1:
+			while GPIO.input(self.data_pin) == 1:
 				signalon = time.time()
+				if (signalon - begin_time) > 2: # Don't run into endless loops
+					signalon = None
+					break
 			
 			# If there is no valid measurement result return
-			if signalon is None or signaloff is None:
+			if signalon is None:
 				continue
 
 			# calculate distance
