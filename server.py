@@ -108,6 +108,9 @@ def get_password(username):
 def json2table(data):
 	return JSON().to_table(data)
 
+@app.template_filter('json')
+def to_json(data):
+	return JSON().build(data)
 
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0')
