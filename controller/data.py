@@ -29,6 +29,10 @@ class DataController(BaseController):
 		data = self.multi_model.get_max(self._get_filter())
 		return self.get_view().data(data)
 
+	def avg(self):
+		data = self.multi_model.get_avg(self._get_filter())
+		return self.get_view().data(data)
+
 	def overview(self): # Testing pretty Dataview.
 		data = self.multi_model.get_all(self._get_filter())
 		return self.get_view(template_file = "index.html").data(data)

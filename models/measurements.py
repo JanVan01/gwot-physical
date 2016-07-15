@@ -149,6 +149,11 @@ class Measurements(BaseMultiModel):
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value ASC LIMIT " + str(filter['limit']))
 
+	def get_avg(self, filter = None):
+		filter = self.filter_defaults(filter, 1)
+		filterSql = self.__build_filter(filter, "WHERE")
+		return self._get_one("SELECT AVG(m.value) AS value FROM Measurements m " + filterSql + " LIMIT 1")
+
 	def get_max(self, filter = None):
 		filter = self.filter_defaults(filter, 1)
 		filterSql = self.__build_filter(filter, "WHERE")
