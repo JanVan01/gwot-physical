@@ -7,6 +7,10 @@ body {
 	padding-top: 20px;
 }
 
+.titel {
+	padding-bottom: 20px;
+}
+
 #table-div {
 	padding: 30px;
 	font-size: 1.3em;
