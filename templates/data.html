@@ -33,9 +33,6 @@
                 <p id="demo"></p>
                 </p>
             </div>
-            <div class="trigger-buttons" style="width:100%">
-                <div style="width: 30%;  margin: 0 auto"><button onclick="triggerNewMeasurements()">Trigger new Measurements</button></div>
-            </div>
         </div>
     </div>
 
@@ -185,9 +182,4 @@ var measurementQualities = [{% for item in data.measurements %} '{{ item.quality
     }
 </script>
 
-<script>
-    function triggerNewMeasurements() {
-        alert(location);
-    }
-</script>
 {% endblock content %}
