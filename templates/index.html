@@ -33,20 +33,28 @@
       </thead>
       <tbody>
         <tr>
-          <td>Min</td>
-          <td>{{ data.minHourly }}</td>
-          <td>{{ data.minDaily }}</td>
-          <td>{{ data.minMonthly }}</td>
-          <td>{{ data.minYearly }}</td>
-          <td>{{ data.minAccum }}</td>
+          <td>Minimum</td>
+          <td>{{ data.hourly.min }}</td>
+          <td>{{ data.daily.min }}</td>
+          <td>{{ data.monthly.min }}</td>
+          <td>{{ data.yearly.min }}</td>
+          <td>{{ data.accum.min }}</td>
         </tr>
         <tr>
-          <td>Max</td>
-          <td>{{ data.maxHourly }}</td>
-          <td>{{ data.maxDaily }}</td>
-          <td>{{ data.maxMonthly }}</td>
-          <td>{{ data.maxYearly }}</td>
-          <td>{{ data.maxAccum }}</td>
+          <td>Average</td>
+          <td>{{ data.hourly.avg }}</td>
+          <td>{{ data.daily.avg }}</td>
+          <td>{{ data.monthly.avg }}</td>
+          <td>{{ data.yearly.avg }}</td>
+          <td>{{ data.accum.avg }}</td>
+        </tr>
+        <tr>
+          <td>Maximum</td>
+          <td>{{ data.hourly.max }}</td>
+          <td>{{ data.daily.max }}</td>
+          <td>{{ data.monthly.max }}</td>
+          <td>{{ data.yearly.max }}</td>
+          <td>{{ data.accum.max }}</td>
         </tr>
       </tbody>
     </table>
