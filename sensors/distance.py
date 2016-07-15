@@ -128,7 +128,7 @@ class GaugeSensor(DistanceSensor):
 		if lid is None or data is None:
 			return None
 
-		location = Locations().get()
+		location = Locations().get(lid)
 		if location is None or location.get_height() is None:
 			return None
 		
