@@ -19,13 +19,19 @@ class Sensor(BaseModel):
 		self.active = False
 
 	def from_dict(self, dict):
-		self.set_id(dict['id'])
-		self.set_module(dict['module'])
-		self.set_class(dict['class'])
-		self.set_type(dict['type'])
-		self.set_description(dict['description'])
-		self.set_unit(dict['unit'])
-		if dict['active'] is not None:
+		if 'id' in dict:
+			self.set_id(dict['id'])
+		if 'module' in dict:
+			self.set_module(dict['module'])
+		if 'class' in dict:
+			self.set_class(dict['class'])
+		if 'type' in dict:
+			self.set_type(dict['type'])
+		if 'description' in dict:
+			self.set_description(dict['description'])
+		if 'unit' in dict:
+			self.set_unit(dict['unit'])
+		if 'active' in dict and dict['active'] is not None:
 			self.set_active(dict['active'])
 
 	def create(self):

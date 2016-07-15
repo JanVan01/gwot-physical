@@ -16,12 +16,17 @@ class Notifier(BaseModel):
 		self.active = False
 
 	def from_dict(self, dict):
-		self.set_id(dict['id'])
-		self.set_module(dict['module'])
-		self.set_class(dict['class'])
-		self.set_description(dict['description'])
-		self.set_settings(dict['settings'])
-		if dict['active'] is not None:
+		if 'id' in dict:
+			self.set_id(dict['id'])
+		if 'module' in dict:
+			self.set_module(dict['module'])
+		if 'class' in dict:
+			self.set_class(dict['class'])
+		if 'description' in dict:
+			self.set_description(dict['description'])
+		if 'settings' in dict:
+			self.set_settings(dict['settings'])
+		if 'active' in dict and dict['active'] is not None:
 			self.set_active(dict['active'])
 
 	def create(self):
