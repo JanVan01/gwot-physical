@@ -80,7 +80,14 @@ class FrontendController(BaseController):
 
 	def data(self):
 		data = self.multi_model.get_all()
-		return self.get_view('data.html').data(data)
+		model = self.get_model('models.locations', 'Locations')
+		locations = model.get_all()
+
+		model = self.get_model('models.sensors', 'Sensors')
+		sensors = model.get_all()
+
+		datacollection = {'measurements': data, 'locations': locations, 'sensors': sensors}
+		return self.get_view('data.html').data(datacollection)
 
 	def about(self):
 		data = {}
