@@ -105,7 +105,7 @@ class DistanceSensor(BaseSensor):
 			return None
 
 		# sort the measurements
-		sorted(raw_data)
+		raw_data.sort()
 		# delete 2 minimum and 2 max measurements
 		trimmed_data = raw_data[2:-2]
 		trimmed_data_length = len(trimmed_data)
