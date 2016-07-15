@@ -21,41 +21,32 @@ class FrontendController(BaseController):
 	def home(self):
 		model = self.get_model('models.sensors', 'Sensors')
 		sensor_data = model.get_all()
-		data = {}
-		for sensor in sensor_data:
-			data[sensor.get_id()] = self.__get_sensor_overview(sensor.get_id())
-		return self.get_view('index.html').data(data)
-
-
-	def __get_sensor_overview(self, sensor):
+		
 		location = ConfigManager.Instance().get_location()
 		locationObj = Locations().get(location)
 		if locationObj is not None:
 			lon = locationObj.get_longitude()
 			lat = locationObj.get_latitude()
-		else:
-			lon = None
-			lat = None
-
-		sensorObj = Sensors().get(sensor)
-		if sensorObj is not None:
-			sensor_type = sensorObj.get_type()
-		else:
-			sensor_type = "Unknown"
-
-		item_data = {
-			"sensor_id": sensor,
-			"sensor_type": sensor_type,
-			"hourly": self.__getminmaxavgvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor),
-			"daily": self.__getminmaxavgvalue(time.strftime("%Y-%m-%dT00:00:00Z"), location, sensor),
-			"monthly": self.__getminmaxavgvalue(time.strftime("%Y-%m-01T00:00:00Z"), location, sensor),
-			"yearly": self.__getminmaxavgvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor),
-			"accum": self.__getminmaxavgvalue(time.strftime("2015-01-01T00:00:00Z"), location, sensor),
-			"last": self.__getlastvalue(location, sensor),
-			"lon": lon,
-			"lat": lat
+			
+		data = {
+			"location": locationObj,
+			"default_sensor": sensor_data[0].get_id(),
+			"sensors": {}
 		}
-		return item_data
+
+		for sensor in sensor_data:
+			sensor_id = sensor.get_id()
+			data['sensors'][sensor_id] = {
+				"sensor": sensor,
+				"hourly": self.__getminmaxavgvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor_id),
+				"daily": self.__getminmaxavgvalue(time.strftime("%Y-%m-%dT00:00:00Z"), location, sensor_id),
+				"monthly": self.__getminmaxavgvalue(time.strftime("%Y-%m-01T00:00:00Z"), location, sensor_id),
+				"yearly": self.__getminmaxavgvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor_id),
+				"accum": self.__getminmaxavgvalue(time.strftime("2015-01-01T00:00:00Z"), location, sensor_id),
+				"last": self.__getlastvalue(location, sensor_id)
+			}
+
+		return self.get_view('index.html').data(data)
 
 	def __getlastvalue(self, location, sensor):
 		filterObj = {
