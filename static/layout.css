@@ -2,39 +2,8 @@ body {
 	font-family: sans-serif;
 	padding-top: 70px;
 }
-#home .home{
+
+#home .home, #data .data, #config .config, #about .about {
 	font-weight: bold;
 	color: white;
-}
-#data .data{
-	font-weight: bold;
-	color: white;
-}
-
-#config .config {
-	font-weight: bold;
-	color: white;
-}
-#about .about{
-	font-weight: bold;
-	color: white;
-}
-
-.overview {
-	padding-top: 20px;
-}
-
-#table-div {
-	padding: 30px;
-	font-size: 1.3em;
-}
-
-#valueMap {
-	margin: 30px;
-	font-size: 2em
-}
-
-#value-content {
-	margin: 30px;
-	text-align: left;
 }
