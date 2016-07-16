@@ -13,60 +13,167 @@
 {% block navigation %}"data"{% endblock navigation %}
 
 {% block content %}
-<h1>Geospatial Web of Things: Physical Smart Device Overview</h1>
-<div id="chart4"></div>
-<div id="chart5"></div>
-<div id="chart6"></div>
+<div class="container-fluid">
+<div class="row">
+	<h1 class="col-md-12">Data</h1>
+</div>
+<div class="row">
 
+    <div class="col-sm-10">
+        <div class="chart-wrapper">
+            <div class="chart-title">
+                <br>
+                <p id="demo"></p>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-2 sidenav">
+        <h4>Locations</h4>
+        <div class="radio">
+            <div id="locations"></div>
+        </div>
+        <br>
+        <h4>Sensors</h4>
+        <div class="radio">
+            <div id="sensors"></div>
+        </div>
+    </div>
+</div>
+</div>
 
 <script>
-    {% set comma = joiner(",") %}
-
-    var distance = ['distance',{% for item in data %}{{comma()}}{{item.get_value() | round(2)}}{% endfor %}];
-
-    var quality = ['quality',{% for item in data %}{{item.get_quality()}}{{comma()}}{% endfor %}];
-
-    var time = ['x' {% for item in data %} {{comma()}}'{{item.get_datetime().replace(microsecond=0)}}' {% endfor %}];
-
-
-    var maximals = maxim(distance, quality);
-    var minimals = min(distance, quality);
-    var uncertaintyAreas = uncertainty(time, quality);
-    var chart = c3.generate({
-        bindto: '#chart4',
-        data: {
-            x: 'x',
-            //        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
-            columns: [
-                //            ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-                //            ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
-                //            ['data1', 30, 200, 100, 400, 150, 250],
-                //            ['data2', 130, 340, 200, 500, 250, 350]
-                distance,
-                time,
-                maximals,
-                minimals
-            ]
-        },
-        zoom: {
-            enabled: true
-        },
-        axis: {
-            x: {
-                type: 'timeseries',
-                tick: {
-                    format: '%Y-%m-%d %H-%M-%S'
-                }
-            }
-        },
-        regions: uncertaintyAreas
-    });
+// Extracting data which is needed in the following steps
+{% set comma = joiner(",") %}
+var sensorNames = [{% for item in data.sensors %} {{ comma() }}'{{ item.class_name }}' {% endfor %}];
+var sensorIds = [{% for item in data.sensors %} '{{ item.id }}' {{ comma() }}{% endfor %}];
+var sensorUnits = [{% for item in data.sensors %} '{{ item.unit }}' {{ comma() }}{% endfor %}];
+var measurements = [{% for item in data.measurements %} '{{ item.value|round(2) }}'  {{ comma() }} {% endfor %}];
+var measurementSensorIds = [{% for item in data.measurements %} ' {{ item.sensor}}'  {{ comma() }} {% endfor %}];
+var locationIdOfMeasurement = [{% for item in data.measurements %} '{{ item.location}}'  {{ comma() }} {% endfor %}];
+var time = [{% for item in data.measurements %} '{{item.get_datetime().replace(microsecond=0)}}' {{ comma() }}  {% endfor %}];
+var measurementQualities = [{% for item in data.measurements %} '{{ item.quality }}'  {{ comma() }} {% endfor %}];
 </script>
 
+<script>
+// Location-Buttons
+    {% set comma = joiner(",") %}
+    var names = [{% for item in data.locations %} {{ comma() }}'{{ item.name }}' {% endfor %}];
+    var ids = [{% for item in data.locations %} '{{ item.id }}' {{ comma() }} {% endfor %}];
+    for (var i = 0; i < names.length; i++) {
+        var locations = document.getElementById("locations");
+        var button = makeRadioButton("location", ids[i], names[i]);
+        button.addEventListener("click", function(event) {
+            //document.getElementById("demo").innerHTML= getSelectedButton(selectButtonsByName("location"));
+
+            // which sensor is active?
+            var currentSensor = getSelectedButton(selectButtonsByName('sensor'))[0].value;
+            var selectedLocationId = event.target.value;
+
+            currentSensor = enableOnlySensorsWithMeasurements(selectedLocationId, locationIdOfMeasurement, measurementSensorIds, "sensor");
+            var Measurements = getMeasurements(time, measurementQualities, selectedLocationId, locationIdOfMeasurement, measurementSensorIds, currentSensor, measurements);
+
+            if (Measurements.values.length == 1) {
+                document.getElementById("demo").innerHTML = "No data for selected location."
+                disableButtons(selectButtonsByName('sensor'));
+            } else {
+                var chart = c3.generate({
+                    bindto: '#demo',
+                    data: {
+                        x: 'time',
+                        columns: [
+                            Measurements.time,
+                            Measurements.values
+                        ]
+                    },
+                    zoom: {
+                        enabled: true
+                    },
+                    axis: {
+                        extent: [time[time.length - 2], time[time.length - 1]],
+                        x: {
+                            type: 'timeseries',
+                            tick: {
+                                format: '%Y-%m-%d %H-%M',
+                                count: 1 + Math.ceil(time.length / 15)
+                            }
+                        },
+                        y: {
+                            label: String(getMeasurementUnits(sensorUnits, sensorIds, currentSensor))
+                        },
+                    },
+                    subchart: {
+                        show: true,
+                        size: {
+                            height: 75
+                        },
+                    },
+                    regions: uncertainty(Measurements.time, Measurements.quality)
+                });
+            }
+        });
 
 
+        locations.appendChild(button);
+    }
+</script>
 
+<script>
+// Sensor-Buttons
+    for (var i = 0; i < sensorNames.length; i++) {
+        var sensors = document.getElementById("sensors");
+        var button = makeRadioButton("sensor", sensorIds[i], sensorNames[i]);
+        button.addEventListener("click", function(event) {
+            // which location is active?
+            var selectedLocationId = getSelectedButton(selectButtonsByName('location'))[0].value;
+            var currentSensor = event.target.value;
+            var Measurements = getMeasurements(time, measurementQualities, selectedLocationId, locationIdOfMeasurement, measurementSensorIds, currentSensor, measurements);
+            //document.getElementById("demo").innerHTML =  Measurements.time;
 
-<h2>Data which should be used in second diagram</h2> {{data}}
+            var chart = c3.generate({
+                bindto: '#demo',
+                data: {
+                    x: 'time',
+                    columns: [
+                        Measurements.time,
+                        Measurements.values
+                    ]
+                },
+                zoom: {
+                    enabled: true
+                },
+                axis: {
+                    extent: [time[time.length - 2], time[time.length - 1]],
+                    x: {
+                        type: 'timeseries',
+                        tick: {
+                            format: '%Y-%m-%d %H-%M',
+                            count: 1 + Math.ceil(time.length / 15)
+                        }
+                    },
+                    y: {
+                        label: String(getMeasurementUnits(sensorUnits, sensorIds, currentSensor))
+                    },
+                },
+                subchart: {
+                    show: true,
+                    size: {
+                        height: 90
+                    },
+                },
+                regions: uncertainty(Measurements.time, Measurements.quality)
+            });
+
+        });
+        sensors.appendChild(button);
+    }
+</script>
+
+<script>
+    window.onload = function() {
+        setFirstLocationAndSensorWithValues(locationIdOfMeasurement, measurementSensorIds);
+    }
+</script>
 
 {% endblock content %}

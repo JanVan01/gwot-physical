@@ -3,6 +3,7 @@ import re
 from email.mime.text import MIMEText
 from notifiers.base import BaseNotifier
 from models.config import ConfigManager
+from utils.utils import SettingManager
 
 class EmailNotifier(BaseNotifier):
 
@@ -63,6 +64,6 @@ class EmailNotifier(BaseNotifier):
 	
 	def get_setting_html(self, key, value):
 		if key == "email" or key == "sender":
-			return self._get_input_field(key, value)
+			return SettingManager().get_input_field(key, value)
 		else:
 			return None

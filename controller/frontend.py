@@ -1,5 +1,8 @@
 from controller.base import BaseController
 from views.html import HtmlView
+from models.config import ConfigManager
+from models.locations import Locations
+from models.sensors import Sensors
 import time
 
 class FrontendController(BaseController):
@@ -7,6 +10,7 @@ class FrontendController(BaseController):
 	def __init__(self):
 		super().__init__()
 		self.multi_model = self.get_model('models.measurements', 'Measurements')
+		self.unknownValue = "None"
 
 	def get_view(self, template_file=None):
 		view = HtmlView()
@@ -15,22 +19,37 @@ class FrontendController(BaseController):
 		return view
 
 	def home(self):
-		location = 1
-		sensor = 1
+		model = self.get_model('models.sensors', 'Sensors')
+		sensor_data = model.get_all()
+		sensor_id = None
+		if sensor_data is not None and len(sensor_data) > 0:
+			sensor_id = sensor_data[0].get_id()
+		
+		location = ConfigManager.Instance().get_location()
+		locationObj = Locations().get(location)
+
 		data = {
-			"sensor": sensor,
-			"minHourly": self.__getminmaxvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor),
-			"maxHourly": self.__getminmaxvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor, False),
-			"minDaily": self.__getminmaxvalue(time.strftime("%Y-%m-%dT00:00:00Z"), location, sensor),
-			"maxDaily": self.__getminmaxvalue(time.strftime("%Y-%m-%dT00:00:00Z"), location, sensor, False),
-			"minMonthly": self.__getminmaxvalue(time.strftime("%Y-%m-01T00:00:00Z"), location, sensor),
-			"maxMonthly": self.__getminmaxvalue(time.strftime("%Y-%m-01T00:00:00Z"), location, sensor, False),
-			"minYearly": self.__getminmaxvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor),
-			"maxYearly": self.__getminmaxvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor, False),
-			"minAccum": self.__getminmaxvalue(time.strftime("2015-01-01T00:00:00Z"), location, sensor),
-			"maxAccum": self.__getminmaxvalue(time.strftime("2015-01-01T00:00:00Z"), location, sensor, False),
-			"last": self.__getlastvalue(location, sensor)
+			"setup": False,
+			"location": locationObj,
+			"default_sensor": sensor_id,
+			"sensors": {}
 		}
+		
+		if locationObj is None or sensor_id is None:
+			data["setup"] = True
+
+		for sensor in sensor_data:
+			sensor_id = sensor.get_id()
+			data['sensors'][sensor_id] = {
+				"sensor": sensor,
+				"hourly": self.__getminmaxavgvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor_id),
+				"daily": self.__getminmaxavgvalue(time.strftime("%Y-%m-%dT00:00:00Z"), location, sensor_id),
+				"monthly": self.__getminmaxavgvalue(time.strftime("%Y-%m-01T00:00:00Z"), location, sensor_id),
+				"yearly": self.__getminmaxavgvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor_id),
+				"accum": self.__getminmaxavgvalue(time.strftime("2015-01-01T00:00:00Z"), location, sensor_id),
+				"last": self.__getlastvalue(location, sensor_id)
+			}
+
 		return self.get_view('index.html').data(data)
 
 	def __getlastvalue(self, location, sensor):
@@ -41,26 +60,44 @@ class FrontendController(BaseController):
 		}
 		mlist = self.multi_model.get_last(filterObj)
 		if len(mlist) == 0:
-			return "None"
+			return self.unknownValue
 		else:
-			return str(mlist[0].get_value())
+			value = mlist[0].get_value()
+			if value is not None:
+				return str(round(value, 1))
+			else:
+				return self.unknownValue
 
+	def __getminmaxavgvalue(self, start, location, sensor):
+		return {
+			'min': self.__getaggregatevalue(start, location, sensor, 'min'),
+			'avg': self.__getaggregatevalue(start, location, sensor, 'avg'),
+			'max': self.__getaggregatevalue(start, location, sensor, 'max')
+		}
 
-	def __getminmaxvalue(self, start, location, sensor, min = True):
+	def __getaggregatevalue(self, start, location, sensor, type = 'avg'):
 		filterObj = {
 			'start': start,
 			'location': [str(location)],
 			'sensor': [str(sensor)],
 			'limit': 1
 		}
-		if min is True:
+		if type == 'min':
 			mlist = self.multi_model.get_min(filterObj)
-		else:
+		elif type == 'max':
 			mlist = self.multi_model.get_max(filterObj)
-		if len(mlist) == 0:
-			return "None"
 		else:
-			return str(mlist[0].get_value())
+			avg_obj = self.multi_model.get_avg(filterObj)
+			mlist = [avg_obj]
+		if len(mlist) == 0:
+			return self.unknownValue
+		else:
+			value = mlist[0].get_value()
+			if value is not None:
+				return str(round(value, 1))
+			else:
+				return self.unknownValue
+			
 
 	def config(self):
 		data = {}
@@ -80,7 +117,14 @@ class FrontendController(BaseController):
 
 	def data(self):
 		data = self.multi_model.get_all()
-		return self.get_view('data.html').data(data)
+		model = self.get_model('models.locations', 'Locations')
+		locations = model.get_all()
+
+		model = self.get_model('models.sensors', 'Sensors')
+		sensors = model.get_all()
+
+		datacollection = {'measurements': data, 'locations': locations, 'sensors': sensors}
+		return self.get_view('data.html').data(datacollection)
 
 	def about(self):
 		data = {}

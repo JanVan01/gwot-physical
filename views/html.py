@@ -1,5 +1,6 @@
 from views.base import BaseView
 from flask import render_template
+from models.config import ConfigManager
 
 class HtmlView(BaseView):
 
@@ -11,4 +12,4 @@ class HtmlView(BaseView):
 			template = self.template
 		else:
 			template = "default.html"
-		return render_template(template, data=data)
+		return render_template(template, data = data, config = ConfigManager.Instance())

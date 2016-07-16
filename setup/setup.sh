@@ -48,6 +48,7 @@ dbhost = localhost
 dbuser = postgres
 dbpw = $DBPASSWORD
 dbname = $DBNAME
+port = 5000
 
 [Default]
 name = $HOST
@@ -58,6 +59,7 @@ dbhost = localhost
 dbuser = postgres
 dbpw = $DBPASSWORD
 dbname = $DBNAME
+port = 5000
 EOF
 
 # Database setup
