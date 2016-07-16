@@ -132,15 +132,11 @@ class ConfigController(BaseController):
             return self.get_view().success()
 
     def password(self):
-        if (request.method == 'GET'):
-            data = {}
-            return self.get_view(template_file='password.html').data(data)
-        elif (request.method == "PUT"):
-            input = request.get_json()
-            if(input is None):
-                return self.get_view().bad_request('expected json')
-            self.config.set_password(input['password'])
-            return self.get_view().success()
+        input = request.get_json()
+        if(input is None):
+            return self.get_view().bad_request('expected json')
+        self.config.set_password(input['password'])
+        return self.get_view().success()
 
     def check_password(self, username):
         if username == "admin":

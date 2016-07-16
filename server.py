@@ -96,7 +96,7 @@ def config_location():
 def config_sensor():
 	return ConfigController().sensor()
 
-@app.route('/api/1.0/config/password', methods=['GET', 'PUT'])#GET for edit password html
+@app.route('/api/1.0/config/password', methods=['PUT'])
 @auth.login_required
 def config_password():
 	return ConfigController().password()
