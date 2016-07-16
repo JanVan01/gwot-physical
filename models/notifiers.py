@@ -16,6 +16,7 @@ class Notifier(BaseModel):
 		self.active = False
 
 	def from_dict(self, dict):
+		super().from_dict(dict)
 		if 'id' in dict:
 			self.set_id(dict['id'])
 		if 'module' in dict:

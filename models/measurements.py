@@ -14,6 +14,7 @@ class Measurement(BaseModel):
 		self.location = None
 
 	def from_dict(self, dict):
+		super().from_dict(dict)
 		if 'id' in dict:
 			self.set_id(dict['id'])
 		if 'datetime' in dict:
@@ -184,11 +185,15 @@ class Measurements(BaseMultiModel):
 		if args['end'] is not None:
 			conditions.append("m.datetime <= timestamp '" + args['end'] + "'")
 
+		if not isinstance(args['location'], list):
+			args['location'] = [args['location']]
 		if len(args['location']) > 0:
-			conditions.append("m.location IN(" + commaSeparator.join(args['location']) + ")");
+			conditions.append("m.location IN(" + commaSeparator.join(str(x) for x in args['location']) + ")");
 
+		if not isinstance(args['sensor'], list):
+			args['sensor'] = [args['sensor']]
 		if len(args['sensor']) > 0:
-			conditions.append("m.sensor IN(" + commaSeparator.join(args['sensor']) + ")");
+			conditions.append("m.sensor IN(" + commaSeparator.join(str(x) for x in args['sensor']) + ")");
 
 		if args['geometry'] is not None:
 			prefix = " INNER JOIN Locations l ON m.location = l.id " + prefix
