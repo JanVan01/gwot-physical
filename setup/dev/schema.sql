@@ -29,7 +29,8 @@ CREATE TABLE Sensors (
   type TEXT NOT NULL,
   description TEXT DEFAULT NULL,
   unit TEXT NOT NULL,
-  active BOOLEAN DEFAULT TRUE
+  active BOOLEAN DEFAULT TRUE,
+  settings TEXT DEFAULT NULL
 );
 
 CREATE TABLE Subscribers (
@@ -49,7 +50,8 @@ CREATE TABLE Measurements (
 );
 
 -- Default data for ultrasonic distance sensor
-INSERT INTO Sensors (module, class, type, description, unit) VALUES ('sensors.distance', 'GaugeSensor', 'HC-SR04', 'Ultrasonic distance sensor for water gauges', 'cm');
+INSERT INTO Sensors (module, class, type, description, unit, settings) VALUES ('sensors.distance', 'GaugeSensor', 'HC-SR04', 'Ultrasonic distance sensor for water gauges', 'cm', '{"trigger_pin": "17", "data_pin": "27"}');
+INSERT INTO Sensors (module, class, type, description, unit, settings) VALUES ('sensors.owmrain', 'OwmRainSnow', 'OpenWeatherMap Rain+Snow', 'Sum of rain and snow. Source: OpenWeatherMap', 'mm/3h', '{"apikey": ""}');
 
 -- Default data for notifications
 INSERT INTO notifiers (id, module, class, description, settings, active) VALUES (1, 'notifiers.email', 'EmailNotifier', 'E-Mail', '{"sender": "no-reply@localhost"}', false);

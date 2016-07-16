@@ -11,14 +11,24 @@ import RPi.GPIO as GPIO
 from sensors.base import BaseSensor, SensorMeasurement
 from models.locations import Locations
 from models.config import ConfigManager
+from utils.utils import SettingManager
 import time
 
 
 class DistanceSensor(BaseSensor):
 	
 	def __init__(self):
-		self.trigger_pin = 17
-		self.data_pin = 27
+		self.settings = None
+		self.prepared = False
+	
+	def __prepare(self):
+		if self.prepared is True:
+			return
+		
+		self.prepared = True
+		
+		self.trigger_pin = self.get_setting("trigger_pin")
+		self.data_pin = self.get_setting("data_pin")
 		
 		# Warnings disabled
 		GPIO.setwarnings(False)
@@ -41,6 +51,8 @@ class DistanceSensor(BaseSensor):
 		return "cm"
 	
 	def get_measurement(self):
+		self.__prepare()
+		
 		raw_data = []
 
 		# We try 20 times and leave 10 attempts for invalid measurements
@@ -119,6 +131,29 @@ class DistanceSensor(BaseSensor):
 		else:
 			quality = 1.0
 		return SensorMeasurement(value, quality)
+
+	def get_setting_keys(self):
+		return {"trigger_pin", "data_pin"}
+	
+	def get_setting_name(self, key):
+		if key == "trigger_pin":
+			return "Trigger Pin on Pi"
+		elif key == "data_pin":
+			return "Data Pin on Pi"
+		else:
+			return None
+	
+	def validate_setting(self, key, value):
+		if key == "trigger_pin" or key == "data_pin":
+			return Validate().integer(value)
+		else:
+			return False
+	
+	def get_setting_html(self, key, value):
+		if key == "trigger_pin" or key == "data_pin":
+			return SettingManager().get_input_field(key, value)
+		else:
+			return None
 	
 class GaugeSensor(DistanceSensor):
 	

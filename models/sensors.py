@@ -9,7 +9,7 @@ from sensors.base import BaseSensor
 class Sensor(BaseModel):
 	
 	def __init__(self, id = None):
-		super().__init__(['id', 'module', 'class_name', 'type', 'description', 'unit', 'active'])
+		super().__init__(['id', 'module', 'class_name', 'type', 'description', 'unit', 'active', 'settings'])
 		self.id = id
 		self.module = None
 		self.class_name = None
@@ -17,6 +17,7 @@ class Sensor(BaseModel):
 		self.description = None
 		self.unit = None
 		self.active = False
+		self.settings = None
 
 	def from_dict(self, dict):
 		if 'id' in dict:
@@ -33,6 +34,8 @@ class Sensor(BaseModel):
 			self.set_unit(dict['unit'])
 		if 'active' in dict and dict['active'] is not None:
 			self.set_active(dict['active'])
+		if 'settings' in dict:
+			self.set_settings(dict['settings'])
 
 	def create(self):
 		impl = self.get_sensor_impl()
@@ -40,7 +43,7 @@ class Sensor(BaseModel):
 			return False
 
 		cur = Database.Instance().dict_cursor()
-		cur.execute("INSERT INTO Sensors (module, class, type, description, unit, active) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id", [self.module, self.class_name, impl.get_type(), self.description, impl.get_unit(), self.active])
+		cur.execute("INSERT INTO Sensors (module, class, type, description, unit, active, settings) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id", [self.module, self.class_name, impl.get_type(), self.description, impl.get_unit(), self.active, self._settings_dump(self.settings)])
 		data = cur.fetchone()
 		self.id = data['id']
 		if self.id > 0:
@@ -66,7 +69,7 @@ class Sensor(BaseModel):
 			return False
 
 		cur = Database.Instance().dict_cursor()
-		cur.execute("UPDATE Sensors SET module = %s, class = %s, type = %s, description = %s, unit = %s, active = %s WHERE id = %s", [self.module, self.class_name, impl.get_type(), self.description, impl.get_unit(), self.active, self.id])
+		cur.execute("UPDATE Sensors SET module = %s, class = %s, type = %s, description = %s, unit = %s, active = %s, settings = %s WHERE id = %s", [self.module, self.class_name, impl.get_type(), self.description, impl.get_unit(), self.active, self._settings_dump(self.settings), self.id])
 		if cur.rowcount > 0:
 			return True
 		else:
@@ -91,7 +94,10 @@ class Sensor(BaseModel):
 		self.id = id
 		
 	def get_sensor_impl(self):
-		return OS().create_object(self.module, self.class_name)
+		obj = OS().create_object(self.module, self.class_name)
+		if obj is not None:
+			obj.set_settings(self.get_settings())
+		return obj
 
 	def set_sensor_impl(self, obj):
 		if isinstance(obj, BaseSensor):
@@ -135,6 +141,23 @@ class Sensor(BaseModel):
 		if self.active is None:
 			return
 		self.active = active
+		
+	def get_setting(self, key):
+		if self.settings is not None and key in self.settings:
+			return self.settings[key]
+		else:
+			return None
+
+	def get_settings(self):
+		if self.settings is None:
+			return {}
+		else:
+			return self.settings
+
+	def set_settings(self, settings):
+		if isinstance(settings, str):
+			settings = self._settings_load(settings)
+		self.settings = settings
 	
 	
 class Sensors(BaseMultiModel):
@@ -147,7 +170,10 @@ class Sensors(BaseMultiModel):
 	
 	def get_pending(self, sinceSql):
 		return self._get_all("SELECT s.* FROM Sensors s LEFT OUTER JOIN Measurements m ON m.sensor = s.id WHERE s.active = TRUE GROUP BY s.id HAVING (MAX(m.datetime) < (NOW() - interval %s) OR MAX(m.datetime) IS NULL);", [sinceSql])
-	
+
+	def get_by_class(self, module, class_name):
+		return self._get_one("SELECT * FROM Sensors WHERE module = %s AND class = %s LIMIT 1", [module, class_name])
+		
 	def trigger_pending(self):
 		interval = ConfigManager.Instance().get_interval()
 		if interval < 1:

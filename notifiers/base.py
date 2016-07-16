@@ -20,10 +20,3 @@ class BaseNotifier(object):
 	
 	def get_setting_html(self, key, value):
 		return None
-	
-	def _get_input_field(self, key, value):
-		return "<input type='text' name='"+key+"' value='"+self._htmlspecialchars(value)+"' />"
-	
-	def _htmlspecialchars(self, value):
-		value.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")
-		return value

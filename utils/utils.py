@@ -85,3 +85,12 @@ class Validate:
 			return isinstance(wkt, geometry._Geometry)
 		except:
 			return False
+
+class SettingManager:
+	
+	def get_input_field(self, key, value):
+		return "<input type='text' name='"+key+"' value='"+self._htmlspecialchars(value)+"' />"
+	
+	def htmlspecialchars(self, value):
+		value.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")
+		return value
