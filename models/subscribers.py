@@ -11,6 +11,7 @@ class Subscriber(BaseModel):
 		self.settings = None
 
 	def from_dict(self, dict):
+		super().from_dict(dict)
 		if 'id' in dict:
 			self.set_id(dict['id'])
 		if 'notifier' in dict:

@@ -14,6 +14,7 @@ class Measurement(BaseModel):
 		self.location = None
 
 	def from_dict(self, dict):
+		super().from_dict(dict)
 		if 'id' in dict:
 			self.set_id(dict['id'])
 		if 'datetime' in dict:
