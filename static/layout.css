@@ -2,6 +2,23 @@ body {
 	font-family: sans-serif;
 	padding-top: 70px;
 }
+#home .home{
+	font-weight: bold;
+	color: white;
+}
+#data .data{
+	font-weight: bold;
+	color: white;
+}
+
+#config .config {
+	font-weight: bold;
+	color: white;
+}
+#about .about{
+	font-weight: bold;
+	color: white;
+}
 
 .overview {
 	padding-top: 20px;

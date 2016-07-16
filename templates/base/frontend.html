@@ -33,13 +33,11 @@
           <a class="navbar-brand" href="/">Web of Things - Physical Smart Device</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            {% block navigation %}
-            <li><a href="/">Home</a></li>
-            <li><a href="/data">Data</a></li>
-            <li><a href="/config">Config</a></li>
-            <li><a href="/about">About</a></li>
-            {% endblock navigation %}
+          <ul id={% block navigation %}"home"{% endblock navigation %} class="nav navbar-nav">
+              <li><a href="/" class="home">Home</a></li>
+              <li><a href="/data"class="data">Data</a></li>
+              <li><a href="/config" class="config">Config</a></li>
+              <li><a href="/about" class="about">About</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
