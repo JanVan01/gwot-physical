@@ -91,7 +91,7 @@ def config_config():
 def config_location():
 	return ConfigController().location()
 
-@app.route('/api/1.0/config/sensor', methods=['GET', 'PUT', 'POST'])
+@app.route('/api/1.0/config/sensor', methods=['PUT', 'POST'])
 @auth.login_required
 def config_sensor():
 	return ConfigController().sensor()
