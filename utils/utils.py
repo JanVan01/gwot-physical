@@ -103,3 +103,19 @@ class SettingManager:
 	def htmlspecialchars(self, value):
 		value.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")
 		return value
+	
+@Singleton
+class ThreadObserver:
+	
+	def __init__(self):
+		self.threads = []
+		
+	def add(self, obj):
+		self.threads.append(obj)
+
+	def remove(self, obj):
+		self.threads.remove(obj)
+		
+	def wait(self):
+		for thread in self.threads:
+			thread.join()

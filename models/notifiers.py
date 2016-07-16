@@ -1,4 +1,4 @@
-from utils.utils import Database, OS
+from utils.utils import Database, OS, ThreadObserver
 from models.base import BaseModel, BaseMultiModel
 from notifiers.base import BaseNotifier
 from models.subscribers import Subscribers
@@ -136,8 +136,7 @@ class Notifier(BaseModel):
 		if self.active is None:
 			return
 		self.active = active
-	
-	
+
 class Notifiers(BaseMultiModel):
 	
 	def create(self, pk = None):
@@ -157,25 +156,25 @@ class NotificationThread(threading.Thread):
 	def __init__(self, measurement):
 		super().__init__();
 		self.measurement = measurement
+		ThreadObserver.Instance().add(self)
 	
 	def run(self):
 		# Get all relevant subscribtions
 		subs = Subscribers().get_all_active_by_sensor(self.measurement.get_sensor())
 
-		# Return if there are no subscribers
-		if len(subs) == 0:
-			return;
+		if len(subs) > 0:
+			# Cache all notifiers in a list with ids as keys
+			notifs = {}
+			for entry in Notifiers().get_all():
+				notifs[entry.get_id()] = entry
 
-		# Cache all notifiers in a list with ids as keys
-		notifs = {}
-		for entry in Notifiers().get_all():
-			notifs[entry.get_id()] = entry
-
-		# Go thorugh all subscribers and send notification
-		for sub in subs:
-			notifier = notifs[sub.get_notifier()]
-			notifier_impl = notifier.get_notifier_impl()
-			if notifier_impl is not None:
-				notifier_impl.send(notifier, sub, self.measurement)
+			# Go thorugh all subscribers and send notification
+			for sub in subs:
+				notifier = notifs[sub.get_notifier()]
+				notifier_impl = notifier.get_notifier_impl()
+				if notifier_impl is not None:
+					notifier_impl.send(notifier, sub, self.measurement)
+		
+		ThreadObserver.Instance().remove(self)
 			
 			
