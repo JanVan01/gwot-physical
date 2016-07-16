@@ -1,1 +1,35 @@
-{% extends "form.html" %}
+{% extends "base/frontend.html" %}
+
+{% block navigation %}
+<li><a href="/">Home</a></li>
+<li><a href="/data">Data</a></li>
+<li class="active"><a href="/config">Config</a></li>
+<li><a href="/about">About</a></li>
+{% endblock navigation %}
+
+{% block content %}
+{% if data.mode == 'edit' %}
+<h2>Edit Location</h2>
+{% else %}
+<h2>New Location</h2>
+{% endif %}
+<form>
+  <label for="id"> ID:</label>
+  <input type="text" id="id" name="id" class="form-control" value={{data.id}}>
+  <label for="name"> Name:</label>
+  <input type="text" id="name" name="name" class="form-control" value={{data.name}}>
+  <label for="lat"> Latitude:</label>
+  <input type="text" id="lat" name="lat" class="form-control" value={{data.lat}}>
+  <label for="lon"> Longitude:</label>
+  <input type="text" id="lon" name="lon" class="form-control" value={{data.lon}}>
+  <label for="height"> Height:</label>
+  <input type="text" id="height" name="height" class="form-control" value={{data.height}}>
+</form>
+<script src="{{ url_for('static', filename='js/submit.js') }}"></script>
+{% if data.mode == 'edit' %}
+<button  class="btn btn-default" onclick="submit_form('/api/1.0/config/location', 'PUT')">Save Changes</button>
+{% else %}
+<button  class="btn btn-default" onclick="submit_form('/api/1.0/config/location', 'POST')">Create new Location</button>
+{% endif %}
+
+{% endblock content %}

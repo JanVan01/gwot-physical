@@ -3,6 +3,7 @@ from views.html import HtmlView
 from models.config import ConfigManager
 from models.locations import Locations
 from models.sensors import Sensors
+from flask import request
 import time
 
 class FrontendController(BaseController):
@@ -10,6 +11,7 @@ class FrontendController(BaseController):
 	def __init__(self):
 		super().__init__()
 		self.multi_model = self.get_model('models.measurements', 'Measurements')
+		self.config_manager = ConfigManager.Instance()
 		self.unknownValue = "None"
 
 	def get_view(self, template_file=None):
@@ -21,13 +23,13 @@ class FrontendController(BaseController):
 	def home(self):
 		model = self.get_model('models.sensors', 'Sensors')
 		sensor_data = model.get_all()
-		
+
 		location = ConfigManager.Instance().get_location()
 		locationObj = Locations().get(location)
 		if locationObj is not None:
 			lon = locationObj.get_longitude()
 			lat = locationObj.get_latitude()
-			
+
 		data = {
 			"location": locationObj,
 			"default_sensor": sensor_data[0].get_id(),
@@ -93,23 +95,50 @@ class FrontendController(BaseController):
 				return str(round(value, 1))
 			else:
 				return self.unknownValue
-			
+
 
 	def config(self):
 		data = {}
+		data['name'] = self.config_manager.get_name()
+		data['interval'] = self.config_manager.get_interval()
+		data['location'] = self._get_location(self.config_manager.get_location())
+		data['sensors'] = self._get_sensors()
+		if 'mode' in request.args and request.args['mode'] == 'edit':
+			data['all_locations'] = self._get_all_locations()
+			return self.get_view('config_edit.html').data(data)
 		return self.get_view('config.html').data(data)
 
 	def config_password(self):
-		data = {}
-		return self.get_view('config_password.html').data(data)
+		return self.get_view('config_password.html').data({})
 
 	def config_sensors(self):
 		data = {}
-		return self.get_view('config_sensors.html').data(data)
+		if 'mode' in request.args and request.args['mode'] == 'edit' and 'id' in request.args:
+			sensor = self.get_model('models.sensors', 'Sensors').get(request.args['id'])
+			if sensor is not None:
+				data['mode'] = 'edit'
+				data['id'] = sensor.get_id()
+				data['module'] = sensor.get_module()
+				data['class_name'] = sensor.get_class()
+				data['type'] = sensor.get_type()
+				data['description'] = sensor.get_description()
+				data['unit'] = sensor.get_unit()
+				return self.get_view('config_sensor.html').data(data)
+		return self.get_view('config_sensor.html').data(data)
 
 	def config_locations(self):
 		data = {}
-		return self.get_view('config_locations.html').data(data)
+		if 'mode' in request.args and request.args['mode'] == 'edit' and 'id' in request.args:
+			location = self.get_model('models.locations', 'Locations').get(request.args['id'])
+			if location is not None:
+				data['mode'] = 'edit'
+				data['id'] = location.get_id()
+				data['name'] = location.get_name()
+				data['lat'] = location.get_latitude()
+				data['lon'] = location.get_longitude()
+				data['height'] = location.get_height()
+				return self.get_view('config_location.html').data(data)
+		return self.get_view('config_location.html').data(data)
 
 	def data(self):
 		data = self.multi_model.get_all()
@@ -125,3 +154,42 @@ class FrontendController(BaseController):
 	def about(self):
 		data = {}
 		return self.get_view('about.html').data(data)
+
+	def _get_location(self, id):
+		location_model = self.get_model('models.locations', 'Location')
+		location_model.set_id(id)
+		location_model.read()
+		location = {}
+		location['id'] = location_model.get_id()
+		location['name'] = location_model.get_name()
+		location['lat'] = location_model.get_latitude()
+		location['lon'] = location_model.get_longitude()
+		location['height'] = location_model.get_height()
+		return location
+
+	def _get_all_locations(self):
+		locations_model = self.get_model('models.locations', 'Locations')
+		locations = []
+		for l in locations_model.get_all():
+			location = {}
+			location['id'] = l.get_id()
+			location['name'] = l.get_name()
+			location['lat'] = l.get_latitude()
+			location['lon'] = l.get_longitude()
+			location['height'] = l.get_height()
+			locations.append(location)
+		return locations
+
+	def _get_sensors(self):
+		sensor_model = self.get_model('models.sensors', 'Sensors')
+		sensors = []
+		for s in sensor_model.get_all():
+			sensor = {}
+			sensor['id'] = s.get_id()
+			sensor['module'] = s.get_module()
+			sensor['class_name'] = s.get_class()
+			sensor['type'] = s.get_type()
+			sensor['description'] = s.get_description()
+			sensor['unit'] = s.get_unit()
+			sensors.append(sensor)
+		return sensors

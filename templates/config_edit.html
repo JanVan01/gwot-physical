@@ -8,34 +8,32 @@
 {% endblock navigation %}
 
 {% block content %}
-{% if data.mode == 'edit' %}
-<h2>Edit Sensor</h2>
-{% else %}
-<h2>New Sensor</h2>
-{% endif %}
+<h2>Edit Config</h2>
 <form>
-  <label for="id"> ID:</label>
-  <input type="text" id="id" name="id" class="form-control" value={{data.id}}>
-  <label for="module"> Module:</label>
-  <input type="text" id="module" name="module" class="form-control" value={{data.module}}>
-  <label for="class_name"> Class:</label>
-  <input type="text" id="class_name" name="class_name" class="form-control" value={{data.class_name}}>
-  <label for="type"> Type:</label>
-  <input type="text" id="type" name="type" class="form-control" value={{data.type}}>
-  <label for="description"> Description:</label>
-  <input type="text" id="description" name="description" class="form-control" value={{data.description}}>
-  <label for="unit"> Unit:</label>
-  <input type="text" id="unit" name="unit" class="form-control" value={{data.unit}}>
+  <label for="name"> Name:</label>
+  <input type="text" id="name" name="name" class="form-control" value={{data.name}}>
+  <label for="interval"> Interval:</label>
+  <input type="number" id="interval" name="interval" class="form-control" value={{data.interval}}>
+  <label for="location"> Location:</label>
+  <select id="interval" class="form-control" name="location">
+    {% for location in data.all_locations %}
+    <option value={{location.id}}>{{location.name}}</option>
+    {% endfor %}
+  </select>
+  <a class="btn btn-default" href="/config/locations">add new location</a>
   <input type=submit class="btn btn-default" value="Save Changes">
 </form>
 <script>
 $('form').on('submit',function (event){
+    alert('blub');
     event.preventDefault();
     form = $(this);
+    console.log(form.serializeArray());
     formdata = JSON.stringify(form.serializeArray()
         .reduce(function(a, x) { a[x.name] = x.value; return a; }, {}));
+    console.log(formdata);
     $.ajax({
-        url:'/api/1.0/config/sensor',
+        url:'/api/1.0/config',
         cache: false,
         type: 'PUT',
         contentType: 'application/json',

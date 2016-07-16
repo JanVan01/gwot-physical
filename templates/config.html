@@ -9,7 +9,66 @@
 
 {% block content %}
   <h2>Config</h2>
-  Name: {{ data.name }} <br>
-  Interval: {{ data.interval }} <br>
-  Location: {{ data.location }} <br>
+  <table class="config_info">
+    <tr>
+      <td>Name:</td>
+      <td>{{ data.name }}</td>
+    </tr>
+    <tr>
+      <td>Password:</td>
+      <td><a class="btn btn-default" href="/config/password">New Password</a></td>
+    </tr>
+    <tr>
+      <td>Interval:</td>
+      <td>{{ data.interval }}</td>
+    </tr>
+    <tr>
+      <td>Location:</td>
+      <td><table>
+        <tr>
+          <td>Name:</td>
+          <td>{{ data.location.name }}</td>
+        </tr>
+        <tr>
+          <td>ID:</td>
+          <td>{{data.location.id}}</td>
+        </tr>
+        <tr>
+          <td>Latitude:</td>
+          <td>{{data.location.lat}}</td>
+        </tr>
+        <tr>
+          <td>Longitude:</td>
+          <td>{{data.location.lon}}</td>
+        </tr>
+        <tr>
+          <td>Height:</td>
+          <td>{{data.location.height}}</td>
+        </tr>
+        <a class="btn btn-default" href="/config/locations?mode=edit&id={{data.location.id}}">edit location</a>
+      </table></td>
+    </tr>
+    <tr><td></td>
+      <td><a class="btn btn-default" href="/config?mode=edit">Edit config</a></td>
+    </tr>
+  </table>
+  <h4>Sensors:</h4>
+  <a class="btn btn-default" href="/config/sensors">Add new Sensor</a>
+  {% for sensor in data.sensors %}
+  <table>
+    <tr>
+      <td>Type:</td>
+      <td>{{ sensor.type }}</td>
+    </tr>
+    <tr>
+      <td>Description:</td>
+      <td>{{sensor.description}}</td>
+    </tr>
+    <tr>
+      <td>ID:</td>
+      <td>{{sensor.id}}</td>
+    </tr>
+  </table>
+  <a class="btn btn-default" href="/config/sensors?mode=edit&id={{sensor.id}}">Edit this Sensor</a>
+  {% endfor %}
 {% endblock content %}

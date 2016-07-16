@@ -24,12 +24,15 @@ class ConfigController(BaseController):
             if(input is None):
                 return self.get_view().bad_request('expected json')
             # TODO(react to invalid input)
-            if ('name' in input and input['name'] != ''):
-                self.config.set_name(input['name'])
-            if ('interval' in input and type(input['interval']) == int):
-                self.config.set_interval(input['interval'])
-            if ('location' in input and type(input['location']) == int):
-                self.config.set_location(input['location'])
+            try:
+                if ('name' in input):
+                    self.config.set_name(str(input['name']))
+                if ('interval' in input):
+                    self.config.set_interval(int(input['interval']))
+                if ('location' in input):
+                    self.config.set_location(int(input['location']))
+            except TypeError:
+                return self.get_view().bad_request('Input not in the right format')
             return self.get_view().success()
 
     def location(self):
@@ -62,6 +65,7 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
+            print(input)
             location = self.get_model('models.locations', 'Location')
             if('name' in input and 'lat' in input and 'lon' in input and 'height' in input):
                 try:
@@ -71,10 +75,11 @@ class ConfigController(BaseController):
                     created = location.create()
                     if not created:
                         return self.get_view().bad_request('The location could not be created')
-
                 except TypeError:
+                    print('type error')
                     return self.get_view().bad_request('input not in the right format')
             else:
+                print('not all fields')
                 return self.get_view().bad_request('not all necessary field available')
             return self.get_view().success()
 
@@ -84,6 +89,7 @@ class ConfigController(BaseController):
             if(input is None):
                 return self.get_view().bad_request('expected json')
             sensor = self.get_model('models.sensors', 'Sensor')
+            print(input)
             if('id' in input):
                 try:
                     sensor.set_id(int(input['id']))
@@ -97,8 +103,7 @@ class ConfigController(BaseController):
                         sensor.set_description(str(input['description']))
                     if('unit' in input):
                         sensor.set_unit(str(input['unit']))
-                    if ('active' in input):
-                        sensor.set_active(bool(input['active']))
+                    print(sensor.get_id())
                     updated = sensor.update()
                     if not updated:
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
@@ -113,7 +118,7 @@ class ConfigController(BaseController):
                 return self.get_view().bad_request('expected json')
             sensor = self.get_model('models.sensors', 'Sensor')
             if('type' in input and 'description' in input and
-                    'unit' in input and 'active' in input and
+                    'unit' in input and
                     'module' in input and 'class_name' in input):
                 try:
                     sensor.set_module(str(input['module']))
@@ -121,7 +126,6 @@ class ConfigController(BaseController):
                     sensor.set_type(str(input['type']))
                     sensor.set_description(str(input['description']))
                     sensor.set_unit(str(input['unit']))
-                    sensor.set_active(bool(input['active']))
                     updated = sensor.update()
                     if not updated:
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
