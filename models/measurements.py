@@ -1,7 +1,7 @@
 from utils.utils import Database
 from models.base import BaseModel, BaseMultiModel
+from models.config import ConfigManager
 
-# Todo: Check whether python datetime and postgresqlsql datetime are transfered correctly
 class Measurement(BaseModel):
 
 	def __init__(self, id = None):
@@ -159,6 +159,82 @@ class Measurements(BaseMultiModel):
 		filter = self.filter_defaults(filter, 1)
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value DESC LIMIT " + str(filter['limit']))
+	
+	def calc_trend(self, sensor, location = None):
+		if location is None:
+			location = ConfigManager.Instance().get_location()
+		
+		last = self.get_last({
+			"sensor": [sensor],
+			"location": [location],
+			"limit": 1000,
+			"quality": 0.25
+		})
+		
+		data = {
+			"since": None,
+			"until": None,
+			"change_abs": 0,
+			"change_perhour": 0
+		}
+		
+		if len(last) < 3:
+			return data # Not enough data for calculation
+		
+		# Calculate whether its ascending or descending
+		direction = 0
+		old = last[0].get_value()
+		older = last[1].get_value()
+		oldest = last[2].get_value()
+		if oldest > older and older > old and old != oldest:
+			direction = -1 # descending
+		if oldest <= older and older <= old and old != oldest:
+			direction = 1 # ascending
+
+		if direction == 0:
+			return data # No trend
+		
+		# Find how long the trend is
+		outliers = 0
+		pivot = 0
+		prev_is_outlier = False
+		i = 0
+		# Iterate over all elements until we have two outliers in a row, elements are getting older with increasing index
+		while i < len(last)-1 and outliers < 2:
+			i += 1
+			this = last[i-1].get_value()
+			prev = last[i].get_value()
+			
+			# Check whether values are equal or are getting smaller/larger
+			if (direction == 1 and prev <= this) or (direction == -1 and prev >= this):
+				# If the elemts are equal...
+				if (prev == this):
+					 # check if the previous entry was an outlier and if this one is the same value, end loop as we reached two outliers
+					if prev_is_outlier is True:
+						break
+				# Value is smaller or larger
+				else:
+					pivot = i
+					# If previous element was not an outlier, we can decrease the number of outliers
+					if prev_is_outlier is False:
+						outliers -= 1
+			# We detected an outlier
+			else:
+				outliers += 1
+				prev_is_outlier = True
+		
+		newest = last[0]
+		oldest = last[pivot]
+
+		data['since'] = oldest.get_datetime()
+		data['until'] = newest.get_datetime()
+		data['change_abs'] = abs(newest.get_value() - oldest.get_value()) * direction
+		
+		timedelta = data['until'] - data['since']
+		hourdelta = timedelta.total_seconds() / (60*60)
+		data['change_perhour'] = hourdelta / data['change_abs']
+
+		return data
 
 	def filter_defaults(self, args = None, limit = 100):
 		defaults = {
