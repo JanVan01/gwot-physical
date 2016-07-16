@@ -7,6 +7,7 @@ dbhost = localhost
 dbuser = 
 dbpw = 
 dbname = 
+port = 5000
 
 [Default]
 name = gwot-physical-device
@@ -17,3 +18,4 @@ dbhost =
 dbuser = 
 dbpw = 
 dbname = 
+port = 5000

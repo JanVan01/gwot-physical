@@ -58,3 +58,9 @@ class ConfigManager(object):
 
 	def get_dbhost(self):
 		return self.config['Config']['dbhost']
+
+	def get_port(self):
+		try:
+			return int(self.config['Config']['port'])
+		except:
+			return 5000

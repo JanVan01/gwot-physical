@@ -9,6 +9,8 @@
 import math
 import RPi.GPIO as GPIO
 from sensors.base import BaseSensor, SensorMeasurement
+from models.locations import Locations
+from models.config import ConfigManager
 import time
 
 
@@ -103,7 +105,7 @@ class DistanceSensor(BaseSensor):
 			return None
 
 		# sort the measurements
-		sorted(raw_data)
+		raw_data.sort()
 		# delete 2 minimum and 2 max measurements
 		trimmed_data = raw_data[2:-2]
 		trimmed_data_length = len(trimmed_data)
@@ -117,3 +119,18 @@ class DistanceSensor(BaseSensor):
 		else:
 			quality = 1.0
 		return SensorMeasurement(value, quality)
+	
+class GaugeSensor(DistanceSensor):
+	
+	def get_measurement(self):
+		lid = ConfigManager.Instance().get_location()
+		data = super().get_measurement()
+		if lid is None or data is None:
+			return None
+
+		location = Locations().get(lid)
+		if location is None or location.get_height() is None:
+			return None
+		
+		value = location.get_height() - data.get_value()
+		return SensorMeasurement(value, data.get_quality())

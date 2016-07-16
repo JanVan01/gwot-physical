@@ -422,6 +422,66 @@
                         }
                     }
                 },
+                "getDataAvg": {
+                    "category": "Data",
+                    "label": "GET /data/avg",
+                    "description": "Average value of the sensor readings",
+                    "uri": "/data/avg",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+					"request_parameters": {
+						"start": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+							"optional": true
+						},
+						"end": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+							"optional": true
+						},
+						"location": {
+							"type": "string",
+							"sample": "1,4",
+							"description": "Comma separated list of IDs from the location relation.",
+							"optional": true
+						},
+						"sensor": {
+							"type": "string",
+							"sample": "1,2,4",
+							"description": "Comma separated list of IDs from the sensor relation.",
+							"optional": true
+						},
+						"geometry": {
+                            "type": "string",
+                            "sample": "POINT(7.700233161449432 51.973379492826446)",
+							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+							"optional": true
+						}
+					},
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }],
+                    "response_body": {
+                        "type": "array",
+                        "items": {
+							"type": "reference",
+							"reference": "measurement"
+                        }
+                    }
+                },
                 "getDataLast": {
                     "category": "Data",
                     "label": "GET /data/last",

@@ -14,12 +14,18 @@ class Measurement(BaseModel):
 		self.location = None
 
 	def from_dict(self, dict):
-		self.set_id(dict['id'])
-		self.set_datetime(dict['datetime'])
-		self.set_value(dict['value'])
-		self.set_quality(dict['quality'])
-		self.set_sensor(dict['sensor'])
-		self.set_location(dict['location'])
+		if 'id' in dict:
+			self.set_id(dict['id'])
+		if 'datetime' in dict:
+			self.set_datetime(dict['datetime'])
+		if 'value' in dict:
+			self.set_value(dict['value'])
+		if 'quality' in dict:
+			self.set_quality(dict['quality'])
+		if 'sensor' in dict:
+			self.set_sensor(dict['sensor'])
+		if 'location' in dict:
+			self.set_location(dict['location'])
 
 	def create(self):
 		if self.sensor is None or self.location is None or self.value is None:
@@ -142,6 +148,11 @@ class Measurements(BaseMultiModel):
 		filter = self.filter_defaults(filter, 1)
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value ASC LIMIT " + str(filter['limit']))
+
+	def get_avg(self, filter = None):
+		filter = self.filter_defaults(filter, 1)
+		filterSql = self.__build_filter(filter, "WHERE")
+		return self._get_one("SELECT AVG(m.value) AS value FROM Measurements m " + filterSql + " LIMIT 1")
 
 	def get_max(self, filter = None):
 		filter = self.filter_defaults(filter, 1)

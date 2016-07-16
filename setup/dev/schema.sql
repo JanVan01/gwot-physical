@@ -49,7 +49,7 @@ CREATE TABLE Measurements (
 );
 
 -- Default data for ultrasonic distance sensor
-INSERT INTO Sensors (module, class, type, description, unit) VALUES ('sensors.distance', 'DistanceSensor', 'HC-SR04', 'Ultrasonic distance sensor for water gauges', 'cm');
+INSERT INTO Sensors (module, class, type, description, unit) VALUES ('sensors.distance', 'GaugeSensor', 'HC-SR04', 'Ultrasonic distance sensor for water gauges', 'cm');
 
 -- Default data for notifications
 INSERT INTO notifiers (id, module, class, description, settings, active) VALUES (1, 'notifiers.email', 'EmailNotifier', 'E-Mail', '{"sender": "no-reply@localhost"}', false);

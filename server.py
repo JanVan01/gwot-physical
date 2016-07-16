@@ -12,6 +12,7 @@ from controller.config import ConfigController
 from controller.frontend import FrontendController
 from utils.utils import OS
 from views.json import JSON
+from models.config import ConfigManager
 
 
 OS().cwd(__file__)
@@ -108,6 +109,9 @@ def get_password(username):
 def json2table(data):
 	return JSON().to_table(data)
 
+@app.template_filter('json')
+def to_json(data):
+	return JSON().build(data)
 
 if __name__ == '__main__':
-	app.run(debug=True, host='0.0.0.0')
+	app.run(debug=True, host='0.0.0.0', port=ConfigManager.Instance().get_port())

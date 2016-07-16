@@ -11,10 +11,14 @@ class Subscriber(BaseModel):
 		self.settings = None
 
 	def from_dict(self, dict):
-		self.set_id(dict['id'])
-		self.set_notifier(dict['notifier'])
-		self.set_sensor(dict['sensor'])
-		self.set_settings(dict['settings'])
+		if 'id' in dict:
+			self.set_id(dict['id'])
+		if 'notifier' in dict:
+			self.set_notifier(dict['notifier'])
+		if 'sensor' in dict:
+			self.set_sensor(dict['sensor'])
+		if 'settings' in dict:
+			self.set_settings(dict['settings'])
 
 	def create(self):
 		if self.sensor is None or self.notifier is None:
