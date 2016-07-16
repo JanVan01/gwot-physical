@@ -11,6 +11,8 @@ import RPi.GPIO as GPIO
 from sensors.base import BaseSensor, SensorMeasurement
 from models.locations import Locations
 from models.config import ConfigManager
+from models.measurements import Measurements
+from models.sensors import Sensors
 from utils.utils import SettingManager
 import time
 
@@ -23,12 +25,17 @@ class DistanceSensor(BaseSensor):
 	
 	def __prepare(self):
 		if self.prepared is True:
-			return
-		
-		self.prepared = True
+			return self.prepared
 		
 		self.trigger_pin = self.get_setting("trigger_pin")
 		self.data_pin = self.get_setting("data_pin")
+		if self.trigger_pin is None or self.data_pin is None:
+			print('Please configure pins of distance sensor.')
+			return False
+		
+		self.prepared = True
+		self.trigger_pin = int(self.trigger_pin)
+		self.data_pin = int(self.data_pin)
 		
 		# Warnings disabled
 		GPIO.setwarnings(False)
@@ -42,6 +49,7 @@ class DistanceSensor(BaseSensor):
 
 		# Avoid crashs
 		time.sleep(0.5)
+		return self.prepared
 		
 		
 	def get_type(self):
@@ -51,12 +59,16 @@ class DistanceSensor(BaseSensor):
 		return "cm"
 	
 	def get_measurement(self):
-		self.__prepare()
+		if not self.__prepare():
+			return None;
 		
 		raw_data = []
 
 		# We try 20 times and leave 10 attempts for invalid measurements
 		for i in range(20):
+			if i > 5 and len(raw_data) == 0:
+				return None # Sensor seems not to be configured corretly, skip execution
+			
 			next_call = time.time() + 0.5
 
 			# Send signal
@@ -131,6 +143,31 @@ class DistanceSensor(BaseSensor):
 		else:
 			quality = 1.0
 		return SensorMeasurement(value, quality)
+
+	def is_due(self, minutes, interval):
+		if minutes is None: # No measurement so far
+			return True
+		
+		weatherSensor = Sensors().get_by_class('sensors.owmrain', 'OwmRainSnow')
+		weatherMeasurements = Measurements().get_last({
+			"sensor": [weatherSensor.get_id()],
+			"limit": 1,
+			"location": [ConfigManager.Instance().get_location()]
+		})
+		
+		
+		new_interval = interval
+		if len(weatherMeasurements) > 0:
+			value = weatherMeasurements[0].get_value()
+			if value > 0:
+				new_interval = interval/2 # Double the speed in case of light rain
+			elif value > 30:
+				new_interval = 2 # Measure every two minutes in case of heavy rain
+				
+		if new_interval < interval:
+			interval = new_interval
+	
+		return (minutes >= interval)
 
 	def get_setting_keys(self):
 		return {"trigger_pin", "data_pin"}

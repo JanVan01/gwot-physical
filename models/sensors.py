@@ -169,8 +169,8 @@ class Sensors(BaseMultiModel):
 	def get_all(self):
 		return self._get_all("SELECT * FROM Sensors ORDER BY id")
 	
-	def get_pending(self, sinceSql):
-		return self._get_all("SELECT s.* FROM Sensors s LEFT OUTER JOIN Measurements m ON m.sensor = s.id WHERE s.active = TRUE GROUP BY s.id HAVING (MAX(m.datetime) < (NOW() - interval %s) OR MAX(m.datetime) IS NULL);", [sinceSql])
+	def get_pending(self):
+		return self._get_all("SELECT s.*, EXTRACT(EPOCH FROM (NOW() - MAX(m.datetime)))/60 AS pending FROM Sensors s LEFT OUTER JOIN Measurements m ON m.sensor = s.id WHERE s.active = TRUE GROUP BY s.id")
 
 	def get_by_class(self, module, class_name):
 		return self._get_one("SELECT * FROM Sensors WHERE module = %s AND class = %s LIMIT 1", [module, class_name])
@@ -180,15 +180,21 @@ class Sensors(BaseMultiModel):
 		if interval < 1:
 			return [] # No valid interval specified
 
-		sensors = self.get_pending(str(interval) + ' minutes')
-		return self.__trigger(sensors)
+		sensors = self.get_pending()
+		return self.__trigger(sensors, True)
 		
 	
 	def trigger_all(self):
 		return self.__trigger(self.get_all())
 	
-	def __trigger(self, sensors):
+	def __trigger(self, sensors, pending = False):
 		data = []
+
+		interval = None
+		if pending is True:
+			interval = ConfigManager.Instance().get_interval()
+			if interval < 1:
+				return [] # No valid interval specified
 		
 		location = Locations().get(ConfigManager.Instance().get_location())
 		if location is None:
@@ -203,6 +209,10 @@ class Sensors(BaseMultiModel):
 			# Ignore the sensor if no implementation can be found
 			impl = sensor.get_sensor_impl()
 			if impl is None:
+				continue
+				
+			# If we want to trigger only pending sensors, check that and ignore sensors that are not pending to their rules
+			if pending is True and impl.is_due(sensor.get_extra('pending'), interval) is False:
 				continue
 
 			measurementObj = None

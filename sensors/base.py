@@ -15,6 +15,9 @@ class BaseSensor(object):
 	def get_measurement(self):
 		return None
 	
+	def is_due(self, minutes, interval):
+		return (minutes is None or minutes >= interval)
+	
 	def get_setting_keys(self):
 		return {}
 	
@@ -40,8 +43,6 @@ class BaseSensor(object):
 			return self.settings
 
 	def set_settings(self, settings):
-		if isinstance(settings, str):
-			settings = self._settings_load(settings)
 		self.settings = settings
 		
 class SensorMeasurement(object):

@@ -46,11 +46,17 @@ class OwmRainSnow(BaseSensor):
 		elif '3h' in vol_snow:
 			value = vol_snow['3h']
 			quality = 0.5
+		else: # Not sure whether this is true (API returns nothing when there is no rain/snow?)
+			value = 0
+			quality = 0.0
 
 		if value is not None:
 			return SensorMeasurement(value, quality)
 		else:
 			return None
+	
+	def is_due(self, minutes, interval):
+		return super().is_due(minutes, 60) # Free plan updates every 1 to 2 hours
 
 	def get_setting_keys(self):
 		return {"apikey"}
