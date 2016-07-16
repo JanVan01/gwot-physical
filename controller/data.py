@@ -61,6 +61,10 @@ class DataController(BaseController):
 		if valid.wkt(geometry):
 			args['geometry'] = geometry
 
+		quality = request.args.get('quality')
+		if valid.floating(quality) and float(quality) >= 0.0 and float(quality) <= 1.0:
+			args['quality'] = float(quality)
+
 		limit = request.args.get('limit')
 		if valid.integer(limit) and int(limit) > 0:
 			args['limit'] = int(limit)

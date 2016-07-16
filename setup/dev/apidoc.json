@@ -270,6 +270,12 @@
 							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
 							"optional": true
 						},
+						"quality": {
+                            "type": "string",
+                            "sample": "0.25",
+							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+							"optional": true
+						},
 						"limit": {
 							"type": "integer",
 							"sample": "50",
@@ -334,6 +340,12 @@
                             "type": "string",
                             "sample": "POINT(7.700233161449432 51.973379492826446)",
 							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+							"optional": true
+						},
+						"quality": {
+                            "type": "string",
+                            "sample": "0.25",
+							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
 							"optional": true
 						},
 						"limit": {
@@ -402,6 +414,12 @@
 							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
 							"optional": true
 						},
+						"quality": {
+                            "type": "string",
+                            "sample": "0.25",
+							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+							"optional": true
+						},
 						"limit": {
 							"type": "integer",
 							"sample": "50",
@@ -460,6 +478,12 @@
 							"type": "string",
 							"sample": "1,2,4",
 							"description": "Comma separated list of IDs from the sensor relation.",
+							"optional": true
+						},
+						"quality": {
+                            "type": "string",
+                            "sample": "0.25",
+							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
 							"optional": true
 						},
 						"geometry": {
@@ -526,6 +550,12 @@
                             "type": "string",
                             "sample": "POINT(7.700233161449432 51.973379492826446)",
 							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+							"optional": true
+						},
+						"quality": {
+                            "type": "string",
+                            "sample": "0.25",
+							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
 							"optional": true
 						},
 						"limit": {

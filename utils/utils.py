@@ -75,6 +75,15 @@ class Validate:
 			return False
 		else:
 			return data.isdigit()
+	
+	def floating(self, data):
+		if data is None or len(data) == 0:
+			return False
+		try:
+			data = float(data)
+			return True
+		except ValueError:
+			return False
 		
 	def wkt(self, data):
 		if data is None or len(data) == 0:

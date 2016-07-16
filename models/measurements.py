@@ -166,6 +166,7 @@ class Measurements(BaseMultiModel):
 			'end': None,
 			'location': [],
 			'geometry': None,
+			'quality': None,
 			'sensor': [],
 			'limit': limit
 		}
@@ -198,6 +199,9 @@ class Measurements(BaseMultiModel):
 		if args['geometry'] is not None:
 			prefix = " INNER JOIN Locations l ON m.location = l.id " + prefix
 			conditions.append("ST_Intersects(l.geom, ST_GeographyFromText('" + args['geometry'] + "'))")
+
+		if args['quality'] is not None:
+			conditions.append("m.quality >= " + str(args['quality']))
 
 		if len(conditions) > 0:
 			op = " AND "
