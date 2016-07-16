@@ -156,7 +156,7 @@ class NotificationThread(threading.Thread):
 	def __init__(self, measurement):
 		super().__init__();
 		self.measurement = measurement
-		ThreadObserver.Instance().add(thread)
+		ThreadObserver.Instance().add(self)
 	
 	def run(self):
 		# Get all relevant subscribtions
@@ -175,6 +175,6 @@ class NotificationThread(threading.Thread):
 				if notifier_impl is not None:
 					notifier_impl.send(notifier, sub, self.measurement)
 		
-		ThreadObserver.Instance().remove(thread)
+		ThreadObserver.Instance().remove(self)
 			
 			

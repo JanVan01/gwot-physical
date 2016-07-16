@@ -116,6 +116,7 @@ def to_json(data):
 @app.after_request
 def after_request(response):
 	ThreadObserver.Instance().wait();
+	return response
 
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0', port=ConfigManager.Instance().get_port())
