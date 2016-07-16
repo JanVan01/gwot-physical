@@ -10,12 +10,7 @@
 <script type="text/javascript" src="{{ url_for('static', filename='datahandling.js') }}"></script>
 {% endblock resources %}
 
-{% block navigation %}
-<li><a href="/">Home</a></li>
-<li class="active"><a href="/data">Data</a></li>
-<li><a href="/config">Config</a></li>
-<li><a href="/about">About</a></li>
-{% endblock navigation %}
+{% block navigation %}data{% endblock navigation %}
 
 {% block content %}
 <div class="container-fluid">

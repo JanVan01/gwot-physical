@@ -2,3 +2,8 @@ body {
 	font-family: sans-serif;
 	padding-top: 70px;
 }
+
+#home .home, #data .data, #config .config, #about .about {
+	font-weight: bold;
+	color: white;
+}
