@@ -14,16 +14,18 @@
 <h2>New Location</h2>
 {% endif %}
 <form>
+  {% if data.mode =='edit' %}
   <label for="id"> ID:</label>
-  <input type="text" id="id" name="id" class="form-control" value={{data.id}}>
+  <input type="text" id="id" name="id" class="form-control" value={{data.id}} readonly>
+  {% endif %}
   <label for="name"> Name:</label>
   <input type="text" id="name" name="name" class="form-control" value={{data.name}}>
   <label for="lat"> Latitude:</label>
-  <input type="text" id="lat" name="lat" class="form-control" value={{data.lat}}>
+  <input type="number" id="lat" name="lat" class="form-control" value={{data.lat}}>
   <label for="lon"> Longitude:</label>
-  <input type="text" id="lon" name="lon" class="form-control" value={{data.lon}}>
+  <input type="number" id="lon" name="lon" class="form-control" value={{data.lon}}>
   <label for="height"> Height:</label>
-  <input type="text" id="height" name="height" class="form-control" value={{data.height}}>
+  <input type="number" id="height" name="height" class="form-control" value={{data.height}}>
 </form>
 <script src="{{ url_for('static', filename='js/submit.js') }}"></script>
 {% if data.mode == 'edit' %}

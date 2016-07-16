@@ -23,7 +23,6 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            # TODO(react to invalid input)
             try:
                 if ('name' in input):
                     self.config.set_name(str(input['name']))
@@ -31,7 +30,7 @@ class ConfigController(BaseController):
                     self.config.set_interval(int(input['interval']))
                 if ('location' in input):
                     self.config.set_location(int(input['location']))
-            except TypeError:
+            except ValueError:
                 return self.get_view().bad_request('Input not in the right format')
             return self.get_view().success()
 
@@ -56,7 +55,7 @@ class ConfigController(BaseController):
                     updated = location.update()
                     if not updated:
                         return self.get_view().bad_request('The location you are trying to update does not exist try to create it instead')
-                except TypeError:
+                except ValueError:
                     return self.get_view().bad_request('input not in the right format')
             else:
                 return self.get_view().bad_request('not all necessary field set')
@@ -75,7 +74,7 @@ class ConfigController(BaseController):
                     created = location.create()
                     if not created:
                         return self.get_view().bad_request('The location could not be created')
-                except TypeError:
+                except ValueError:
                     print('type error')
                     return self.get_view().bad_request('input not in the right format')
             else:
@@ -107,7 +106,7 @@ class ConfigController(BaseController):
                     updated = sensor.update()
                     if not updated:
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
-                except TypeError:
+                except ValueError:
                     return self.get_view().bad_request('input not in the right format')
             else:
                 return self.get_view().bad_request('not all necessary field set')
@@ -129,7 +128,7 @@ class ConfigController(BaseController):
                     updated = sensor.update()
                     if not updated:
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
-                except TypeError:
+                except ValueError:
                     return self.get_view().bad_request('input not in the right format')
             else:
                 return self.get_view().bad_request('not all necessary field set')

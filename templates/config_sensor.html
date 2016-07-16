@@ -14,8 +14,10 @@
 <h2>New Sensor</h2>
 {% endif %}
 <form>
+  {% if data.mode =='edit' %}
   <label for="id"> ID:</label>
-  <input type="text" id="id" name="id" class="form-control" value={{data.id}}>
+  <input type="text" id="id" name="id" class="form-control" value={{data.id}} readonly>
+  {% endif %}
   <label for="module"> Module:</label>
   <input type="text" id="module" name="module" class="form-control" value={{data.module}}>
   <label for="class_name"> Class:</label>
@@ -26,28 +28,11 @@
   <input type="text" id="description" name="description" class="form-control" value={{data.description}}>
   <label for="unit"> Unit:</label>
   <input type="text" id="unit" name="unit" class="form-control" value={{data.unit}}>
-  <input type=submit class="btn btn-default" value="Save Changes">
 </form>
-<script>
-$('form').on('submit',function (event){
-    event.preventDefault();
-    form = $(this);
-    formdata = JSON.stringify(form.serializeArray()
-        .reduce(function(a, x) { a[x.name] = x.value; return a; }, {}));
-    $.ajax({
-        url:'/api/1.0/config/sensor',
-        cache: false,
-        type: 'PUT',
-        contentType: 'application/json',
-        dataType:'json',
-        data : formdata,
-        success: function() {
-            form.find("input[type=text], input[type=password], input[type=number]").val("");
-        },
-        error: function() {
-            form.find("input[type=text], input[type=password]").val("");
-        }
-    });
-});
-</script>
+<script src="{{ url_for('static', filename='js/submit.js') }}"></script>
+{% if data.mode == 'edit' %}
+<button  class="btn btn-default" onclick="submit_form('/api/1.0/config/sensor', 'PUT')">Save Changes</button>
+{% else %}
+<button  class="btn btn-default" onclick="submit_form('/api/1.0/config/sensor', 'POST')">Create new Sensor</button>
+{% endif %}
 {% endblock content %}

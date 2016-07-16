@@ -21,31 +21,9 @@
     {% endfor %}
   </select>
   <a class="btn btn-default" href="/config/locations">add new location</a>
-  <input type=submit class="btn btn-default" value="Save Changes">
 </form>
-<script>
-$('form').on('submit',function (event){
-    alert('blub');
-    event.preventDefault();
-    form = $(this);
-    console.log(form.serializeArray());
-    formdata = JSON.stringify(form.serializeArray()
-        .reduce(function(a, x) { a[x.name] = x.value; return a; }, {}));
-    console.log(formdata);
-    $.ajax({
-        url:'/api/1.0/config',
-        cache: false,
-        type: 'PUT',
-        contentType: 'application/json',
-        dataType:'json',
-        data : formdata,
-        success: function() {
-            form.find("input[type=text], input[type=password], input[type=number]").val("");
-        },
-        error: function() {
-            form.find("input[type=text], input[type=password]").val("");
-        }
-    });
-});
-</script>
+<script src="{{ url_for('static', filename='js/submit.js') }}"></script>
+
+<button  class="btn btn-default" onclick="submit_form('/api/1.0/config', 'PUT')">Save Changes</button>
+
 {% endblock content %}

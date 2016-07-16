@@ -12,10 +12,10 @@ function submit_form(url, method){
       url: url,
       data : formdata,
       success: function() {
-          form.find("input[type=text], input[type=password]").val("");
+          alert('success');
       },
       error: function() {
-          form.find("input[type=text], input[type=password]").val("");
+          alert('error');
       }
   });
 
