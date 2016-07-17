@@ -10,7 +10,7 @@ from controller.location import LocationController
 from controller.sensor import SensorController
 from controller.config import ConfigController
 from controller.frontend import FrontendController
-from utils.utils import OS
+from utils.utils import OS, ThreadObserver
 from views.json import JSON
 from models.config import ConfigManager
 
@@ -69,6 +69,10 @@ def data_min():
 def data_max():
 	return DataController().max()
 
+@app.route('/api/1.0/data/trend')
+def data_trend():
+	return DataController().trend()
+
 @app.route('/api/1.0/location/list')
 def location_list():
 	return LocationController().list()
@@ -112,6 +116,11 @@ def json2table(data):
 @app.template_filter('json')
 def to_json(data):
 	return JSON().build(data)
+
+@app.after_request
+def after_request(response):
+	ThreadObserver.Instance().wait();
+	return response
 
 if __name__ == '__main__':
 	app.run(debug=True, host='0.0.0.0', port=ConfigManager.Instance().get_port())

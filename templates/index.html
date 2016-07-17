@@ -9,18 +9,16 @@
 <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 {% endblock resources%}
 
-{% block navigation %}
-<li class="active"><a href="/">Home</a></li>
-<li><a href="/data">Data</a></li>
-<li><a href="/config">Config</a></li>
-<li><a href="/about">About</a></li>
-{% endblock navigation %}
+{% block navigation %}home{% endblock navigation %}
 
 {% block content %}
 <div class="container-fluid">
 	<div class="row">
 		<h1 class="col-md-12">Welcome to the smart device <em>{{ config.get_name() }}</em>.</h1>
 	</div>
+	{% if data.setup %}
+	<div class="alert alert-danger" role="alert">This device has not been configured correctly. Please change your <a href="/config">configuration</a>.</div>
+	{% else %}
 	<div class="row">
 		<div class="col-md-6">
 			<h2>Sensors</h2>
@@ -60,7 +58,7 @@
 		<div class="col-md-6">
 			<h3>Last measurement</h3>
 			<div>Measured on: <span id="last_time"></span></div>
-			
+
 		</div>
 		<div class="col-md-6">
 			<div id="last_value"></div>
@@ -71,17 +69,19 @@
 			Page generated on xx.xx.xxx xx:xx:xx
 		</div>
 	</div>
-</div>
 
-<script type="text/javascript" src="{{ url_for('static', filename='home.js') }}"></script>
-<script type="text/javascript">
-var sensordata = {{ data.sensors | json | safe }};
-var loc_height = {{ data.location.get_height() }};
-$(function() {
-	$("input:radio[name=sensors]:first").attr('checked', true).trigger('change');
-	createmap({{ data.location.get_longitude() }}, {{ data.location.get_latitude() }});
-	$('[data-toggle="tooltip"]').tooltip()
-});
-</script>
+	<script type="text/javascript" src="{{ url_for('static', filename='home.js') }}"></script>
+	<script type="text/javascript">
+	var sensordata = {{ data.sensors | json | safe }};
+	var loc_height = {{ data.location.get_height() }};
+	$(function() {
+		$("input:radio[name=sensors]:first").attr('checked', true).trigger('change');
+		createmap({{ data.location.get_longitude() }}, {{ data.location.get_latitude() }});
+		$('[data-toggle="tooltip"]').tooltip()
+	});
+	</script>
+	{% endif %}
+
+</div>
 
 {% endblock content %}

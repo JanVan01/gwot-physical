@@ -10,4 +10,6 @@ class DummySensor(BaseSensor):
 		return "dummy"
 	
 	def get_measurement(self):
-		return SensorMeasurement(random.randint(1, 1000), random.random())
+		value = random.randint(1, 1000)
+		value = self._round(value)
+		return SensorMeasurement(value, random.random())

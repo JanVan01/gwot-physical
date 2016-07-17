@@ -25,6 +25,20 @@ class OS:
 		except:
 			print("Can't create object " + module_name + "." + class_name)
 			return None
+		
+class Transform:
+	
+	def round(self, value, precision):
+		if precision < 0:
+			div = pow(10, abs(precsion))
+			temp = value / div
+			temp = round(temp)
+			value = temp * div
+		elif precision == 0:
+			value = round(value)
+		else:
+			value = round(value, precision)
+		return value
 
 
 @Singleton
@@ -75,6 +89,15 @@ class Validate:
 			return False
 		else:
 			return data.isdigit()
+	
+	def floating(self, data):
+		if data is None or len(data) == 0:
+			return False
+		try:
+			data = float(data)
+			return True
+		except ValueError:
+			return False
 		
 	def wkt(self, data):
 		if data is None or len(data) == 0:
@@ -85,3 +108,28 @@ class Validate:
 			return isinstance(wkt, geometry._Geometry)
 		except:
 			return False
+
+class SettingManager:
+	
+	def get_input_field(self, key, value):
+		return "<input type='text' name='"+key+"' value='"+self._htmlspecialchars(value)+"' />"
+	
+	def htmlspecialchars(self, value):
+		value.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")
+		return value
+	
+@Singleton
+class ThreadObserver:
+	
+	def __init__(self):
+		self.threads = []
+		
+	def add(self, obj):
+		self.threads.append(obj)
+
+	def remove(self, obj):
+		self.threads.remove(obj)
+		
+	def wait(self):
+		for thread in self.threads:
+			thread.join()

@@ -6,6 +6,7 @@ class BaseModel(object):
 
 	def __init__(self, attrs = []):
 		self.attrs = attrs
+		self.raw = {}
 		
 	def __repr__(self):
 		if len(self.attrs) == 0:
@@ -18,7 +19,7 @@ class BaseModel(object):
 		return self.__module__ + '.' + self.__class__.__name__ + ':' + pformat(data)
 		
 	def from_dict(self, dict):
-		return
+		self.raw = dict;
 	
 	def create(self):
 		return
@@ -31,6 +32,12 @@ class BaseModel(object):
 	
 	def delete(self):
 		return
+	
+	def get_extra(self, key):
+		if key in self.raw and key not in self.attrs:
+			return self.raw[key];
+		else:
+			return None
 	
 	def _settings_dump(self, settings):
 		if isinstance(settings, dict) or isinstance(settings, list):

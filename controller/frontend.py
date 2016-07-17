@@ -23,18 +23,22 @@ class FrontendController(BaseController):
 	def home(self):
 		model = self.get_model('models.sensors', 'Sensors')
 		sensor_data = model.get_all()
+		sensor_id = None
+		if sensor_data is not None and len(sensor_data) > 0:
+			sensor_id = sensor_data[0].get_id()
 
 		location = ConfigManager.Instance().get_location()
 		locationObj = Locations().get(location)
-		if locationObj is not None:
-			lon = locationObj.get_longitude()
-			lat = locationObj.get_latitude()
 
 		data = {
+			"setup": False,
 			"location": locationObj,
-			"default_sensor": sensor_data[0].get_id(),
+			"default_sensor": sensor_id,
 			"sensors": {}
 		}
+
+		if locationObj is None or sensor_id is None:
+			data["setup"] = True
 
 		for sensor in sensor_data:
 			sensor_id = sensor.get_id()
@@ -62,7 +66,7 @@ class FrontendController(BaseController):
 		else:
 			value = mlist[0].get_value()
 			if value is not None:
-				return str(round(value, 1))
+				return str(value)
 			else:
 				return self.unknownValue
 
@@ -92,7 +96,7 @@ class FrontendController(BaseController):
 		else:
 			value = mlist[0].get_value()
 			if value is not None:
-				return str(round(value, 1))
+				return str(value)
 			else:
 				return self.unknownValue
 
