@@ -578,6 +578,83 @@
                         }
                     }
                 },
+                "getDataTrend": {
+                    "category": "Data",
+                    "label": "GET /data/trend",
+                    "description": "Current trend for the data of a sensor.",
+                    "uri": "/data/trend",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+					"request_parameters": {
+						"location": {
+							"type": "string",
+							"sample": "1",
+							"description": "ID of the location. If no location is given, the current/default location is used.",
+							"optional": true
+						},
+						"sensor": {
+							"type": "string",
+							"sample": "2",
+							"description": "ID of the sensor.",
+							"optional": false
+						}
+					},
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    },{
+                        "code": 400,
+                        "description": "Not enough data given. Invalid or no sensor or location id specified?",
+                        "generic": true
+                    }],
+                    "response_body": {
+						"type": "object",
+						"properties": {
+							"since": {
+								"type": "string",
+								"format": "date-time",
+								"sample": "2016-06-28T10:50:77.125489"
+							},
+							"until": {
+								"type": "string",
+								"format": "date-time",
+								"sample": "2016-06-28T13:52:08.504709"
+							},
+							"until": {
+								"type": "string",
+								"format": "time",
+								"sample": "00:50:45.123456"
+							},
+							"change_abs": {
+								"type": "number",
+								"sample": 89.75,
+								"constraints": {
+									"unit": "cm"
+								}
+							},
+							"change_perhour": {
+								"type": "number",
+								"sample": 20.59,
+								"constraints": {
+									"unit": "cm/hour"
+								}
+							},
+							"description": {
+								"type": "string",
+								"sample": "Increasing since 2 hours 5 minutes by 37.8 cm/h"
+							}
+						}
+                    }
+                },
                 "getLocationList": {
                     "category": "Location",
                     "label": "GET /location/list",

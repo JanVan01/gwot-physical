@@ -161,8 +161,22 @@ class Measurements(BaseMultiModel):
 		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value DESC LIMIT " + str(filter['limit']))
 	
 	def calc_trend(self, sensor, location = None):
+		data = {
+			"since": None,
+			"until": None,
+			"timedelta": None,
+			"change_abs": 0,
+			"change_perhour": 0,
+			"description": "No change computable"
+		}
+
 		if location is None:
 			location = ConfigManager.Instance().get_location()
+			
+		from models.sensors import Sensors
+		sensorObj = Sensors().get(sensor)
+		if sensorObj is None:
+			return None
 		
 		last = self.get_last({
 			"sensor": [sensor],
@@ -170,13 +184,6 @@ class Measurements(BaseMultiModel):
 			"limit": 1000,
 			"quality": 0.25
 		})
-		
-		data = {
-			"since": None,
-			"until": None,
-			"change_abs": 0,
-			"change_perhour": 0
-		}
 		
 		if len(last) < 3:
 			return data # Not enough data for calculation
@@ -228,11 +235,20 @@ class Measurements(BaseMultiModel):
 
 		data['since'] = oldest.get_datetime()
 		data['until'] = newest.get_datetime()
+		data['timedelta'] = data['until'] - data['since']
+		hourdelta = data['timedelta'].total_seconds() / (60*60)
+		hours = int(hourdelta)
+		minutes = int((hourdelta - hours) * 60)
 		data['change_abs'] = abs(newest.get_value() - oldest.get_value()) * direction
-		
-		timedelta = data['until'] - data['since']
-		hourdelta = timedelta.total_seconds() / (60*60)
-		data['change_perhour'] = hourdelta / data['change_abs']
+		data['change_perhour'] = data['change_abs'] / hourdelta
+		if direction == -1:
+			data['description'] = 'Descreasing'
+		else:
+			data['description'] = 'Increasing'
+		data['description'] += ' since '
+		if hours > 0:
+			data['description'] += str(hours) + ' hours '
+		data['description'] += str(minutes) + ' minutes by ' + str(round(abs(data['change_perhour']), 2)) + ' ' + sensorObj.get_unit() + '/h'
 
 		return data
 

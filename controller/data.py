@@ -33,9 +33,22 @@ class DataController(BaseController):
 		data = self.multi_model.get_avg(self._get_filter())
 		return self.get_view().data(data)
 
-	def overview(self): # Testing pretty Dataview.
-		data = self.multi_model.get_all(self._get_filter())
-		return self.get_view(template_file = "index.html").data(data)
+	def trend(self):
+		valid = Validate()
+		data = None
+
+		location = request.args.get('location')
+		if not valid.integer(location):
+			location = None
+
+		sensor = request.args.get('sensor')
+		if valid.integer(sensor):
+			data = self.multi_model.calc_trend(sensor, location)
+
+		if data is None:
+			return self.get_view().bad_request("No valid sensor id specified.")
+		else:
+			return self.get_view().data(data)
 
 	def _get_filter(self):
 		valid = Validate()

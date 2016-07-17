@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from models.measurements import Measurement
 from models.locations import Location
 from models.sensors import Sensor
@@ -43,6 +43,9 @@ class JSON(object):
 	def __json_serial(self, obj):
 		if isinstance(obj, datetime):
 			return obj.isoformat()
+		
+		elif isinstance(obj, timedelta):
+			return str(obj)
 
 		elif isinstance(obj, Measurement):
 			sensor = obj.get_sensor_object()
