@@ -114,14 +114,13 @@ class FrontendController(BaseController):
 		return self.get_view('config_location.html').data()
 
 	def data(self):
-		data = self.multi_model.get_all()
 		model = self.get_model('models.locations', 'Locations')
 		locations = model.get_all()
 
 		model = self.get_model('models.sensors', 'Sensors')
 		sensors = model.get_all()
 
-		datacollection = {'measurements': data, 'locations': locations, 'sensors': sensors}
+		datacollection = {'locations': locations, 'sensors': sensors}
 		return self.get_view('data.html').data(datacollection)
 
 	def tutorial_sensors(self):
