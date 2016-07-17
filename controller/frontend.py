@@ -48,7 +48,8 @@ class FrontendController(BaseController):
 				'yearly': self.__getminmaxavgvalue(time.strftime('%Y-01-01T00:00:00Z'), location, sensor_id),
 				'accum': self.__getminmaxavgvalue(time.strftime('2015-01-01T00:00:00Z'), location, sensor_id),
 				'last': self.__getlastvalue(location, sensor_id)['last'],
-				'datetime': self.__getlastvalue(location, sensor_id)['datetime']
+				'datetime': self.__getlastvalue(location, sensor_id)['datetime'],
+				'trend': self.multi_model.calc_trend(location, sensor_id)['description']
 			}
 		return self.get_view('index.html').data(data)
 
@@ -64,7 +65,7 @@ class FrontendController(BaseController):
 		else:
 			value = mlist[0].get_value()
 			if value is not None:
-				return {'last': str(value), 'datetime': mlist[0].datetime.strftime("%a, %d %b %Y %H:%M:%S")}
+				return {'last': str(value), 'datetime': mlist[0].datetime.strftime("%a %b %d %Y %H:%M:%S")}
 			else:
 				return self.unknownValue
 

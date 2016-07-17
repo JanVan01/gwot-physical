@@ -21,6 +21,8 @@ function updateData (current_id) {
 			+ "<td>" + sensordata[current_id].accum.max + "</td>");
 
 	$("#last_time").text(sensordata[current_id].datetime);
+	$("#trend").text(sensordata[current_id].trend);
+	$("#curr_time").html("<i>Page generated on " + Date().slice(0,-9) + "</i>");
 	
 	if (sensordata[current_id].last === 'None') {
 		$("#last_box").hide();
