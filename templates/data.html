@@ -6,11 +6,28 @@
 <!-- Load d3.js and c3.js -->
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/c3/0.1.29/c3.js"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='datahandling.js') }}"></script>
 <!-- Rangeslider -->
 <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+<script type="text/javascript">
+// Extracting data which is needed in the following steps
+{% set comma = joiner(",") %}
+var sensorTypes = [{% for item in data.sensors %} {{ comma() }}'{{ item.type }}' {% endfor %}];
+var sensorIds = [{% for item in data.sensors %} '{{ item.id }}' {{ comma() }}{% endfor %}];
+var sensorUnits = [{% for item in data.sensors %} '{{ item.unit }}' {{ comma() }}{% endfor %}];
+var locationNames = [{% for item in data.locations %} '{{ item.name }}' {{ comma() }} {% endfor %}];
+var locationIds = [{% for item in data.locations %} '{{ item.id }}' {{ comma() }} {% endfor %}];
+
+$(function() {
+	$('[data-toggle="tooltip"]').tooltip();
+	createButtons();
+	selectButtonsByName('sensor')[0].click();
+	selectButtonsByName('location')[0].click();
+});
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='datahandling.js') }}"></script>
 
 {% endblock resources %}
 
@@ -50,52 +67,5 @@
     </div>
 </div>
 </div>
-
-<script>
-// Extracting data which is needed in the following steps
-{% set comma = joiner(",") %}
-var sensorTypes = [{% for item in data.sensors %} {{ comma() }}'{{ item.type }}' {% endfor %}];
-var sensorIds = [{% for item in data.sensors %} '{{ item.id }}' {{ comma() }}{% endfor %}];
-var sensorUnits = [{% for item in data.sensors %} '{{ item.unit }}' {{ comma() }}{% endfor %}];
-var locationNames = [{% for item in data.locations %} '{{ item.name }}' {{ comma() }} {% endfor %}];
-var locationIds = [{% for item in data.locations %} '{{ item.id }}' {{ comma() }} {% endfor %}];
-
-
-</script>
-
-<script>
-    // Create Location-Buttons
-    for (var i = 0; i < locationNames.length; i++) {
-        var button = makeRadioButton("location", locationIds[i], locationNames[i]);
-        button.addEventListener("click", function(event) {
-            var currentSensor = getSelectedButton(selectButtonsByName('sensor'))[0].value;
-            var currentLocation = event.target.value;
-            //Get Data for Sensor and location
-            drawGraph (sensorIds, sensorUnits, currentSensor, currentLocation);});
-        document.getElementById("locations").appendChild(button);
-    }
-</script>
-
-<script>
-// Create Sensor-Button
-for (var i = 0; i < sensorTypes.length; i++) {
-    var button = makeRadioButton("sensor", sensorIds[i], sensorTypes[i]);
-    button.addEventListener("click", function(event) {
-        var currentSensor =event.target.value;
-        var currentLocation = getSelectedButton(selectButtonsByName('location'))[0].value;
-        drawGraph (sensorIds, sensorUnits, currentSensor, currentLocation);
-    });
-    $(function() {
-        $('[data-toggle="tooltip"]').tooltip()
-    });
-    document.getElementById("sensors").appendChild(button);
-  }
-</script>
-<script>
-    window.onload = function() {
-        selectButtonsByName('sensor')[0].click();
-        selectButtonsByName('location')[0].click();
-    }
-</script>
 
 {% endblock content %}
