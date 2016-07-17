@@ -11,3 +11,7 @@ body {
 	font-weight: bold;
 	color: white;
 }
+
+.panel-no-pad {
+	padding-top: 0px;
+}
