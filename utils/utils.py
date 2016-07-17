@@ -25,6 +25,20 @@ class OS:
 		except:
 			print("Can't create object " + module_name + "." + class_name)
 			return None
+		
+class Transform:
+	
+	def round(self, value, precision):
+		if precision < 0:
+			div = pow(10, abs(precsion))
+			temp = value / div
+			temp = round(temp)
+			value = temp * div
+		elif precision == 0:
+			value = round(value)
+		else:
+			value = round(value, precision)
+		return value
 
 
 @Singleton

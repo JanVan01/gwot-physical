@@ -1,4 +1,4 @@
-from utils.utils import Database
+from utils.utils import Database, Transform
 from models.base import BaseModel, BaseMultiModel
 from models.config import ConfigManager
 
@@ -177,6 +177,14 @@ class Measurements(BaseMultiModel):
 		sensorObj = Sensors().get(sensor)
 		if sensorObj is None:
 			return None
+
+		t = Transform()
+		precision = 2
+		high_precision = 3
+		sensor_impl = sensorObj.get_sensor_impl()
+		if sensor_impl is not None:
+			precision = sensor_impl.low_precision()
+			high_precision = sensor_impl.high_precision()
 		
 		last = self.get_last({
 			"sensor": [sensor],
@@ -190,9 +198,9 @@ class Measurements(BaseMultiModel):
 		
 		# Calculate whether its ascending or descending
 		direction = 0
-		old = last[0].get_value()
-		older = last[1].get_value()
-		oldest = last[2].get_value()
+		old = t.round(last[0].get_value(), precision)
+		older = t.round(last[1].get_value(), precision)
+		oldest = t.round(last[2].get_value(), precision)
 		if oldest > older and older > old and old != oldest:
 			direction = -1 # descending
 		if oldest <= older and older <= old and old != oldest:
@@ -209,8 +217,8 @@ class Measurements(BaseMultiModel):
 		# Iterate over all elements until we have two outliers in a row, elements are getting older with increasing index
 		while i < len(last)-1 and outliers < 2:
 			i += 1
-			this = last[i-1].get_value()
-			prev = last[i].get_value()
+			this = t.round(last[i-1].get_value(), precision)
+			prev = t.round(last[i].get_value(), precision)
 			
 			# Check whether values are equal or are getting smaller/larger
 			if (direction == 1 and prev <= this) or (direction == -1 and prev >= this):
@@ -239,8 +247,8 @@ class Measurements(BaseMultiModel):
 		hourdelta = data['timedelta'].total_seconds() / (60*60)
 		hours = int(hourdelta)
 		minutes = int((hourdelta - hours) * 60)
-		data['change_abs'] = abs(newest.get_value() - oldest.get_value()) * direction
-		data['change_perhour'] = data['change_abs'] / hourdelta
+		data['change_abs'] = t.round(abs(newest.get_value() - oldest.get_value()) * direction, high_precision)
+		data['change_perhour'] = t.round(data['change_abs'] / hourdelta, high_precision)
 		if direction == -1:
 			data['description'] = 'Descreasing'
 		else:
@@ -248,7 +256,7 @@ class Measurements(BaseMultiModel):
 		data['description'] += ' since '
 		if hours > 0:
 			data['description'] += str(hours) + ' hours '
-		data['description'] += str(minutes) + ' minutes by ' + str(round(abs(data['change_perhour']), 2)) + ' ' + sensorObj.get_unit() + '/h'
+		data['description'] += str(minutes) + ' minutes by ' + str(abs(data['change_perhour'])) + ' ' + sensorObj.get_unit() + '/h'
 
 		return data
 
