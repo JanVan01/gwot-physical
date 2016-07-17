@@ -51,9 +51,16 @@ class OwmRainSnow(BaseSensor):
 			quality = 0.0
 
 		if value is not None:
+			value = self._round(value)
 			return SensorMeasurement(value, quality)
 		else:
 			return None
+
+	def low_precision(self):
+		return 0
+	
+	def high_precision(self):
+		return 0
 	
 	def is_due(self, minutes, interval):
 		return super().is_due(minutes, 60) # Free plan updates every 1 to 2 hours

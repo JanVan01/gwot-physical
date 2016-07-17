@@ -64,7 +64,7 @@ class FrontendController(BaseController):
 		else:
 			value = mlist[0].get_value()
 			if value is not None:
-				return str(round(value, 1))
+				return str(value)
 			else:
 				return self.unknownValue
 
@@ -94,7 +94,7 @@ class FrontendController(BaseController):
 		else:
 			value = mlist[0].get_value()
 			if value is not None:
-				return str(round(value, 1))
+				return str(value)
 			else:
 				return self.unknownValue
 			

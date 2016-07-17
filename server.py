@@ -69,6 +69,10 @@ def data_min():
 def data_max():
 	return DataController().max()
 
+@app.route('/api/1.0/data/trend')
+def data_trend():
+	return DataController().trend()
+
 @app.route('/api/1.0/location/list')
 def location_list():
 	return LocationController().list()

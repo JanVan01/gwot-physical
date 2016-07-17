@@ -142,7 +142,11 @@ class DistanceSensor(BaseSensor):
 			quality = 0.0
 		else:
 			quality = 1.0
+		value = self._round(value)
 		return SensorMeasurement(value, quality)
+	
+	def high_precision(self):
+		return 1
 
 	def is_due(self, minutes, interval):
 		if minutes is None: # No measurement so far
@@ -205,4 +209,5 @@ class GaugeSensor(DistanceSensor):
 			return None
 		
 		value = location.get_height() - data.get_value()
+		value = self._round(value)
 		return SensorMeasurement(value, data.get_quality())
