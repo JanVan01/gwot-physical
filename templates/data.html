@@ -10,7 +10,6 @@
 <!-- Rangeslider -->
 
 <!-- Include Required Prerequisites -->
-<script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 
 <!-- Include Date Range Picker -->
@@ -71,11 +70,7 @@ var sensorIds = [{% for item in data.sensors %} '{{ item.id }}' {{ comma() }}{% 
 var sensorUnits = [{% for item in data.sensors %} '{{ item.unit }}' {{ comma() }}{% endfor %}];
 var locationNames = [{% for item in data.locations %} '{{ item.name }}' {{ comma() }} {% endfor %}];
 var locationIds = [{% for item in data.locations %} '{{ item.id }}' {{ comma() }} {% endfor %}];
-//var measurements = [];                  //[{% for item in data.measurements %} '{{ item.value|round(2) }}'  {{ comma() }} {% endfor %}];
-//var measurementSensorIds = [];         //[{% for item in data.measurements %} ' {{ item.sensor}}'  {{ comma() }} {% endfor %}];
-//var locationIdOfMeasurement = [];      //[{% for item in data.measurements %} '{{ item.location}}'  {{ comma() }} {% endfor %}];
-//var time = [];                          //[{% for item in data.measurements %} '{{item.get_datetime().replace(microsecond=0)}}' {{ comma() }}  {% endfor %}];
-//var measurementQualities = [];         //[{% for item in data.measurements %} '{{ item.quality }}'  {{ comma() }} {% endfor %}];
+
 
 </script>
 
