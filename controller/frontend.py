@@ -10,7 +10,7 @@ class FrontendController(BaseController):
 	def __init__(self):
 		super().__init__()
 		self.multi_model = self.get_model('models.measurements', 'Measurements')
-		self.unknownValue = "None"
+		self.unknownValue = 'None'
 
 	def get_view(self, template_file=None):
 		view = HtmlView()
@@ -29,27 +29,27 @@ class FrontendController(BaseController):
 		locationObj = Locations().get(location)
 
 		data = {
-			"setup": False,
-			"location": locationObj,
-			"default_sensor": sensor_id,
-			"sensors": {}
+			'setup': False,
+			'location': locationObj,
+			'default_sensor': sensor_id,
+			'sensors': {}
 		}
 		
 		if locationObj is None or sensor_id is None:
-			data["setup"] = True
+			data['setup'] = True
 
 		for sensor in sensor_data:
 			sensor_id = sensor.get_id()
 			data['sensors'][sensor_id] = {
-				"sensor": sensor,
-				"hourly": self.__getminmaxavgvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor_id),
-				"daily": self.__getminmaxavgvalue(time.strftime("%Y-%m-%dT00:00:00Z"), location, sensor_id),
-				"monthly": self.__getminmaxavgvalue(time.strftime("%Y-%m-01T00:00:00Z"), location, sensor_id),
-				"yearly": self.__getminmaxavgvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor_id),
-				"accum": self.__getminmaxavgvalue(time.strftime("2015-01-01T00:00:00Z"), location, sensor_id),
-				"last": self.__getlastvalue(location, sensor_id)
+				'sensor': sensor,
+				'hourly': self.__getminmaxavgvalue(time.strftime('%Y-%m-%dT%H:00:00Z'), location, sensor_id),
+				'daily': self.__getminmaxavgvalue(time.strftime('%Y-%m-%dT00:00:00Z'), location, sensor_id),
+				'monthly': self.__getminmaxavgvalue(time.strftime('%Y-%m-01T00:00:00Z'), location, sensor_id),
+				'yearly': self.__getminmaxavgvalue(time.strftime('%Y-01-01T00:00:00Z'), location, sensor_id),
+				'accum': self.__getminmaxavgvalue(time.strftime('2015-01-01T00:00:00Z'), location, sensor_id),
+				'last': self.__getlastvalue(location, sensor_id)['last'],
+				'datetime': self.__getlastvalue(location, sensor_id)['datetime']
 			}
-
 		return self.get_view('index.html').data(data)
 
 	def __getlastvalue(self, location, sensor):
@@ -64,7 +64,7 @@ class FrontendController(BaseController):
 		else:
 			value = mlist[0].get_value()
 			if value is not None:
-				return str(value)
+				return {'last': str(value), 'datetime': mlist[0].datetime.strftime("%a, %d %b %Y %H:%M:%S")}
 			else:
 				return self.unknownValue
 

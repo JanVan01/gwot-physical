@@ -19,6 +19,8 @@ function updateData (current_id) {
 			+ "<td>" + sensordata[current_id].monthly.max + "</td>"
 			+ "<td>" + sensordata[current_id].yearly.max + "</td>"
 			+ "<td>" + sensordata[current_id].accum.max + "</td>");
+
+	$("#last_time").text(sensordata[current_id].datetime);
 	
 	if (sensordata[current_id].last === 'None') {
 		$("#last_box").hide();
