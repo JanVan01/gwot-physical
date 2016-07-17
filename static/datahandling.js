@@ -24,7 +24,11 @@ var uncertainty = function(items, qualities) {
 function makeRadioButton(name, value, text) {
 
     var label = document.createElement("label");
+
     var radio = document.createElement("input");
+    label.setAttribute("data-toggle", "tooltip");
+    label.setAttribute("data-placement", "top");
+    label.setAttribute("title", text);
     radio.type = "radio";
     radio.name = name;
     radio.value = value;
@@ -212,6 +216,10 @@ function drawGraph (sensorIds, sensorUnits, currentSensor, currentLocation) {
               measurements.push(data[i].value);
               measurementQuality.push(data[i].quality);
           }
+          if(measurements.length < 2){
+            measurements.push(0);
+            dateTime.push("1900-01-01T00:00:11.080805");
+          }
           var chart = c3.generate({
               bindto: '#demo',
               data: {
@@ -255,3 +263,9 @@ function drawGraph (sensorIds, sensorUnits, currentSensor, currentLocation) {
       }
   });
 }
+
+
+
+$(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    });

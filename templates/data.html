@@ -44,7 +44,7 @@
                 </p>
                 <br>
 
-                <button id="picker" class="btn btn-primary"><span class="date"></span> <span class="caret"></span></button>
+                <p id="slider"></p>
                 </p>
             </div>
         </div>
@@ -69,7 +69,7 @@
 var sensorTypes = [{% for item in data.sensors %} {{ comma() }}'{{ item.type }}' {% endfor %}];
 var sensorIds = [{% for item in data.sensors %} '{{ item.id }}' {{ comma() }}{% endfor %}];
 var sensorUnits = [{% for item in data.sensors %} '{{ item.unit }}' {{ comma() }}{% endfor %}];
-var locationNames = [{% for item in data.locations %} {{ comma() }}'{{ item.name }}' {% endfor %}];
+var locationNames = [{% for item in data.locations %} '{{ item.name }}' {{ comma() }} {% endfor %}];
 var locationIds = [{% for item in data.locations %} '{{ item.id }}' {{ comma() }} {% endfor %}];
 //var measurements = [];                  //[{% for item in data.measurements %} '{{ item.value|round(2) }}'  {{ comma() }} {% endfor %}];
 //var measurementSensorIds = [];         //[{% for item in data.measurements %} ' {{ item.sensor}}'  {{ comma() }} {% endfor %}];
@@ -101,6 +101,9 @@ for (var i = 0; i < sensorTypes.length; i++) {
         var currentLocation = getSelectedButton(selectButtonsByName('location'))[0].value;
         drawGraph (sensorIds, sensorUnits, currentSensor, currentLocation);
     });
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
     document.getElementById("sensors").appendChild(button);
   }
 </script>
@@ -111,54 +114,6 @@ for (var i = 0; i < sensorTypes.length; i++) {
     }
 </script>
 
-<script type="text/javascript">
-// Apply the date range picker with default settings to the button
-$('#picker').daterangepicker();
 
-
-var start = moment().subtract(29, 'days');
-var end = moment();
-// Apply the date range picker with custom settings to the button
-$('#picker').daterangepicker({
-    format: 'MM/DD/YYYY',
-    startDate: moment().subtract(29, 'days'),
-    endDate: moment(),
-    minDate: '01/01/2012',
-    maxDate: '12/31/2015',
-    dateLimit: { days: 60 },
-    showDropdowns: true,
-    showWeekNumbers: true,
-    timePicker: false,
-    timePickerIncrement: 1,
-    timePicker12Hour: true,
-    ranges: {
-       'Today': [moment(), moment()],
-       'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-       'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-       'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-       'This Month': [moment().startOf('month'), moment().endOf('month')],
-       'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-    },
-    opens: 'left',
-    drops: 'down',
-    buttonClasses: ['btn', 'btn-sm'],
-    applyClass: 'btn-primary',
-    cancelClass: 'btn-default',
-    separator: ' to ',
-    locale: {
-        applyLabel: 'Submit',
-        cancelLabel: 'Cancel',
-        fromLabel: 'From',
-        toLabel: 'To',
-        customRangeLabel: 'Custom',
-        daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
-        monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        firstDay: 1
-    }
-}, function(start, end, label) {
-    $('#picker span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-});
-
-
-</script>
+{{data}}
 {% endblock content %}
