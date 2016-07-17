@@ -4,12 +4,21 @@ body {
 }
 
 #home .home, #data .data, #config .config, #about .about, #subscribe .subscribe,
-#custom_sensors .custom_sensors, #custom_notifications .custom_notifications,
-#config_settings .config_settings, #config_password .config_password,
-#config_sensors .config_sensors, #config_locations .config_locations,
-#config_notifications .config_notifications, #api .api {
+#api .api, #api .developers, .navbar-brand, .navbar-inverse .navbar-brand,
+#tutorial_sensors .developers, #tutorial_notifications .developers,
+#config_settings .config, #config_password .config,
+#config_sensors .config, #config_locations .config,
+#config_notifications .config {
 	font-weight: bold;
 	color: white;
+}
+
+#tutorial_sensors .tutorial_sensors, #tutorial_notifications .tutorial_notifications,
+#config_settings .config_settings, #config_password .config_password,
+#config_sensors .config_sensors, #config_locations .config_locations,
+#config_notifications .config_notifications {
+	font-weight: bold;
+	color: black;
 }
 
 .panel-no-pad {

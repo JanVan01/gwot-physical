@@ -9,7 +9,7 @@ class BaseView(object):
 	def set_template(self, file):
 		self.template = file
 
-	def data(self, data):
+	def data(self, data = {}):
 		return self._send_data(200, data)
 
 	def success(self):
