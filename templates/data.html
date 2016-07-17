@@ -11,22 +11,6 @@
 <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
 
-<script type="text/javascript">
-// Extracting data which is needed in the following steps
-{% set comma = joiner(",") %}
-var sensorTypes = [{% for item in data.sensors %} {{ comma() }}'{{ item.type }}' {% endfor %}];
-var sensorIds = [{% for item in data.sensors %} '{{ item.id }}' {{ comma() }}{% endfor %}];
-var sensorUnits = [{% for item in data.sensors %} '{{ item.unit }}' {{ comma() }}{% endfor %}];
-var locationNames = [{% for item in data.locations %} '{{ item.name }}' {{ comma() }} {% endfor %}];
-var locationIds = [{% for item in data.locations %} '{{ item.id }}' {{ comma() }} {% endfor %}];
-
-$(function() {
-	$('[data-toggle="tooltip"]').tooltip();
-	createButtons();
-	selectButtonsByName('sensor')[0].click();
-	selectButtonsByName('location')[0].click();
-});
-</script>
 <script type="text/javascript" src="{{ url_for('static', filename='datahandling.js') }}"></script>
 
 {% endblock resources %}
@@ -45,25 +29,26 @@ $(function() {
             <div class="chart-title">
                 <br>
                 <p id="demo"></p>
-                </p>
-                <br>
-
+                <br />
                 <p id="slider"></p>
-                </p>
             </div>
         </div>
     </div>
 
     <div class="col-sm-2 sidenav">
         <h4>Locations</h4>
-        <div class="radio">
-            <div id="locations"></div>
-        </div>
-        <br>
+        <div id="locations" class="radio">
+			{% for value in data.locations %}
+			<input type="radio" name="location" value="{{ value.get_id() }}" onchange="locationChanged(this.value);" /> {{ value.get_name() }}<br />
+			{% endfor %}
+		</div>
+        <br />
         <h4>Sensors</h4>
-        <div class="radio">
-            <div id="sensors"></div>
-        </div>
+		<div id="sensors"  class="radio">
+			{% for value in data.sensors %}
+			<input type="radio" name="sensor" value="{{ value.get_id() }}" onchange="sensorChanged(this.value);" /> <span data-toggle="tooltip" data-placement="top" title="{{ value.get_description() }}">{{ value.get_type() }}</span><br />
+			{% endfor %}
+		</div>
     </div>
 </div>
 </div>
