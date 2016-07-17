@@ -3,25 +3,24 @@ body {
 	padding-top: 70px;
 }
 
-.overview {
-	padding-top: 20px;
+#home .home, #data .data, #config .config, #about .about, #subscribe .subscribe,
+#api .api, #api .developers, .navbar-brand, .navbar-inverse .navbar-brand,
+#tutorial_sensors .developers, #tutorial_notifications .developers,
+#config_settings .config, #config_password .config,
+#config_sensors .config, #config_locations .config,
+#config_notifications .config {
+	font-weight: bold;
+	color: white;
 }
 
-.titel {
-	padding-bottom: 20px;
+#tutorial_sensors .tutorial_sensors, #tutorial_notifications .tutorial_notifications,
+#config_settings .config_settings, #config_password .config_password,
+#config_sensors .config_sensors, #config_locations .config_locations,
+#config_notifications .config_notifications {
+	font-weight: bold;
+	color: black;
 }
 
-#table-div {
-	padding: 30px;
-	font-size: 1.3em;
-}
-
-#valueMap {
-	margin: 30px;
-	font-size: 2em
-}
-
-#value-content {
-	margin: 30px;
-	text-align: left;
+.panel-no-pad {
+	padding-top: 0px;
 }

@@ -12,10 +12,15 @@ class Location(BaseModel):
 		self.height = None
 
 	def from_dict(self, dict):
-		self.set_id(dict['id'])
-		self.set_name(dict['name'])
-		self.set_position(dict['lon'], dict['lat'])
-		self.set_height(dict['height'])
+		super().from_dict(dict)
+		if 'id' in dict:
+			self.set_id(dict['id'])
+		if 'name' in dict:
+			self.set_name(dict['name'])
+		if 'lon' in dict and 'lat' in dict:
+			self.set_position(dict['lon'], dict['lat'])
+		if 'height' in dict:
+			self.set_height(dict['height'])
 
 	def create(self):
 		if self.lon is None or self.lat is None or self.height is None:

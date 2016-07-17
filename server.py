@@ -10,8 +10,9 @@ from controller.location import LocationController
 from controller.sensor import SensorController
 from controller.config import ConfigController
 from controller.frontend import FrontendController
-from utils.utils import OS
+from utils.utils import OS, ThreadObserver
 from views.json import JSON
+from models.config import ConfigManager
 
 
 OS().cwd(__file__)
@@ -27,25 +28,45 @@ def frontend_data():
 	return FrontendController().data()
 
 @app.route('/config')
+@auth.login_required
 def frontend_config():
 	return FrontendController().config()
 
 @app.route('/config/password')
+@auth.login_required
 def frontend_config_password():
 	return FrontendController().config_password()
 
 @app.route('/config/sensors')
+@auth.login_required
 def frontend_config_sensors():
 	return FrontendController().config_sensors()
 
-
 @app.route('/config/locations')
+@auth.login_required
 def frontend_config_locations():
 	return FrontendController().config_locations()
+
+@app.route('/config/notifications')
+@auth.login_required
+def frontend_config_notifications():
+	return FrontendController().config_notifications()
+
+@app.route('/tutorial/notifications')
+def frontend_tutorial_notifications():
+	return FrontendController().tutorial_notifications()
+
+@app.route('/tutorial/sensors')
+def frontend_tutorial_sensors():
+	return FrontendController().tutorial_sensors()
 
 @app.route('/about')
 def frontend_about():
 	return FrontendController().about()
+
+@app.route('/subscriptions')
+def frontend_subscriptions():
+	return FrontendController().subscriptions()
 
 @app.route('/api/1.0/data/trigger')
 @auth.login_required
@@ -67,6 +88,10 @@ def data_min():
 @app.route('/api/1.0/data/max')
 def data_max():
 	return DataController().max()
+
+@app.route('/api/1.0/data/trend')
+def data_trend():
+	return DataController().trend()
 
 @app.route('/api/1.0/location/list')
 def location_list():
@@ -90,12 +115,12 @@ def config_config():
 def config_location():
 	return ConfigController().location()
 
-@app.route('/api/1.0/config/sensor', methods=['GET', 'PUT', 'POST'])
+@app.route('/api/1.0/config/sensor', methods=['PUT', 'POST'])
 @auth.login_required
 def config_sensor():
 	return ConfigController().sensor()
 
-@app.route('/api/1.0/config/password', methods=['GET', 'PUT', 'POST'])#GET for edit password html
+@app.route('/api/1.0/config/password', methods=['PUT'])
 @auth.login_required
 def config_password():
 	return ConfigController().password()
@@ -108,6 +133,14 @@ def get_password(username):
 def json2table(data):
 	return JSON().to_table(data)
 
+@app.template_filter('json')
+def to_json(data):
+	return JSON().build(data)
+
+@app.after_request
+def after_request(response):
+	ThreadObserver.Instance().wait();
+	return response
 
 if __name__ == '__main__':
-	app.run(debug=True, host='0.0.0.0')
+	app.run(debug=True, host='0.0.0.0', port=ConfigManager.Instance().get_port())

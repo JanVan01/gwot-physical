@@ -7,6 +7,7 @@ assert sys.version_info >= (3,0)
 from utils.utils import OS
 from models.sensors import Sensors
 from views.json import JSON
+from utils.utils import ThreadObserver
 
 if __name__ == '__main__':
 	OS().cwd(__file__)
@@ -17,3 +18,5 @@ if __name__ == '__main__':
 	# Send json to cmd line for debugging
 	json = JSON()
 	print(json.build(data))
+	
+	ThreadObserver.Instance().wait();

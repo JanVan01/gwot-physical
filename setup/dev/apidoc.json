@@ -270,6 +270,12 @@
 							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
 							"optional": true
 						},
+						"quality": {
+                            "type": "string",
+                            "sample": "0.25",
+							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+							"optional": true
+						},
 						"limit": {
 							"type": "integer",
 							"sample": "50",
@@ -334,6 +340,12 @@
                             "type": "string",
                             "sample": "POINT(7.700233161449432 51.973379492826446)",
 							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+							"optional": true
+						},
+						"quality": {
+                            "type": "string",
+                            "sample": "0.25",
+							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
 							"optional": true
 						},
 						"limit": {
@@ -402,10 +414,82 @@
 							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
 							"optional": true
 						},
+						"quality": {
+                            "type": "string",
+                            "sample": "0.25",
+							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+							"optional": true
+						},
 						"limit": {
 							"type": "integer",
 							"sample": "50",
 							"description": "Maximum number of elements that are returned. Default: 100",
+							"optional": true
+						}
+					},
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }],
+                    "response_body": {
+                        "type": "array",
+                        "items": {
+							"type": "reference",
+							"reference": "measurement"
+                        }
+                    }
+                },
+                "getDataAvg": {
+                    "category": "Data",
+                    "label": "GET /data/avg",
+                    "description": "Average value of the sensor readings",
+                    "uri": "/data/avg",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+					"request_parameters": {
+						"start": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+							"optional": true
+						},
+						"end": {
+							"type": "string",
+							"sample": "2016-06-28T13:52:08.504709",
+							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+							"optional": true
+						},
+						"location": {
+							"type": "string",
+							"sample": "1,4",
+							"description": "Comma separated list of IDs from the location relation.",
+							"optional": true
+						},
+						"sensor": {
+							"type": "string",
+							"sample": "1,2,4",
+							"description": "Comma separated list of IDs from the sensor relation.",
+							"optional": true
+						},
+						"quality": {
+                            "type": "string",
+                            "sample": "0.25",
+							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+							"optional": true
+						},
+						"geometry": {
+                            "type": "string",
+                            "sample": "POINT(7.700233161449432 51.973379492826446)",
+							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
 							"optional": true
 						}
 					},
@@ -468,6 +552,12 @@
 							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
 							"optional": true
 						},
+						"quality": {
+                            "type": "string",
+                            "sample": "0.25",
+							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+							"optional": true
+						},
 						"limit": {
 							"type": "integer",
 							"sample": "50",
@@ -486,6 +576,83 @@
 							"type": "reference",
 							"reference": "measurement"
                         }
+                    }
+                },
+                "getDataTrend": {
+                    "category": "Data",
+                    "label": "GET /data/trend",
+                    "description": "Current trend for the data of a sensor.",
+                    "uri": "/data/trend",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+					"request_parameters": {
+						"location": {
+							"type": "string",
+							"sample": "1",
+							"description": "ID of the location. If no location is given, the current/default location is used.",
+							"optional": true
+						},
+						"sensor": {
+							"type": "string",
+							"sample": "2",
+							"description": "ID of the sensor.",
+							"optional": false
+						}
+					},
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    },{
+                        "code": 400,
+                        "description": "Not enough data given. Invalid or no sensor or location id specified?",
+                        "generic": true
+                    }],
+                    "response_body": {
+						"type": "object",
+						"properties": {
+							"since": {
+								"type": "string",
+								"format": "date-time",
+								"sample": "2016-06-28T10:50:77.125489"
+							},
+							"until": {
+								"type": "string",
+								"format": "date-time",
+								"sample": "2016-06-28T13:52:08.504709"
+							},
+							"until": {
+								"type": "string",
+								"format": "time",
+								"sample": "00:50:45.123456"
+							},
+							"change_abs": {
+								"type": "number",
+								"sample": 89.75,
+								"constraints": {
+									"unit": "cm"
+								}
+							},
+							"change_perhour": {
+								"type": "number",
+								"sample": 20.59,
+								"constraints": {
+									"unit": "cm/hour"
+								}
+							},
+							"description": {
+								"type": "string",
+								"sample": "Increasing since 2 hours 5 minutes by 37.8 cm/h"
+							}
+						}
                     }
                 },
                 "getLocationList": {
