@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='layout.css') }}">
     {% block resources %}
-
     {% endblock resources %}
   </head>
   <body id="{% block navigation %}home{% endblock navigation %}">
@@ -30,28 +29,28 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-              <li><a href="./" class="home">Home</a></li>
-			  <li><a href="./about" class="about">About</a></li>
-              <li><a href="./data" class="data">Data</a></li>
-              <li><a href="./subscribe" class="subscribe">Subscriptions</a></li>
+              <li><a href="/" class="home">Home</a></li>
+			  <li><a href="/about" class="about">About</a></li>
+              <li><a href="/data" class="data">Data</a></li>
+              <li><a href="/subscriptions" class="subscribe">Subscriptions</a></li>
               <li class="dropdown">
-                <a href="#" class="developers custom_sensors custom_notifications dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Developers <span class="caret"></span></a>
+                <a href="#" class="developers dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Developers <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a class="api" href="./static/apidoc/index.html" target="_blank">REST API Documentation</a></li>
-                  <li><a class="custom_sensors" href="./tutorial/sensors">Custom Sensors</a></li>
-                  <li><a class="custom_notifications" href="./tutorial/notifications">Custom Notification Services</a></li>
+                  <li><a class="api" href="/static/apidoc/index.html" target="_blank">REST API Documentation</a></li>
+                  <li><a class="tutorial_sensors" href="/tutorial/sensors">Custom Sensors</a></li>
+                  <li><a class="tutorial_notifications" href="/tutorial/notifications">Custom Notification Services</a></li>
                 </ul>
 			  </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">
-                <a href="#" class="config config_settings config_password config_sensors config_locations config_notifications dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Administration <span class="caret"></span></a>
+                <a href="#" class="config dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Administration <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a class="config_settings" href="./config">Settings</a></li>
-                  <li><a class="config_password" href="./config/password">Password</a></li>
-                  <li><a class="config_sensors" href="./config/sensors">Sensors</a></li>
-                  <li><a class="config_locations" href="./config/locations">Locations</a></li>
-                  <li><a class="config_notifications" href="./config/notifications">Notifications &amp; Subscriptions</a></li>
+                  <li><a class="config_settings" href="/config">Settings</a></li>
+                  <li><a class="config_password" href="/config/password">Password</a></li>
+                  <li><a class="config_sensors" href="/config/sensors">Sensors</a></li>
+                  <li><a class="config_locations" href="/config/locations">Locations</a></li>
+                  <li><a class="config_notifications" href="/config/notifications">Notifications &amp; Subscriptions</a></li>
                 </ul>
 			  </li>
           </ul>

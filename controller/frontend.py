@@ -2,7 +2,6 @@ from controller.base import BaseController
 from views.html import HtmlView
 from models.config import ConfigManager
 from models.locations import Locations
-from models.sensors import Sensors
 import time
 
 class FrontendController(BaseController):
@@ -100,20 +99,19 @@ class FrontendController(BaseController):
 			
 
 	def config(self):
-		data = {}
-		return self.get_view('config.html').data(data)
+		return self.get_view('config.html').data()
 
 	def config_password(self):
-		data = {}
-		return self.get_view('config_password.html').data(data)
+		return self.get_view('config_password.html').data()
 
 	def config_sensors(self):
-		data = {}
-		return self.get_view('config_sensors.html').data(data)
+		return self.get_view('config_sensor.html').data()
+
+	def config_notifications(self):
+		return self.get_view('config_notifications.html').data()
 
 	def config_locations(self):
-		data = {}
-		return self.get_view('config_locations.html').data(data)
+		return self.get_view('config_location.html').data()
 
 	def data(self):
 		data = self.multi_model.get_all()
@@ -126,6 +124,14 @@ class FrontendController(BaseController):
 		datacollection = {'measurements': data, 'locations': locations, 'sensors': sensors}
 		return self.get_view('data.html').data(datacollection)
 
+	def tutorial_sensors(self):
+		return self.get_view('tutorial_sensors.html').data()
+
+	def tutorial_notifications(self):
+		return self.get_view('tutorial_notifications.html').data()
+	
+	def subscriptions(self):
+		return self.get_view('subscriptions.html').data()
+
 	def about(self):
-		data = {}
-		return self.get_view('about.html').data(data)
+		return self.get_view('about.html').data()
