@@ -197,3 +197,61 @@ function enableOnlySensorsWithMeasurements(selectedLocationId, locationIdOfMeasu
   }
   return newCurrentSensor;
 }
+
+
+
+function drawGraph (sensorIds, sensorUnits, currentSensor, currentLocation) {
+  $.ajax({
+      url: 'api/1.0/data/list?sensor=' + currentSensor + '&location=' + currentLocation,
+      success: function(data, status, ajax) {
+          var dateTime = ['time'];
+          var measurements = ['measurements'];
+          var measurementQuality = [];
+          for (i = 0; i < data.length; i++) {
+              dateTime.push(data[i].datetime);
+              measurements.push(data[i].value);
+              measurementQuality.push(data[i].quality);
+          }
+          var chart = c3.generate({
+              bindto: '#demo',
+              data: {
+                  x: 'time',
+                  columns: [
+                      measurements,
+                      dateTime
+                  ]
+              },
+              zoom: {
+                  enabled: true
+              },
+              axis: {
+                  //extent: [dateTime[dateTime.length - 2], dateTime[dateTime.length - 1]],
+                  x: {
+                      type: 'timeseries',
+                      tick: {
+                          format: '%Y-%m-%d %H-%M',
+                          count: 1 + Math.ceil(dateTime.length / (dateTime.length / 4))
+                      }
+                  },
+                  y: {
+                      label: String(getMeasurementUnits(sensorUnits, sensorIds, currentSensor))
+                  },
+              },
+              subchart: {
+                  show: true,
+                  size: {
+                      height: 75
+                  },
+              },
+              regions: uncertainty(dateTime, measurementQuality)
+          });
+      },
+      error: function(ajax, status, error) {
+          alert("Sorry, can't load data.");
+      },
+      dataType: "json",
+      headers: {
+          accept: 'application/json'
+      }
+  });
+}

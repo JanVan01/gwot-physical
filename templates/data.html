@@ -3,11 +3,21 @@
 {% block resources %}
 <!-- Load c3.css -->
 <link href="//cdnjs.cloudflare.com/ajax/libs/c3/0.1.29/c3.css" rel="stylesheet" type="text/css">
-
 <!-- Load d3.js and c3.js -->
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/c3/0.1.29/c3.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='datahandling.js') }}"></script>
+<!-- Rangeslider -->
+
+<!-- Include Required Prerequisites -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+<!-- Include Date Range Picker -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+
 <style>
       body {
           padding-top: 50px;
@@ -32,6 +42,10 @@
                 <br>
                 <p id="demo"></p>
                 </p>
+                <br>
+
+                <button id="picker" class="btn btn-primary"><span class="date"></span> <span class="caret"></span></button>
+                </p>
             </div>
         </div>
     </div>
@@ -52,134 +66,99 @@
 <script>
 // Extracting data which is needed in the following steps
 {% set comma = joiner(",") %}
-var sensorNames = [{% for item in data.sensors %} {{ comma() }}'{{ item.class_name }}' {% endfor %}];
+var sensorTypes = [{% for item in data.sensors %} {{ comma() }}'{{ item.type }}' {% endfor %}];
 var sensorIds = [{% for item in data.sensors %} '{{ item.id }}' {{ comma() }}{% endfor %}];
 var sensorUnits = [{% for item in data.sensors %} '{{ item.unit }}' {{ comma() }}{% endfor %}];
-var measurements = [{% for item in data.measurements %} '{{ item.value|round(2) }}'  {{ comma() }} {% endfor %}];
-var measurementSensorIds = [{% for item in data.measurements %} ' {{ item.sensor}}'  {{ comma() }} {% endfor %}];
-var locationIdOfMeasurement = [{% for item in data.measurements %} '{{ item.location}}'  {{ comma() }} {% endfor %}];
-var time = [{% for item in data.measurements %} '{{item.get_datetime().replace(microsecond=0)}}' {{ comma() }}  {% endfor %}];
-var measurementQualities = [{% for item in data.measurements %} '{{ item.quality }}'  {{ comma() }} {% endfor %}];
+var locationNames = [{% for item in data.locations %} {{ comma() }}'{{ item.name }}' {% endfor %}];
+var locationIds = [{% for item in data.locations %} '{{ item.id }}' {{ comma() }} {% endfor %}];
+//var measurements = [];                  //[{% for item in data.measurements %} '{{ item.value|round(2) }}'  {{ comma() }} {% endfor %}];
+//var measurementSensorIds = [];         //[{% for item in data.measurements %} ' {{ item.sensor}}'  {{ comma() }} {% endfor %}];
+//var locationIdOfMeasurement = [];      //[{% for item in data.measurements %} '{{ item.location}}'  {{ comma() }} {% endfor %}];
+//var time = [];                          //[{% for item in data.measurements %} '{{item.get_datetime().replace(microsecond=0)}}' {{ comma() }}  {% endfor %}];
+//var measurementQualities = [];         //[{% for item in data.measurements %} '{{ item.quality }}'  {{ comma() }} {% endfor %}];
+
 </script>
 
 <script>
-// Location-Buttons
-    {% set comma = joiner(",") %}
-    var names = [{% for item in data.locations %} {{ comma() }}'{{ item.name }}' {% endfor %}];
-    var ids = [{% for item in data.locations %} '{{ item.id }}' {{ comma() }} {% endfor %}];
-    for (var i = 0; i < names.length; i++) {
-        var locations = document.getElementById("locations");
-        var button = makeRadioButton("location", ids[i], names[i]);
+    // Create Location-Buttons
+    for (var i = 0; i < locationNames.length; i++) {
+        var button = makeRadioButton("location", locationIds[i], locationNames[i]);
         button.addEventListener("click", function(event) {
-            //document.getElementById("demo").innerHTML= getSelectedButton(selectButtonsByName("location"));
-
-            // which sensor is active?
             var currentSensor = getSelectedButton(selectButtonsByName('sensor'))[0].value;
-            var selectedLocationId = event.target.value;
-
-            currentSensor = enableOnlySensorsWithMeasurements(selectedLocationId, locationIdOfMeasurement, measurementSensorIds, "sensor");
-            var Measurements = getMeasurements(time, measurementQualities, selectedLocationId, locationIdOfMeasurement, measurementSensorIds, currentSensor, measurements);
-
-            if (Measurements.values.length == 1) {
-                document.getElementById("demo").innerHTML = "No data for selected location."
-                disableButtons(selectButtonsByName('sensor'));
-            } else {
-                var chart = c3.generate({
-                    bindto: '#demo',
-                    data: {
-                        x: 'time',
-                        columns: [
-                            Measurements.time,
-                            Measurements.values
-                        ]
-                    },
-                    zoom: {
-                        enabled: true
-                    },
-                    axis: {
-                        extent: [time[time.length - 2], time[time.length - 1]],
-                        x: {
-                            type: 'timeseries',
-                            tick: {
-                                format: '%Y-%m-%d %H-%M',
-                                count: 1 + Math.ceil(time.length / 15)
-                            }
-                        },
-                        y: {
-                            label: String(getMeasurementUnits(sensorUnits, sensorIds, currentSensor))
-                        },
-                    },
-                    subchart: {
-                        show: true,
-                        size: {
-                            height: 75
-                        },
-                    },
-                    regions: uncertainty(Measurements.time, Measurements.quality)
-                });
-            }
-        });
-
-
-        locations.appendChild(button);
+            var currentLocation = event.target.value;
+            //Get Data for Sensor and location
+            drawGraph (sensorIds, sensorUnits, currentSensor, currentLocation);});
+        document.getElementById("locations").appendChild(button);
     }
 </script>
 
 <script>
-// Sensor-Buttons
-    for (var i = 0; i < sensorNames.length; i++) {
-        var sensors = document.getElementById("sensors");
-        var button = makeRadioButton("sensor", sensorIds[i], sensorNames[i]);
-        button.addEventListener("click", function(event) {
-            // which location is active?
-            var selectedLocationId = getSelectedButton(selectButtonsByName('location'))[0].value;
-            var currentSensor = event.target.value;
-            var Measurements = getMeasurements(time, measurementQualities, selectedLocationId, locationIdOfMeasurement, measurementSensorIds, currentSensor, measurements);
-            //document.getElementById("demo").innerHTML =  Measurements.time;
-
-            var chart = c3.generate({
-                bindto: '#demo',
-                data: {
-                    x: 'time',
-                    columns: [
-                        Measurements.time,
-                        Measurements.values
-                    ]
-                },
-                zoom: {
-                    enabled: true
-                },
-                axis: {
-                    extent: [time[time.length - 2], time[time.length - 1]],
-                    x: {
-                        type: 'timeseries',
-                        tick: {
-                            format: '%Y-%m-%d %H-%M',
-                            count: 1 + Math.ceil(time.length / 15)
-                        }
-                    },
-                    y: {
-                        label: String(getMeasurementUnits(sensorUnits, sensorIds, currentSensor))
-                    },
-                },
-                subchart: {
-                    show: true,
-                    size: {
-                        height: 90
-                    },
-                },
-                regions: uncertainty(Measurements.time, Measurements.quality)
-            });
-
-        });
-        sensors.appendChild(button);
-    }
+// Create Sensor-Button
+for (var i = 0; i < sensorTypes.length; i++) {
+    var button = makeRadioButton("sensor", sensorIds[i], sensorTypes[i]);
+    button.addEventListener("click", function(event) {
+        var currentSensor =event.target.value;
+        var currentLocation = getSelectedButton(selectButtonsByName('location'))[0].value;
+        drawGraph (sensorIds, sensorUnits, currentSensor, currentLocation);
+    });
+    document.getElementById("sensors").appendChild(button);
+  }
 </script>
-
 <script>
     window.onload = function() {
-        setFirstLocationAndSensorWithValues(locationIdOfMeasurement, measurementSensorIds);
+        selectButtonsByName('sensor')[0].click();
+        selectButtonsByName('location')[0].click();
     }
 </script>
 
+<script type="text/javascript">
+// Apply the date range picker with default settings to the button
+$('#picker').daterangepicker();
+
+
+var start = moment().subtract(29, 'days');
+var end = moment();
+// Apply the date range picker with custom settings to the button
+$('#picker').daterangepicker({
+    format: 'MM/DD/YYYY',
+    startDate: moment().subtract(29, 'days'),
+    endDate: moment(),
+    minDate: '01/01/2012',
+    maxDate: '12/31/2015',
+    dateLimit: { days: 60 },
+    showDropdowns: true,
+    showWeekNumbers: true,
+    timePicker: false,
+    timePickerIncrement: 1,
+    timePicker12Hour: true,
+    ranges: {
+       'Today': [moment(), moment()],
+       'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+       'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+       'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+       'This Month': [moment().startOf('month'), moment().endOf('month')],
+       'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    },
+    opens: 'left',
+    drops: 'down',
+    buttonClasses: ['btn', 'btn-sm'],
+    applyClass: 'btn-primary',
+    cancelClass: 'btn-default',
+    separator: ' to ',
+    locale: {
+        applyLabel: 'Submit',
+        cancelLabel: 'Cancel',
+        fromLabel: 'From',
+        toLabel: 'To',
+        customRangeLabel: 'Custom',
+        daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+        monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        firstDay: 1
+    }
+}, function(start, end, label) {
+    $('#picker span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+});
+
+
+</script>
 {% endblock content %}
