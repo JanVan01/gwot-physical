@@ -16,7 +16,7 @@
 
     {% endblock resources %}
   </head>
-  <body>
+  <body id="{% block navigation %}home{% endblock navigation %}">
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -29,20 +29,37 @@
           <a class="navbar-brand" href="/">{{ config.get_name() }}</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-          <ul id="{% block navigation %}home{% endblock navigation %}" class="nav navbar-nav">
-              <li><a href="/" class="home">Home</a></li>
-              <li><a href="/data"class="data">Data</a></li>
-              <li><a href="/config" class="config">Config</a></li>
-              <li><a href="/about" class="about">About</a></li>
+          <ul class="nav navbar-nav">
+              <li><a href="./" class="home">Home</a></li>
+			  <li><a href="./about" class="about">About</a></li>
+              <li><a href="./data" class="data">Data</a></li>
+              <li><a href="./subscribe" class="subscribe">Subscriptions</a></li>
+              <li class="dropdown">
+                <a href="#" class="developers custom_sensors custom_notifications dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Developers <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a class="api" href="./static/apidoc/index.html" target="_blank">REST API Documentation</a></li>
+                  <li><a class="custom_sensors" href="./tutorial/sensors">Custom Sensors</a></li>
+                  <li><a class="custom_notifications" href="./tutorial/notifications">Custom Notification Services</a></li>
+                </ul>
+			  </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="config config_settings config_password config_sensors config_locations config_notifications dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Administration <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a class="config_settings" href="./config">Settings</a></li>
+                  <li><a class="config_password" href="./config/password">Password</a></li>
+                  <li><a class="config_sensors" href="./config/sensors">Sensors</a></li>
+                  <li><a class="config_locations" href="./config/locations">Locations</a></li>
+                  <li><a class="config_notifications" href="./config/notifications">Notifications &amp; Subscriptions</a></li>
+                </ul>
+			  </li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
     <div class="container">
       {% block content %}
-
-      Fill me with content!
-
       {% endblock content %}
     </div><!-- /.container -->
 

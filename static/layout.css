@@ -3,7 +3,11 @@ body {
 	padding-top: 70px;
 }
 
-#home .home, #data .data, #config .config, #about .about {
+#home .home, #data .data, #config .config, #about .about, #subscribe .subscribe,
+#custom_sensors .custom_sensors, #custom_notifications .custom_notifications,
+#config_settings .config_settings, #config_password .config_password,
+#config_sensors .config_sensors, #config_locations .config_locations,
+#config_notifications .config_notifications, #api .api {
 	font-weight: bold;
 	color: white;
 }
