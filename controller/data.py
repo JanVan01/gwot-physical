@@ -11,7 +11,11 @@ class DataController(BaseController):
 		self.multi_model = Measurements()
 
 	def trigger(self):
-		data = Sensors().trigger_all()
+		sensor = request.args.get('sensor')
+		if Validate().integer(sensor):
+			data = Sensors().trigger_one(sensor)
+		else:
+			data = Sensors().trigger_all()
 		return self.get_view().data(data)
 
 	def last(self):

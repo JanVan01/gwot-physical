@@ -183,9 +183,15 @@ class Sensors(BaseMultiModel):
 		sensors = self.get_pending()
 		return self.__trigger(sensors, True)
 		
-	
 	def trigger_all(self):
 		return self.__trigger(self.get_all())
+	
+	def trigger_one(self, id):
+		sensors = []
+		sensor = self.get(id)
+		if sensor is not None:
+			sensors.append(sensor)
+		return self.__trigger(sensors)
 	
 	def __trigger(self, sensors, pending = False):
 		data = []

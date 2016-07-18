@@ -50,7 +50,7 @@
 						<span class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></span>
 						{% endif %}
 					</td>
-					<td>
+					<td class="text-right">
 						<a href="javascript:show_marker_on_location_map({{ loop.index0 }});" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-map-marker"></span> Show on Map</a>
 						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 						<a href="javascript:remove_location({{ location.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>

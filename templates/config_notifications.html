@@ -28,7 +28,7 @@
 						<span class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></span>
 						{% endif %}
 					</td>
-					<td>
+					<td class="text-right">
 						<a href="/config/notifications/{{ service.get_id() }}/subscriptions" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-send"></span> Subscriptions</a>
 						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 						<a href="javascript:remove_notifier({{ service.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>

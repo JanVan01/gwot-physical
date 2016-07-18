@@ -26,7 +26,7 @@
 					{% for key in data.notifier_impl.get_subscriber_settings() %}
 					<td>{{ client.get_setting(key) }}</td>
 					{% endfor %}
-					<td>
+					<td class="text-right">
 						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 						<a href="javascript:remove_subscription({{client.get_id()}})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
 					</td>
