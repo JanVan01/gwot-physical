@@ -88,23 +88,21 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            sensor = Sensor()
             if('id' in input):
                 try:
-                    sensor.set_id(int(input['id']))
-                    if('module' in input):
+                    sensor = Sensor(int(input['id']))
+                    sensor.read()
+                    if 'module' in input:
                         sensor.set_module(str(input['module']))
-                    if ('class_name' in input):
+                    if 'class_name' in input:
                         sensor.set_class(str(input['class_name']))
-                    if ('type' in input):
-                        sensor.set_type(str(input['type']))
-                    if ('description' in input):
+                    if 'description' in input:
                         sensor.set_description(str(input['description']))
-                    if('unit' in input):
-                        sensor.set_unit(str(input['unit']))
-                    print(sensor.get_id())
-                    updated = sensor.update()
-                    if not updated:
+                    if 'settings' in input:
+                        sensor.set_settings(input['settings'])
+                    if 'active' in input:
+                        sensor.set_active(bool(input['active']))
+                    if not sensor.update():
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
                 except ValueError:
                     return self.get_view().bad_request('input not in the right format')
@@ -116,17 +114,13 @@ class ConfigController(BaseController):
             if(input is None):
                 return self.get_view().bad_request('expected json')
             sensor = Sensor()
-            if('type' in input and 'description' in input and
-                    'unit' in input and
-                    'module' in input and 'class_name' in input):
+            if 'description' in input and 'module' in input and 'class_name' in input and 'active' in input:
                 try:
                     sensor.set_module(str(input['module']))
                     sensor.set_class(str(input['class_name']))
-                    sensor.set_type(str(input['type']))
                     sensor.set_description(str(input['description']))
-                    sensor.set_unit(str(input['unit']))
-                    updated = sensor.update()
-                    if not updated:
+                    sensor.set_active(bool(input['active']))
+                    if not sensor.create():
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
                 except ValueError:
                     return self.get_view().bad_request('input not in the right format')

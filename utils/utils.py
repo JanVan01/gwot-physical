@@ -161,7 +161,7 @@ class SettingManager:
 			value = ""
 		else:
 			value = self.htmlspecialchars(value)
-		return "<input type='text' id="+key+" name='"+key+"' class='form-control' value='"+value+"' />"
+		return "<input type='text' id="+key+" name='"+key+"' class='custom-settings form-control' value='"+value+"' />"
 	
 	def htmlspecialchars(self, value):
 		value.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")

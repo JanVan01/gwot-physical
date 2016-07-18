@@ -19,15 +19,19 @@
 			</div>
 			<div class="form-group">
 				<label for="type">Type:</label>
-				<input type="text" id="type" name="type" class="form-control" value="{% if data.edit %}{{data.sensor.get_type()}}{% endif %}">
+				<input type="text" id="type" name="type" class="form-control" value="{{data.sensor_impl.get_type()}}" readonly="readonly">
+			</div>
+			<div class="form-group">
+				<label for="unit">Unit:</label>
+				<input type="text" id="unit" name="unit" class="form-control" value="{{data.sensor_impl.get_unit()}}" readonly="readonly">
 			</div>
 			<div class="form-group">
 				<label for="description">Description:</label>
 				<input type="text" id="description" name="description" class="form-control" value="{% if data.edit %}{{data.sensor.get_description()}}{% endif %}">
 			</div>
 			<div class="form-group">
-				<label for="unit">Unit:</label>
-				<input type="text" id="unit" name="unit" class="form-control" value="{% if data.edit %}{{data.sensor.get_unit()}}{% endif %}">
+				<label for="description">Active:</label>
+				<input type="checkbox" id="active" name="active" class="form-control"{% if not data.edit or data.sensor.is_active() %} checked="checked"{% endif %}>
 			</div>
 			{% for key in data.sensor_impl.get_setting_keys() %}
 			<div class="form-group">

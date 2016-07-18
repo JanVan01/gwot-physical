@@ -44,13 +44,11 @@ function request(method, url, success, data) {
 	if (typeof success === 'function') {
 		options.success = function (data, status, ajax) {
 			success(data);
-			$('#ajax_form').reset();
 		};
 	}
 	else if (typeof success === 'string') {
 		options.success = function (data, status, ajax) {
 			success_msg(success);
-			$('#ajax_form').reset();
 		};
 	}
 	if (data) {
@@ -88,6 +86,15 @@ function remove_x(endpoint, id) {
 			$('#entry_' + id).remove();
 		}
 	);
+}
+
+function split_module(classpath) {
+	var module = classpath.substring(0, classpath.lastIndexOf("."));
+	var class_name = classpath.substring(classpath.lastIndexOf(".") + 1, classpath.length);
+	return {
+		module: module,
+		class: class_name
+	}
 }
 
 function change_password() {
@@ -128,7 +135,31 @@ function change_location(id){
 }
 
 function change_sensor(id){
-
+	var classpath = split_module($('#module').val());
+	var data = {
+		module: classpath.module,
+		class_name: classpath.class,
+		active: $('#active').is(':checked'),
+		description: $('#description').val(),
+		settings: {}
+	};
+	$('.custom-settings').each(function() {
+		var elem = $( this );
+		data.settings[elem.attr('id')] = elem.val();
+	});
+	var method = 'POST'; // Create
+	if (id) {
+		data.id = id;
+		method = 'PUT'; // Update
+	}
+	request(
+		method, '/api/1.0/config/sensor', 
+		function() {
+			'Sensor has been saved successfully.',
+			window.location = '/config/sensors'
+		},
+		data
+	);
 }
 
 var markerGroup = [];

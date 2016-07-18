@@ -28,11 +28,11 @@ class Sensor(BaseModel):
 		if 'class' in dict:
 			self.set_class(dict['class'])
 		if 'type' in dict:
-			self.set_type(dict['type'])
+			self.type = dict['type']
 		if 'description' in dict:
 			self.set_description(dict['description'])
 		if 'unit' in dict:
-			self.set_unit(dict['unit'])
+			self.unit = dict['unit']
 		if 'active' in dict and dict['active'] is not None:
 			self.set_active(dict['active'])
 		if 'settings' in dict:
@@ -44,7 +44,7 @@ class Sensor(BaseModel):
 			return False
 
 		cur = Database.Instance().dict_cursor()
-		cur.execute("INSERT INTO Sensors (module, class, type, description, unit, active, settings) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id", [self.module, self.class_name, impl.get_type(), self.description, impl.get_unit(), self.active, self._settings_dump(self.settings)])
+		cur.execute("INSERT INTO Sensors (module, class, type, description, unit, active, settings) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id", [self.module, self.class_name, impl.get_type(), self.description, impl.get_unit(), self.active, self._settings_dump(self.settings)])
 		data = cur.fetchone()
 		self.id = data['id']
 		if self.id > 0:
@@ -122,9 +122,6 @@ class Sensor(BaseModel):
 		
 	def get_type(self):
 		return self.type
-	
-	def set_type(self, type):
-		self.type = type
 		
 	def get_description(self):
 		return self.description
@@ -134,9 +131,6 @@ class Sensor(BaseModel):
 		
 	def get_unit(self):
 		return self.unit
-	
-	def set_unit(self, unit):
-		self.unit = unit
 		
 	def is_active(self):
 		return self.active
