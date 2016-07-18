@@ -176,8 +176,30 @@ class FrontendController(BaseController):
 		}
 		return self.get_view('config_notifications.html').data(data)
 
-	def config_notifications_change(self, nid):
-		return;
+	def config_notifications_change(self, mode, nid):
+		if mode == 'add' and 'module' not in request.args:
+			if request.method == 'POST':
+				filename = OS().upload_file('notifiers/', 'file');
+			return self._get_module_chooser("Add Notification Service", "/config/notifications/add", "notifiers", "Notifier")
+		
+		data = {
+			"edit": (mode == 'edit'),
+			"mode": mode,
+			"notifier": None,
+			"notifier_inpl": None,
+			"notifier_module": None,
+			"modules": OS().get_classes("notifiers", "Notifier")
+		}
+		if mode == 'edit' and id is not None:
+			notifier = Notifiers().get(id)
+			data['notifier'] = notifier
+			data['notifier_module'] = notifier.get_classpath()
+			data['notifier_impl'] = notifier.get_notifier_impl()
+		elif mode == 'add':
+			data['notifier_module'] = request.args.get('module')
+			data['notifier_impl'] = OS().create_object(data['notifier_module'])
+
+		return self.get_view('config_notifications_change.html').data(data)
 
 	def config_subscriptions(self, nid):
 		notifier = Notifiers().get(nid)
@@ -189,7 +211,7 @@ class FrontendController(BaseController):
 		}
 		return self.get_view('config_subscriptions.html').data(data)
 
-	def config_subscriptions_change(self, nid, sid):
+	def config_subscriptions_change(self, mode, nid, sid):
 		return;
 
 	def data(self):
