@@ -5,33 +5,33 @@
 {% block admin_content %}
 <div class="panel panel-default">
 	<div class="panel-heading">
-		{% if data.mode == 'edit' %}
+		{% if data.edit %}
 		<h1 class="panel-title">Edit Sensor</h1>
 		{% else %}
 		<h1 class="panel-title">Add Sensor</h1>
 		{% endif %}
 	</div>
 	<div class="panel-body">
-		<form id="ajax_form" onsubmit="change_sensor({% if data.mode =='edit' %}{{data.location.get_id()}}{% endif %}); return false;">
+		<form id="ajax_form" onsubmit="change_sensor({% if data.edit %}{{data.sensor.get_id()}}{% endif %}); return false;">
 			<div class="form-group">
 				<label for="module">Module:</label>
-				<input type="text" id="module" name="module" class="form-control" value="{{data.sensor.get_module()}}">
+				<input type="text" id="module" name="module" class="form-control" value="{% if data.edit %}{{data.sensor.get_module()}}{% endif %}">
 			</div>
 			<div class="form-group">
 				<label for="class_name">Class:</label>
-				<input type="text" id="class_name" name="class_name" class="form-control" value="{{data.sensor.get_class()}}">
+				<input type="text" id="class_name" name="class_name" class="form-control" value="{% if data.edit %}{{data.sensor.get_class()}}{% endif %}">
 			</div>
 			<div class="form-group">
 				<label for="type">Type:</label>
-				<input type="text" id="type" name="type" class="form-control" value="{{data.sensor.get_type()}}">
+				<input type="text" id="type" name="type" class="form-control" value="{% if data.edit %}{{data.sensor.get_type()}}{% endif %}">
 			</div>
 			<div class="form-group">
 				<label for="description">Description:</label>
-				<input type="text" id="description" name="description" class="form-control" value="{{data.sensor.get_description()}}">
+				<input type="text" id="description" name="description" class="form-control" value="{% if data.edit %}{{data.sensor.get_description()}}{% endif %}">
 			</div>
 			<div class="form-group">
 				<label for="unit">Unit:</label>
-				<input type="text" id="unit" name="unit" class="form-control" value="{{data.sensor.get_unit()}}">
+				<input type="text" id="unit" name="unit" class="form-control" value="{% if data.edit %}{{data.sensor.get_unit()}}{% endif %}">
 			</div>
 			<button type="submit" class="btn btn-primary">Submit</button>
 		</form>

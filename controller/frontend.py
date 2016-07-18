@@ -119,13 +119,13 @@ class FrontendController(BaseController):
 
 	def config_sensors_change(self, mode, id):
 		data = {
-			"mode": mode
+			"edit": (mode == 'edit'),
+			"mode": mode,
+			"sensor": None
 		}
 		if mode == 'edit' and id is not None:
 			sensor = Sensors().get(id)
 			data['sensor'] = sensor
-		elif request.args['mode'] == 'add':
-			data['sensor'] = None
 
 		return self.get_view('config_sensor_change.html').data(data)
 
@@ -139,13 +139,13 @@ class FrontendController(BaseController):
 
 	def config_locations_change(self, mode, id):
 		data = {
-			"mode": mode
+			"edit": (mode == 'edit'),
+			"mode": mode,
+			"location": None
 		}
 		if mode == 'edit' and id is not None:
 			location = Locations().get(id)
 			data['location'] = location
-		elif request.args['mode'] == 'add':
-			data['location'] = Location()
 
 		return self.get_view('config_location_change.html').data(data)
 
@@ -187,5 +187,4 @@ class FrontendController(BaseController):
 		return self.get_view('subscriptions.html').data()
 
 	def about(self):
-		data = {}
-		return self.get_view('about.html').data(data)
+		return self.get_view('about.html').data()
