@@ -195,7 +195,7 @@
                 "getDataTrigger": {
                     "category": "Data",
                     "label": "GET /data/trigger",
-                    "description": "Triggers a sensor reading",
+                    "description": "Triggers sensor readings",
                     "uri": "/data/trigger",
                     "method": "get",
                     "request_headers": {
@@ -207,6 +207,14 @@
                             "generic": true
                         }
                     },
+					"request_parameters": {
+						"sensor": {
+							"type": "string",
+							"sample": "2",
+							"description": "ID of the sensor to trigger. Triggers all sensors if not specified.",
+							"optional": true
+						}
+					},
                     "response_codes": [{
                         "code": 200,
                         "description": "Requested content is returned",

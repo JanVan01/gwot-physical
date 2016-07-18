@@ -1,3 +1,76 @@
-{% extends "base/frontend.html" %}
+{% extends "base/admin.html" %}
 
 {% block navigation %}config_locations{% endblock navigation %}
+
+{% block admin_resources %}
+<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+{% set comma = joiner(",") %}
+<script>
+	var locations = [
+		{% for location in data.locations %}
+		{{ comma() }} { name: '{{ location.get_name() }}', lat: {{ location.get_latitude() }}, lon:  {{ location.get_longitude() }} }
+		{% endfor %}
+	];
+	$(function() {
+		create_location_map(locations);
+	});
+</script>
+{% endblock admin_resources %}
+
+{% block admin_content %}
+<div class="panel panel-default admin-dashboard">
+	<div class="panel-heading clearfix">
+		<h1 class="panel-title pull-left">Locations</h1>
+		<a href="#" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
+	</div>
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Longitude</th>
+					<th>Latitude</th>
+					<th>Height</th>
+					<th>Active</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for location in data.locations %}
+				<tr>
+					<td>{{ location.get_name() }}</td>
+					<td>{{ location.get_longitude() }}</td>
+					<td>{{ location.get_latitude() }}</td>
+					<td>{{ location.get_height() }}</td>
+					<td>
+						{% if location.get_id() == data.default_location %}
+						<span class="text-success glyphicon glyphicon-ok" aria-hidden="true"></span>
+						{% else %}
+						<span class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></span>
+						{% endif %}
+					</td>
+					<td class="text-right">
+						<a href="javascript:show_marker_on_location_map({{ loop.index0 }});" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-map-marker"></span> Show on Map</a>
+						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+						<a href="javascript:remove_location({{ location.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
+					</td>
+				</tr>
+				{% else %}
+				<tr>
+					<td colspan="6" class="text-center">No locations available.</td>
+				</tr>
+				{% endfor %}
+			</tbody> 
+		</table>
+	</div>
+</div>
+<div class="panel panel-default admin-dashboard">
+	<div class="panel-heading">
+		<h2 class="panel-title">Map</h2>
+	</div>
+	<div class="panel-body" id="map" style="height: 500px;">
+		
+	</div>
+</div>
+{% endblock admin_content %}

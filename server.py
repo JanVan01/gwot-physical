@@ -52,6 +52,11 @@ def frontend_config_locations():
 def frontend_config_notifications():
 	return FrontendController().config_notifications()
 
+@app.route('/config/notifications/<int:id>/subscriptions')
+@auth.login_required
+def frontend_config_subscriptions(id):
+	return FrontendController().config_subscriptions(id)
+
 @app.route('/tutorial/notifications')
 def frontend_tutorial_notifications():
 	return FrontendController().tutorial_notifications()
@@ -100,10 +105,6 @@ def location_list():
 @app.route('/api/1.0/sensor/list')
 def sensor_list():
 	return SensorController().list()
-
-@app.route('/api/1.0/sensor/<int:id>/subscription', methods=['GET', 'POST', 'DELETE'])
-def sensor_subscription(id):
-	return SensorController().subscription(id)
 
 @app.route('/api/1.0/config', methods=['GET', 'PUT'])
 @auth.login_required

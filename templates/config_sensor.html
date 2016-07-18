@@ -1,12 +1,56 @@
-{% extends "base/frontend.html" %}
+{% extends "base/admin.html" %}
 
 {% block navigation %}config_sensors{% endblock navigation %}
 
-{% block content %}
-<div class="container-fluid overview">
-  <div id="table-div" class="table-responsive">
-    {{ data | json2table | safe }}
-  </div>
+{% block admin_content %}
+
+<div class="panel panel-default admin-dashboard">
+	<div class="panel-heading clearfix">
+		<h1 class="panel-title pull-left">Sensors</h1>
+		<span class=" pull-right">
+			<a href="/api/1.0/data/trigger" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-flash"></span> Trigger all</a>
+			<a href="#" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-plus"></span> Add</a>
+	</div>
+	<div class="table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Type</th>
+					<th>Description</th>
+					<th>Unit</th>
+					<th>Active</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for sensor in data.sensors %}
+				<tr>
+					<td>{{ sensor.get_type() }}</td>
+					<td>{{ sensor.get_description() }}</td>
+					<td>{{ sensor.get_unit() }}</td>
+					<td>
+						{% if sensor.is_active() %}
+						<span class="text-success glyphicon glyphicon-ok" aria-hidden="true"></span>
+						{% else %}
+						<span class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></span>
+						{% endif %}
+					</td>
+					<td class="text-right">
+						{% if sensor.is_active() %}
+						<a href="/api/1.0/data/trigger?sensor={{ sensor.get_id() }}" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-flash"></span> Trigger</a>
+						{% endif %}
+						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+						<a href="javascript:remove_sensor({{ sensor.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
+					</td>
+				</tr>
+				{% else %}
+				<tr>
+					<td colspan="5" class="text-center">No sensors available.</td>
+				</tr>
+				{% endfor %}
+			</tbody> 
+		</table>
+	</div>
 </div>
 
-{% endblock content %}
+{% endblock admin_content %}

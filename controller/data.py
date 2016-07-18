@@ -1,16 +1,21 @@
 from flask import request
 from controller.base import BaseController
 from utils.utils import Validate
+from models.measurements import Measurements
+from models.sensors import Sensors
 
 class DataController(BaseController):
 
 	def __init__(self):
 		super().__init__()
-		self.multi_model = self.get_model('models.measurements', 'Measurements')
+		self.multi_model = Measurements()
 
 	def trigger(self):
-		sensors = self.get_model('models.sensors', 'Sensors')
-		data = sensors.trigger_all()
+		sensor = request.args.get('sensor')
+		if Validate().integer(sensor):
+			data = Sensors().trigger_one(sensor)
+		else:
+			data = Sensors().trigger_all()
 		return self.get_view().data(data)
 
 	def last(self):
