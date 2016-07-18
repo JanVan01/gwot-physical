@@ -80,7 +80,7 @@ function remove_x(endpoint, id) {
 		return;
 	}
 	request(
-		'DELETE', '/api/1.0/config/'+endpoint+'/'+id, 
+		'DELETE', '/api/1.0/config/'+endpoint+'/'+id,
 		function() {
 			success_msg('The data has been deleted successfully.');
 			$('#entry_' + id).remove();
@@ -131,6 +131,26 @@ function update_config(){
 }
 
 function change_location(id){
+	var data = {
+		id: $('#id').val(),
+		name: $('#name').val(),
+		lat: $('#lat').val(),
+		lon:$('#lon').val(),
+		height:$('#height').val()
+	};
+	var method = 'POST'; // Create
+	if (id) {
+		data.id = id;
+		method = 'PUT'; // Update
+	}
+	request(
+		method, '/api/1.0/config/location',
+		function() {
+			'Sensor has been saved successfully.',
+			window.location = '/config/locations'
+		},
+		data
+	);
 
 }
 
@@ -153,7 +173,7 @@ function change_sensor(id){
 		method = 'PUT'; // Update
 	}
 	request(
-		method, '/api/1.0/config/sensor', 
+		method, '/api/1.0/config/sensor',
 		function() {
 			'Sensor has been saved successfully.',
 			window.location = '/config/sensors'

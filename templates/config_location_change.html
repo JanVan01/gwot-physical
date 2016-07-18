@@ -12,7 +12,7 @@
 		{% endif %}
 	</div>
 	<div class="panel-body">
-		<form id="ajax_form" onsubmit="change_password({% if data.edit %}{{data.location.get_id()}}{% endif %}); return false;">
+		<form id="ajax_form" onsubmit="change_location({% if data.edit %}{{data.location.get_id()}}{% endif %}); return false;">
 			<div class="form-group">
 				<label for="name">Name:</label>
 				<input type="text" id="name" name="name" class="form-control" value="{% if data.edit %}{{data.location.get_name()}}{% endif %}">
