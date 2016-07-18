@@ -1,10 +1,9 @@
 from controller.base import BaseController
 from flask import request
 from models.config import ConfigManager
-from utils.utils import Validate
 from models.locations import Locations
-from models.locations import Location
-from models.sensors import Sensor
+from models.sensors import Sensors
+from utils.utils import Validate
 
 
 class ConfigController(BaseController):
@@ -39,8 +38,7 @@ class ConfigController(BaseController):
 
     def location(self, id):
         if (request.method == 'GET'):
-            data = {}
-            return self.get_view(template_file='location_form.html').data(data)
+            return self.get_view(template_file='location_form.html').data()
         elif (request.method == 'DELETE'):
             location = Locations().get(id)
             if location is None:
@@ -53,8 +51,8 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            location = Location()
             if('id' in input):
+                location = Locations.get()
                 try:
                     location.set_id(int(input['id']))
                     if('name' in input):
@@ -75,8 +73,8 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            location = Location()
             if('name' in input and 'lat' in input and 'lon' in input and 'height' in input):
+                location = Locations.get()
                 try:
                     location.set_name(str(input['name']))
                     location.set_position(float(input['lat']), float(input['lon']))
@@ -93,6 +91,8 @@ class ConfigController(BaseController):
             return self.get_view().success()
 
     def sensor(self, id):
+        if request.method == 'GET':
+            return self.get_view(template_file='sensor_form.html').data()
         if (request.method == 'DELETE'):
             sensor = Sensors().get(id)
             if sensor is None:
@@ -107,8 +107,9 @@ class ConfigController(BaseController):
                 return self.get_view().bad_request('expected json')
             if('id' in input):
                 try:
-                    sensor = Sensor(int(input['id']))
-                    sensor.read()
+                    sensor = Sensors.get(int(input['id']))
+                    if sensor is None:
+                        return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
                     if 'module' in input:
                         sensor.set_module(str(input['module']))
                     if 'class_name' in input:
@@ -130,8 +131,8 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            sensor = Sensor()
             if 'description' in input and 'module' in input and 'class_name' in input and 'active' in input:
+                sensor = Sensors.get()
                 try:
                     sensor.set_module(str(input['module']))
                     sensor.set_class(str(input['class_name']))
