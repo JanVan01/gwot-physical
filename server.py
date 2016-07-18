@@ -42,7 +42,7 @@ def frontend_config_password():
 def frontend_config_sensors():
 	return FrontendController().config_sensors()
 
-@app.route('/config/sensors/add', defaults={'id': None, 'mode': 'add'})
+@app.route('/config/sensors/add', defaults={'id': None, 'mode': 'add'}, methods=['GET', 'POST'])
 @app.route('/config/sensors/edit/<int:id>', defaults={'mode': 'edit'})
 @auth.login_required
 def frontend_config_sensors_change(mode, id):
@@ -64,7 +64,7 @@ def frontend_config_locations_change(mode, id):
 def frontend_config_notifications():
 	return FrontendController().config_notifications()
 
-@app.route('/config/notifications/add', defaults={'id': None, 'mode': 'add'})
+@app.route('/config/notifications/add', defaults={'id': None, 'mode': 'add'}, methods=['GET', 'POST'])
 @app.route('/config/notifications/edit/<int:id>', defaults={'mode': 'edit'})
 @auth.login_required
 def frontend_config_notifications_change(mode, id):

@@ -1,0 +1,33 @@
+{% extends "base/admin.html" %}
+
+{% block navigation %}config_sensors{% endblock navigation %}
+
+{% block admin_content %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h1 class="panel-title">{{ data.title }}</h1>
+	</div>
+	<div class="panel-body">
+		<form action="?" method="POST" enctype="multipart/form-data">
+			<div class="form-group">
+				<label for="module">Upload new module:</label>
+				<input type="file" id="file" name="file">
+				<p class="help-block">*.py files, implemented according to <a href="/tutorial/sensors" target="_blank">Custom Sensor</a> tutorial.</p>
+			</div>
+			<button type="submit" class="btn btn-primary">Upload</button>
+		</form>
+		<div class="text-divider"><span>OR</span></div>
+		<form action="{{ data.target }}" method="GET">
+			<div class="form-group">
+				<label for="module">Choose existing module:</label>
+				<select id="module" name="module" class="form-control">
+					{% for module in data.modules %}
+					<option value="{{module}}">{{module}}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>
+{% endblock admin_content %}

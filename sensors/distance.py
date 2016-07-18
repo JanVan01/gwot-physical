@@ -190,7 +190,7 @@ class DistanceSensor(BaseSensor):
 		else:
 			return False
 	
-	def get_setting_html(self, key, value):
+	def get_setting_html(self, key, value = None):
 		if key == "trigger_pin" or key == "data_pin":
 			return SettingManager().get_input_field(key, value)
 		else:

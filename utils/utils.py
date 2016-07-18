@@ -1,11 +1,15 @@
 import os
+import os.path
 import re
 import psycopg2
 import psycopg2.extras
 import importlib
+import glob
 from utils.singleton import Singleton
 from models.config import ConfigManager
 from pygeoif import geometry
+from flask import request
+from werkzeug.utils import secure_filename
 
 class OS:
 	
@@ -14,9 +18,17 @@ class OS:
 		dname = os.path.dirname(abspath)
 		os.chdir(dname)
 		
-	def create_object(self, module_name, class_name):
-		if module_name is None or class_name is None:
+	def create_object(self, module_name, class_name = None):
+		if module_name is None:
 			return None
+		
+		if class_name is None:
+			parts = module_name.rsplit('.', 1)
+			if len(parts) != 2:
+				return None
+			else:
+				module_name = parts[0]
+				class_name = parts[1]
 		
 		try:
 			module = importlib.import_module(module_name)
@@ -25,6 +37,39 @@ class OS:
 		except:
 			print("Can't create object " + module_name + "." + class_name)
 			return None
+		
+	def get_classes(self, folder, class_suffix, selected = None):
+		classes = []
+		for file in glob.glob(folder + "/*.py"):
+			handle = open(file, "r")
+			content = handle.read()
+			handle.close()
+			
+			module = folder.replace('/', '.').replace('\\', '.') + '.' + os.path.basename(file).replace('.py', '')
+
+			regexp = "\sclass\s+([\w\d]+"+class_suffix+")\s*\(([\w\d]*)\)\s*:\s"
+			for m in re.finditer(regexp, content):
+				parent_class = m.group(2)
+				if len(parent_class) == 0 or parent_class == 'object':
+					continue
+				class_name = m.group(1)
+				classes.append(module + '.' + class_name)
+				
+		return classes
+	
+	def upload_file(self, folder, param):
+		if request.method == 'POST':
+			# check if the post request has the file part
+			if param not in request.files:
+				return None
+			file = request.files[param]
+			# if user does not select file, browser also submit a empty part without filename
+			if not file or len(file.filename) == 0:
+				return None
+			if '.' in file.filename and file.filename.rsplit('.', 1)[1] == 'py':
+				filename = secure_filename(file.filename)
+				file.save(os.path.join(folder, filename))
+				return filename
 		
 class Transform:
 	
@@ -111,8 +156,12 @@ class Validate:
 
 class SettingManager:
 	
-	def get_input_field(self, key, value):
-		return "<input type='text' name='"+key+"' value='"+self._htmlspecialchars(value)+"' />"
+	def get_input_field(self, key, value = None):
+		if value is None:
+			value = ""
+		else:
+			value = self.htmlspecialchars(value)
+		return "<input type='text' id="+key+" name='"+key+"' class='form-control' value='"+value+"' />"
 	
 	def htmlspecialchars(self, value):
 		value.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")

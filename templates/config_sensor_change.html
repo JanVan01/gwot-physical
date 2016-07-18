@@ -15,11 +15,7 @@
 		<form id="ajax_form" onsubmit="change_sensor({% if data.edit %}{{data.sensor.get_id()}}{% endif %}); return false;">
 			<div class="form-group">
 				<label for="module">Module:</label>
-				<input type="text" id="module" name="module" class="form-control" value="{% if data.edit %}{{data.sensor.get_module()}}{% endif %}">
-			</div>
-			<div class="form-group">
-				<label for="class_name">Class:</label>
-				<input type="text" id="class_name" name="class_name" class="form-control" value="{% if data.edit %}{{data.sensor.get_class()}}{% endif %}">
+				<input type="text" id="module" name="module" class="form-control" value="{{data.sensor_module}}" readonly="readonly">
 			</div>
 			<div class="form-group">
 				<label for="type">Type:</label>
@@ -33,6 +29,16 @@
 				<label for="unit">Unit:</label>
 				<input type="text" id="unit" name="unit" class="form-control" value="{% if data.edit %}{{data.sensor.get_unit()}}{% endif %}">
 			</div>
+			{% for key in data.sensor_impl.get_setting_keys() %}
+			<div class="form-group">
+				<label for="{{ key }}">{{ data.sensor_impl.get_setting_name(key) }}:</label>
+				{% if data.edit %}
+				{{ data.sensor_impl.get_setting_html(key, data.sensor.get_setting(key)) | safe }}
+				{% else %}
+				{{ data.sensor_impl.get_setting_html(key) | safe }}
+				{% endif %}
+			</div>
+			{% endfor %}
 			<button type="submit" class="btn btn-primary">Submit</button>
 		</form>
 	</div>

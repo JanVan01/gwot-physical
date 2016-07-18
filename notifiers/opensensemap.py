@@ -41,8 +41,8 @@ class OpenSenseMapNotifier(BaseNotifier):
 		else:
 			return False
 	
-	def get_setting_html(self, key):
+	def get_setting_html(self, key, value = None):
 		if key == "sensor_id" or key == "sensebox_id":
-			return self._get_input_field(key, value)
+			return SettingManager().get_input_field(key, value)
 		else:
 			return None

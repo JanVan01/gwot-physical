@@ -1,13 +1,14 @@
 from controller.base import BaseController
-from flask import request
 from models.config import ConfigManager
 from models.locations import Locations
 from models.measurements import Measurements
 from models.notifiers import Notifiers
 from models.sensors import Sensors
 from models.subscribers import Subscribers
-import time
 from views.html import HtmlView
+from utils.utils import OS
+from flask import request
+import time
 
 class FrontendController(BaseController):
 
@@ -101,7 +102,14 @@ class FrontendController(BaseController):
 				return str(value)
 			else:
 				return self.unknownValue
-
+	
+	def _get_module_chooser(self, title, url, folder, suffix):
+		data = {
+			"title": title,
+			"target": url,
+			"modules": OS().get_classes(folder, suffix)
+		}
+		return self.get_view('config_module_chooser.html').data(data)
 
 	def config(self):
 		data = {
@@ -115,17 +123,30 @@ class FrontendController(BaseController):
 
 	def config_sensors(self):
 		data = {"sensors": Sensors().get_all()}
-		return self.get_view('config_sensor.html').data(data)
+		return self.get_view('config_sensor.html').data(data)	
 
 	def config_sensors_change(self, mode, id):
+		if mode == 'add' and 'module' not in request.args:
+			if request.method == 'POST':
+				filename = OS().upload_file('sensors/', 'file');
+			return self._get_module_chooser("Add Sensor", "/config/sensors/add", "sensors", "Sensor")
+		
 		data = {
 			"edit": (mode == 'edit'),
 			"mode": mode,
-			"sensor": None
+			"sensor": None,
+			"sensor_inpl": None,
+			"sensor_module": None,
+			"modules": OS().get_classes("sensors", "Sensor")
 		}
 		if mode == 'edit' and id is not None:
 			sensor = Sensors().get(id)
 			data['sensor'] = sensor
+			data['sensor_module'] = sensor.get_classpath()
+			data['sensor_impl'] = sensor.get_sensor_impl()
+		elif mode == 'add':
+			data['sensor_module'] = request.args.get('module')
+			data['sensor_impl'] = OS().create_object(data['sensor_module'])
 
 		return self.get_view('config_sensor_change.html').data(data)
 
