@@ -1,10 +1,10 @@
-{% extends "base/frontend.html" %}
+{% extends "base/admin.html" %}
 
 {% block navigation %}config_settings{% endblock navigation %}
 
-{% block content %}
+{% block admin_content %}
   <h2>Config</h2>
   Name: {{ data.name }} <br>
   Interval: {{ data.interval }} <br>
   Location: {{ data.location }} <br>
-{% endblock content %}
+{% endblock admin_content %}
