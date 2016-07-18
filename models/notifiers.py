@@ -73,7 +73,7 @@ class Notifier(BaseModel):
 			return False
 
 		cur = Database.Instance().cursor()
-		cur.execute("DELETE FROM Sensors WHERE id = %s", [self.id])
+		cur.execute("DELETE FROM Notifiers WHERE id = %s", [self.id])
 		if cur.rowcount > 0:
 			self.id = None
 			return True

@@ -179,7 +179,7 @@ class FrontendController(BaseController):
 	def config_notifications_change(self, mode, nid):
 		if mode == 'add' and 'module' not in request.args:
 			if request.method == 'POST':
-				filename = OS().upload_file('notifiers/', 'file');
+				filename = OS().upload_file('notifiers/', 'file')
 			return self._get_module_chooser("Add Notification Service", "/config/notifications/add", "notifiers", "Notifier")
 
 		data = {
@@ -190,8 +190,8 @@ class FrontendController(BaseController):
 			"notifier_module": None,
 			"modules": OS().get_classes("notifiers", "Notifier")
 		}
-		if mode == 'edit' and id is not None:
-			notifier = Notifiers().get(id)
+		if mode == 'edit' and nid is not None:
+			notifier = Notifiers().get(nid)
 			data['notifier'] = notifier
 			data['notifier_module'] = notifier.get_classpath()
 			data['notifier_impl'] = notifier.get_notifier_impl()
