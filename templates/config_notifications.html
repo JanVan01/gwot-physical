@@ -1,0 +1,12 @@
+{% extends "base/frontend.html" %}
+
+{% block navigation %}config_notifications{% endblock navigation %}
+
+{% block content %}
+<div class="container-fluid overview">
+  <div id="table-div" class="table-responsive">
+    {{ data | json2table | safe }}
+  </div>
+</div>
+
+{% endblock content %}

@@ -28,25 +28,45 @@ def frontend_data():
 	return FrontendController().data()
 
 @app.route('/config')
+@auth.login_required
 def frontend_config():
 	return FrontendController().config()
 
 @app.route('/config/password')
+@auth.login_required
 def frontend_config_password():
 	return FrontendController().config_password()
 
 @app.route('/config/sensors')
+@auth.login_required
 def frontend_config_sensors():
 	return FrontendController().config_sensors()
 
-
 @app.route('/config/locations')
+@auth.login_required
 def frontend_config_locations():
 	return FrontendController().config_locations()
+
+@app.route('/config/notifications')
+@auth.login_required
+def frontend_config_notifications():
+	return FrontendController().config_notifications()
+
+@app.route('/tutorial/notifications')
+def frontend_tutorial_notifications():
+	return FrontendController().tutorial_notifications()
+
+@app.route('/tutorial/sensors')
+def frontend_tutorial_sensors():
+	return FrontendController().tutorial_sensors()
 
 @app.route('/about')
 def frontend_about():
 	return FrontendController().about()
+
+@app.route('/subscriptions')
+def frontend_subscriptions():
+	return FrontendController().subscriptions()
 
 @app.route('/api/1.0/data/trigger')
 @auth.login_required

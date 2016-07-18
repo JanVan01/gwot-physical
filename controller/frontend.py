@@ -2,7 +2,6 @@ from controller.base import BaseController
 from views.html import HtmlView
 from models.config import ConfigManager
 from models.locations import Locations
-from models.sensors import Sensors
 from flask import request
 import time
 
@@ -145,15 +144,23 @@ class FrontendController(BaseController):
 		return self.get_view('config_location.html').data(data)
 
 	def data(self):
-		data = self.multi_model.get_all()
 		model = self.get_model('models.locations', 'Locations')
 		locations = model.get_all()
 
 		model = self.get_model('models.sensors', 'Sensors')
 		sensors = model.get_all()
 
-		datacollection = {'measurements': data, 'locations': locations, 'sensors': sensors}
+		datacollection = {'locations': locations, 'sensors': sensors}
 		return self.get_view('data.html').data(datacollection)
+
+	def tutorial_sensors(self):
+		return self.get_view('tutorial_sensors.html').data()
+
+	def tutorial_notifications(self):
+		return self.get_view('tutorial_notifications.html').data()
+
+	def subscriptions(self):
+		return self.get_view('subscriptions.html').data()
 
 	def about(self):
 		data = {}
