@@ -1,4 +1,5 @@
 from notifiers.base import BaseNotifier
+from utils.utils import SettingManager
 import requests
 import re
 
