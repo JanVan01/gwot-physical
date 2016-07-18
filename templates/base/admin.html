@@ -1,0 +1,16 @@
+{% extends "base/frontend.html" %}
+
+{% block resources %}
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
+{% block admin_resources %}
+{% endblock admin_resources %}
+{% endblock resources %}
+
+{% block content %}
+<div id="alert" class="alert alert-dismissible" role="alert">
+  <button type="button" class="close" onclick="dismiss_alert()"><span aria-hidden="true">&times;</span></button>
+  <div id="alert_message"></div>
+</div>
+{% block admin_content %}
+{% endblock admin_content %}
+{% endblock content %}

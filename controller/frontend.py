@@ -2,6 +2,10 @@ from controller.base import BaseController
 from views.html import HtmlView
 from models.config import ConfigManager
 from models.locations import Locations
+from models.measurements import Measurements
+from models.sensors import Sensors
+from models.notifiers import Notifiers
+from models.subscribers import Subscribers
 from flask import request
 import time
 
@@ -9,7 +13,6 @@ class FrontendController(BaseController):
 
 	def __init__(self):
 		super().__init__()
-		self.multi_model = self.get_model('models.measurements', 'Measurements')
 		self.config_manager = ConfigManager.Instance()
 		self.unknownValue = "None"
 
@@ -20,8 +23,7 @@ class FrontendController(BaseController):
 		return view
 
 	def home(self):
-		model = self.get_model('models.sensors', 'Sensors')
-		sensor_data = model.get_all()
+		sensor_data = Sensors().get_all()
 		sensor_id = None
 		if sensor_data is not None and len(sensor_data) > 0:
 			sensor_id = sensor_data[0].get_id()
@@ -59,7 +61,7 @@ class FrontendController(BaseController):
 			'sensor': [str(sensor)],
 			'limit': 1
 		}
-		mlist = self.multi_model.get_last(filterObj)
+		mlist = Measurements().get_last(filterObj)
 		if len(mlist) == 0:
 			return self.unknownValue
 		else:
@@ -83,12 +85,13 @@ class FrontendController(BaseController):
 			'sensor': [str(sensor)],
 			'limit': 1
 		}
+		multi_model = Measurements()
 		if type == 'min':
-			mlist = self.multi_model.get_min(filterObj)
+			mlist = multi_model.get_min(filterObj)
 		elif type == 'max':
-			mlist = self.multi_model.get_max(filterObj)
+			mlist = multi_model.get_max(filterObj)
 		else:
-			avg_obj = self.multi_model.get_avg(filterObj)
+			avg_obj = multi_model.get_avg(filterObj)
 			mlist = [avg_obj]
 		if len(mlist) == 0:
 			return self.unknownValue
@@ -115,7 +118,7 @@ class FrontendController(BaseController):
 		return self.get_view('config_password.html').data({})
 
 	def config_sensors(self):
-		data = {}
+		data = {"sensors": Sensors().get_all()}
 		if 'mode' in request.args and request.args['mode'] == 'edit' and 'id' in request.args:
 			sensor = self.get_model('models.sensors', 'Sensors').get(request.args['id'])
 			if sensor is not None:
@@ -130,7 +133,10 @@ class FrontendController(BaseController):
 		return self.get_view('config_sensor.html').data(data)
 
 	def config_locations(self):
-		data = {}
+		data = data = {
+			"locations": Locations().get_all(),
+			"default_location": ConfigManager.Instance().get_location()
+		}
 		if 'mode' in request.args and request.args['mode'] == 'edit' and 'id' in request.args:
 			location = self.get_model('models.locations', 'Locations').get(request.args['id'])
 			if location is not None:
@@ -143,13 +149,31 @@ class FrontendController(BaseController):
 				return self.get_view('config_location.html').data(data)
 		return self.get_view('config_location.html').data(data)
 
+	def config_notifications(self):
+		data = {
+			"notifiers": Notifiers().get_all()
+		}
+		return self.get_view('config_notifications.html').data(data)
+
+	def config_subscriptions(self, nid):
+		notifier = Notifiers().get(nid)
+		notifier_impl = notifier.get_notifier_impl()
+		data = {
+			"notifier": notifier,
+			"notifier_impl": notifier_impl,
+			"subscribers": Subscribers().get_all_by_notifier(nid)
+		}
+		return self.get_view('config_subscriptions.html').data(data)
+
+	def config_locations(self):
+		data = {
+			"locations": Locations().get_all(),
+			"default_location": ConfigManager.Instance().get_location()
+		}
+
 	def data(self):
-		model = self.get_model('models.locations', 'Locations')
-		locations = model.get_all()
-
-		model = self.get_model('models.sensors', 'Sensors')
-		sensors = model.get_all()
-
+		locations = Locations().get_all()
+		sensors = Sensors().get_all()
 		datacollection = {'locations': locations, 'sensors': sensors}
 		return self.get_view('data.html').data(datacollection)
 

@@ -2,6 +2,8 @@ from controller.base import BaseController
 from flask import request
 from models.config import ConfigManager
 from utils.utils import Validate
+from models.locations import Location
+from models.sensors import Sensor
 
 
 class ConfigController(BaseController):
@@ -42,7 +44,7 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            location = self.get_model('models.locations', 'Location')
+            location = Location()
             if('id' in input):
                 try:
                     location.set_id(int(input['id']))
@@ -64,8 +66,7 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            print(input)
-            location = self.get_model('models.locations', 'Location')
+            location = Location()
             if('name' in input and 'lat' in input and 'lon' in input and 'height' in input):
                 try:
                     location.set_name(str(input['name']))
@@ -87,8 +88,7 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            sensor = self.get_model('models.sensors', 'Sensor')
-            print(input)
+            sensor = Sensor()
             if('id' in input):
                 try:
                     sensor.set_id(int(input['id']))
@@ -115,7 +115,7 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            sensor = self.get_model('models.sensors', 'Sensor')
+            sensor = Sensor()
             if('type' in input and 'description' in input and
                     'unit' in input and
                     'module' in input and 'class_name' in input):
@@ -147,9 +147,7 @@ class ConfigController(BaseController):
         return None
 
     def _get_location(self, id):
-        location_model = self.get_model('models.locations', 'Location')
-        location_model.set_id(id)
-        location_model.read()
+        location_model = Locations().get(id)
         location = {}
         location['id'] = location_model.get_id()
         location['name'] = location_model.get_name()
