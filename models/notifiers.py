@@ -103,6 +103,9 @@ class Notifier(BaseModel):
 	def get_class(self):
 		return self.class_name
 	
+	def get_classpath(self):
+		return self.module + '.' + self.class_name
+	
 	def set_class(self, class_name):
 		self.class_name = class_name
 		

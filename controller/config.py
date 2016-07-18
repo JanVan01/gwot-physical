@@ -25,13 +25,15 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            # TODO(react to invalid input)
-            if ('name' in input and input['name'] != ''):
-                self.config.set_name(input['name'])
-            if ('interval' in input and type(input['interval']) == int):
-                self.config.set_interval(input['interval'])
-            if ('location' in input and type(input['location']) == int):
-                self.config.set_location(input['location'])
+            try:
+                if ('name' in input):
+                    self.config.set_name(str(input['name']))
+                if ('interval' in input):
+                    self.config.set_interval(int(input['interval']))
+                if ('location' in input):
+                    self.config.set_location(int(input['location']))
+            except ValueError:
+                return self.get_view().bad_request('Input not in the right format')
             return self.get_view().success()
 
     def location(self):
@@ -55,7 +57,7 @@ class ConfigController(BaseController):
                     updated = location.update()
                     if not updated:
                         return self.get_view().bad_request('The location you are trying to update does not exist try to create it instead')
-                except TypeError:
+                except ValueError:
                     return self.get_view().bad_request('input not in the right format')
             else:
                 return self.get_view().bad_request('not all necessary field set')
@@ -73,10 +75,11 @@ class ConfigController(BaseController):
                     created = location.create()
                     if not created:
                         return self.get_view().bad_request('The location could not be created')
-
-                except TypeError:
+                except ValueError:
+                    print('type error')
                     return self.get_view().bad_request('input not in the right format')
             else:
+                print('not all fields')
                 return self.get_view().bad_request('not all necessary field available')
             return self.get_view().success()
 
@@ -85,26 +88,23 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            sensor = Sensor()
             if('id' in input):
                 try:
-                    sensor.set_id(int(input['id']))
-                    if('module' in input):
+                    sensor = Sensor(int(input['id']))
+                    sensor.read()
+                    if 'module' in input:
                         sensor.set_module(str(input['module']))
-                    if ('class_name' in input):
+                    if 'class_name' in input:
                         sensor.set_class(str(input['class_name']))
-                    if ('type' in input):
-                        sensor.set_type(str(input['type']))
-                    if ('description' in input):
+                    if 'description' in input:
                         sensor.set_description(str(input['description']))
-                    if('unit' in input):
-                        sensor.set_unit(str(input['unit']))
-                    if ('active' in input):
+                    if 'settings' in input:
+                        sensor.set_settings(input['settings'])
+                    if 'active' in input:
                         sensor.set_active(bool(input['active']))
-                    updated = sensor.update()
-                    if not updated:
+                    if not sensor.update():
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
-                except TypeError:
+                except ValueError:
                     return self.get_view().bad_request('input not in the right format')
             else:
                 return self.get_view().bad_request('not all necessary field set')
@@ -114,20 +114,15 @@ class ConfigController(BaseController):
             if(input is None):
                 return self.get_view().bad_request('expected json')
             sensor = Sensor()
-            if('type' in input and 'description' in input and
-                    'unit' in input and 'active' in input and
-                    'module' in input and 'class_name' in input):
+            if 'description' in input and 'module' in input and 'class_name' in input and 'active' in input:
                 try:
                     sensor.set_module(str(input['module']))
                     sensor.set_class(str(input['class_name']))
-                    sensor.set_type(str(input['type']))
                     sensor.set_description(str(input['description']))
-                    sensor.set_unit(str(input['unit']))
                     sensor.set_active(bool(input['active']))
-                    updated = sensor.update()
-                    if not updated:
+                    if not sensor.create():
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
-                except TypeError:
+                except ValueError:
                     return self.get_view().bad_request('input not in the right format')
             else:
                 return self.get_view().bad_request('not all necessary field set')

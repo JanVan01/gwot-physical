@@ -22,7 +22,7 @@
 <div class="panel panel-default admin-dashboard">
 	<div class="panel-heading clearfix">
 		<h1 class="panel-title pull-left">Locations</h1>
-		<a href="#" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
+		<a href="/config/locations/add" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
 	</div>
 	<div class="table-responsive">
 		<table class="table table-hover">
@@ -38,7 +38,7 @@
 			</thead>
 			<tbody>
 				{% for location in data.locations %}
-				<tr>
+				<tr id="entry_{{ location.get_id() }}">
 					<td>{{ location.get_name() }}</td>
 					<td>{{ location.get_longitude() }}</td>
 					<td>{{ location.get_latitude() }}</td>
@@ -52,7 +52,7 @@
 					</td>
 					<td class="text-right">
 						<a href="javascript:show_marker_on_location_map({{ loop.index0 }});" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-map-marker"></span> Show on Map</a>
-						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+						<a href="/config/locations/edit/{{ location.get_id() }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 						<a href="javascript:remove_location({{ location.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
 					</td>
 				</tr>
@@ -61,7 +61,7 @@
 					<td colspan="6" class="text-center">No locations available.</td>
 				</tr>
 				{% endfor %}
-			</tbody> 
+			</tbody>
 		</table>
 	</div>
 </div>
@@ -70,7 +70,7 @@
 		<h2 class="panel-title">Map</h2>
 	</div>
 	<div class="panel-body" id="map" style="height: 500px;">
-		
+
 	</div>
 </div>
 {% endblock admin_content %}

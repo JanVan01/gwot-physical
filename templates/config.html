@@ -3,8 +3,45 @@
 {% block navigation %}config_settings{% endblock navigation %}
 
 {% block admin_content %}
-  <h2>Config</h2>
-  Name: {{ data.name }} <br>
-  Interval: {{ data.interval }} <br>
-  Location: {{ data.location }} <br>
+<div id="alert"></div>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h1 class="panel-title">Change Settings</h1>
+	</div>
+	<div class="panel-body">
+		<form id="ajax_form" onsubmit="update_config(); return false;">
+			<div class="form-group">
+				<label for="name">Device Name</label>
+				<input type="text" class="form-control" id="name" name="name" value="{{ data.config.get_name() }}">
+			</div>
+			<div class="form-group">
+				<label for="interval">Default interval for mesurements</label>
+				<input type="number" class="form-control" id="interval" name="interval" value="{{ data.config.get_interval() }}">
+			</div>
+			<div class="form-group">
+				<label for="location">Current Location</label>
+				<select class="form-control" id="location" name="location">
+					{% for location in data.locations %}
+					<option value="{{ location.get_id() }}"{% if location.get_id() == data.config.get_location() %} selected="selected"{% endif %}>{{ location.get_name() }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="form-group">
+				<label>Port</label>
+				<div>
+					{{ data.config.get_port() }}<br />
+					<small>Please configure this in the config.ini manually and restart the service afterwards.</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<label>Database</label>
+				<div>
+					Hosted on <em>{{ data.config.get_dbhost() }}</em> using database <em>{{ data.config.get_dbname() }}</em> and user <em>{{ data.config.get_dbuser() }}</em>.<br />
+					<small>Please change this in the config.ini manually.</small>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>
 {% endblock admin_content %}

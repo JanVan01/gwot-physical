@@ -44,13 +44,11 @@ function request(method, url, success, data) {
 	if (typeof success === 'function') {
 		options.success = function (data, status, ajax) {
 			success(data);
-			$('#ajax_form').reset();
 		};
 	}
 	else if (typeof success === 'string') {
 		options.success = function (data, status, ajax) {
 			success_msg(success);
-			$('#ajax_form').reset();
 		};
 	}
 	if (data) {
@@ -62,26 +60,41 @@ function request(method, url, success, data) {
 }
 
 function remove_sensor(id) {
-	remove_x('/api/1.0/config/sensor/' + id)
+	remove_x('sensor', id)
 }
 
 function remove_notifier(id) {
-	remove_x('/api/1.0/config/notification/' + id)
+	remove_x('notification', id)
 }
 
 function remove_location(id) {
-	remove_x('/api/1.0/config/location/' + id)
+	remove_x('location', id)
 }
 
 function remove_subscription(id) {
-	remove_x('/api/1.0/config/subscription/' + id)
+	remove_x('subscription', id)
 }
 
-function remove_x(url) {
+function remove_x(endpoint, id) {
 	if (!confirm('Are you sure you want to delete the selected entry?')) {
 		return;
 	}
-	request('DELETE', url, 'The data has been deleted successfully.');
+	request(
+		'DELETE', '/api/1.0/config/'+endpoint+'/'+id, 
+		function() {
+			success_msg('The data has been deleted successfully.');
+			$('#entry_' + id).remove();
+		}
+	);
+}
+
+function split_module(classpath) {
+	var module = classpath.substring(0, classpath.lastIndexOf("."));
+	var class_name = classpath.substring(classpath.lastIndexOf(".") + 1, classpath.length);
+	return {
+		module: module,
+		class: class_name
+	}
 }
 
 function change_password() {
@@ -99,6 +112,53 @@ function change_password() {
 		'PUT', '/api/1.0/config/password',
 		'The password has been changed successfully and will be needed for the next login.',
 		{password: pw1}
+	);
+}
+
+function update_config(){
+	var name = $('#name').val();
+	var interval = $('#interval').val();
+	var location = $('#location').val();
+	request(
+		'PUT', '/api/1.0/config',
+		'Settings updated successfully.',
+		{
+			name: name,
+			interval: interval,
+			location: location
+		}
+	);
+}
+
+function change_location(id){
+
+}
+
+function change_sensor(id){
+	var classpath = split_module($('#module').val());
+	var data = {
+		module: classpath.module,
+		class_name: classpath.class,
+		active: $('#active').is(':checked'),
+		description: $('#description').val(),
+		settings: {}
+	};
+	$('.custom-settings').each(function() {
+		var elem = $( this );
+		data.settings[elem.attr('id')] = elem.val();
+	});
+	var method = 'POST'; // Create
+	if (id) {
+		data.id = id;
+		method = 'PUT'; // Update
+	}
+	request(
+		method, '/api/1.0/config/sensor', 
+		function() {
+			'Sensor has been saved successfully.',
+			window.location = '/config/sensors'
+		},
+		data
 	);
 }
 

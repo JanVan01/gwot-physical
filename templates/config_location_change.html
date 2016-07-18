@@ -1,0 +1,36 @@
+{% extends "base/admin.html" %}
+
+{% block navigation %}config_locations{% endblock navigation %}
+
+{% block admin_content %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{% if data.edit %}
+		<h1 class="panel-title">Edit Location</h1>
+		{% else %}
+		<h1 class="panel-title">Add Location</h1>
+		{% endif %}
+	</div>
+	<div class="panel-body">
+		<form id="ajax_form" onsubmit="change_password({% if data.edit %}{{data.location.get_id()}}{% endif %}); return false;">
+			<div class="form-group">
+				<label for="name">Name:</label>
+				<input type="text" id="name" name="name" class="form-control" value="{% if data.edit %}{{data.location.get_name()}}{% endif %}">
+			</div>
+			<div class="form-group">
+				<label for="lat">Latitude:</label>
+				<input type="number" id="lat" name="lat" class="form-control" value="{% if data.edit %}{{data.location.get_latitude()}}{% endif %}">
+			</div>
+			<div class="form-group">
+				<label for="lon">Longitude:</label>
+				<input type="number" id="lon" name="lon" class="form-control" value="{% if data.edit %}{{data.location.get_longitude()}}{% endif %}">
+			</div>
+			<div class="form-group">
+				<label for="height">Height (cm):</label>
+				<input type="number" class="form-control" id="height" name="height" value="{% if data.edit %}{{data.location.get_height()}}{% endif %}">
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>
+{% endblock admin_content %}

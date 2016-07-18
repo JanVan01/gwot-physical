@@ -3,13 +3,12 @@
 {% block navigation %}config_sensors{% endblock navigation %}
 
 {% block admin_content %}
-
 <div class="panel panel-default admin-dashboard">
 	<div class="panel-heading clearfix">
 		<h1 class="panel-title pull-left">Sensors</h1>
 		<span class=" pull-right">
 			<a href="/api/1.0/data/trigger" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-flash"></span> Trigger all</a>
-			<a href="#" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-plus"></span> Add</a>
+			<a href="/config/sensors/add" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-plus"></span> Add</a>
 	</div>
 	<div class="table-responsive">
 		<table class="table table-hover">
@@ -24,7 +23,7 @@
 			</thead>
 			<tbody>
 				{% for sensor in data.sensors %}
-				<tr>
+				<tr id="entry_{{ sensor.get_id() }}">
 					<td>{{ sensor.get_type() }}</td>
 					<td>{{ sensor.get_description() }}</td>
 					<td>{{ sensor.get_unit() }}</td>
@@ -39,7 +38,7 @@
 						{% if sensor.is_active() %}
 						<a href="/api/1.0/data/trigger?sensor={{ sensor.get_id() }}" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-flash"></span> Trigger</a>
 						{% endif %}
-						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+						<a href="/config/sensors/edit/{{ sensor.get_id() }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 						<a href="javascript:remove_sensor({{ sensor.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
 					</td>
 				</tr>
@@ -48,9 +47,8 @@
 					<td colspan="5" class="text-center">No sensors available.</td>
 				</tr>
 				{% endfor %}
-			</tbody> 
+			</tbody>
 		</table>
 	</div>
 </div>
-
 {% endblock admin_content %}

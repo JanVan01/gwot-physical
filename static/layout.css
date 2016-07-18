@@ -28,3 +28,15 @@ body {
 #alert {
 	display: none;
 }
+
+.text-divider {
+	width:100%;
+	text-align:center;
+	border-bottom: 1px solid darkgrey;
+	line-height:0.1em;
+	margin:10px 0 20px;
+} 
+.text-divider span {
+	background:#fff;
+	padding:0 10px;
+}

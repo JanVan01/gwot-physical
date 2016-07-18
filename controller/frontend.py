@@ -1,17 +1,20 @@
 from controller.base import BaseController
-from views.html import HtmlView
 from models.config import ConfigManager
 from models.locations import Locations
 from models.measurements import Measurements
-from models.sensors import Sensors
 from models.notifiers import Notifiers
+from models.sensors import Sensors
 from models.subscribers import Subscribers
+from views.html import HtmlView
+from utils.utils import OS
+from flask import request
 import time
 
 class FrontendController(BaseController):
 
 	def __init__(self):
 		super().__init__()
+		self.config_manager = ConfigManager.Instance()
 		self.unknownValue = "None"
 
 	def get_view(self, template_file=None):
@@ -25,7 +28,7 @@ class FrontendController(BaseController):
 		sensor_id = None
 		if sensor_data is not None and len(sensor_data) > 0:
 			sensor_id = sensor_data[0].get_id()
-		
+
 		location = ConfigManager.Instance().get_location()
 		locationObj = Locations().get(location)
 
@@ -35,7 +38,7 @@ class FrontendController(BaseController):
 			"default_sensor": sensor_id,
 			"sensors": {}
 		}
-		
+
 		if locationObj is None or sensor_id is None:
 			data["setup"] = True
 
@@ -76,7 +79,7 @@ class FrontendController(BaseController):
 			'max': self.__getaggregatevalue(start, location, sensor, 'max')
 		}
 
-	def __getaggregatevalue(self, start, location, sensor, type = 'avg'):
+	def __getaggregatevalue(self, start, location, sensor, type='avg'):
 		filterObj = {
 			'start': start,
 			'location': [str(location)],
@@ -99,25 +102,82 @@ class FrontendController(BaseController):
 				return str(value)
 			else:
 				return self.unknownValue
-			
+	
+	def _get_module_chooser(self, title, url, folder, suffix):
+		data = {
+			"title": title,
+			"target": url,
+			"modules": OS().get_classes(folder, suffix)
+		}
+		return self.get_view('config_module_chooser.html').data(data)
 
 	def config(self):
-		return self.get_view('config.html').data()
+		data = {
+			"config": ConfigManager.Instance(),
+			"locations": Locations().get_all()
+		}
+		return self.get_view('config.html').data(data)
 
 	def config_password(self):
 		return self.get_view('config_password.html').data()
 
 	def config_sensors(self):
+		data = {"sensors": Sensors().get_all()}
+		return self.get_view('config_sensor.html').data(data)	
+
+	def config_sensors_change(self, mode, id):
+		if mode == 'add' and 'module' not in request.args:
+			if request.method == 'POST':
+				filename = OS().upload_file('sensors/', 'file');
+			return self._get_module_chooser("Add Sensor", "/config/sensors/add", "sensors", "Sensor")
+		
 		data = {
-			"sensors": Sensors().get_all()
+			"edit": (mode == 'edit'),
+			"mode": mode,
+			"sensor": None,
+			"sensor_inpl": None,
+			"sensor_module": None,
+			"modules": OS().get_classes("sensors", "Sensor")
 		}
-		return self.get_view('config_sensor.html').data(data)
+		if mode == 'edit' and id is not None:
+			sensor = Sensors().get(id)
+			data['sensor'] = sensor
+			data['sensor_module'] = sensor.get_classpath()
+			data['sensor_impl'] = sensor.get_sensor_impl()
+		elif mode == 'add':
+			data['sensor_module'] = request.args.get('module')
+			data['sensor_impl'] = OS().create_object(data['sensor_module'])
+
+		return self.get_view('config_sensor_change.html').data(data)
+
+	def config_locations(self):
+		data = {
+			"locations": Locations().get_all(),
+			"default_location": ConfigManager.Instance().get_location()
+		}
+
+		return self.get_view('config_location.html').data(data)
+
+	def config_locations_change(self, mode, id):
+		data = {
+			"edit": (mode == 'edit'),
+			"mode": mode,
+			"location": None
+		}
+		if mode == 'edit' and id is not None:
+			location = Locations().get(id)
+			data['location'] = location
+
+		return self.get_view('config_location_change.html').data(data)
 
 	def config_notifications(self):
 		data = {
 			"notifiers": Notifiers().get_all()
 		}
 		return self.get_view('config_notifications.html').data(data)
+
+	def config_notifications_change(self, nid):
+		return;
 
 	def config_subscriptions(self, nid):
 		notifier = Notifiers().get(nid)
@@ -129,12 +189,8 @@ class FrontendController(BaseController):
 		}
 		return self.get_view('config_subscriptions.html').data(data)
 
-	def config_locations(self):
-		data = {
-			"locations": Locations().get_all(),
-			"default_location": ConfigManager.Instance().get_location()
-		}
-		return self.get_view('config_location.html').data(data)
+	def config_subscriptions_change(self, nid, sid):
+		return;
 
 	def data(self):
 		locations = Locations().get_all()
@@ -147,7 +203,7 @@ class FrontendController(BaseController):
 
 	def tutorial_notifications(self):
 		return self.get_view('tutorial_notifications.html').data()
-	
+
 	def subscriptions(self):
 		return self.get_view('subscriptions.html').data()
 

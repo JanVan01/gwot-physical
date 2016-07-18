@@ -42,20 +42,44 @@ def frontend_config_password():
 def frontend_config_sensors():
 	return FrontendController().config_sensors()
 
+@app.route('/config/sensors/add', defaults={'id': None, 'mode': 'add'}, methods=['GET', 'POST'])
+@app.route('/config/sensors/edit/<int:id>', defaults={'mode': 'edit'})
+@auth.login_required
+def frontend_config_sensors_change(mode, id):
+	return FrontendController().config_sensors_change(mode, id)
+
 @app.route('/config/locations')
 @auth.login_required
 def frontend_config_locations():
 	return FrontendController().config_locations()
+
+@app.route('/config/locations/add', defaults={'id': None, 'mode': 'add'})
+@app.route('/config/locations/edit/<int:id>', defaults={'mode': 'edit'})
+@auth.login_required
+def frontend_config_locations_change(mode, id):
+	return FrontendController().config_locations_change(mode, id)
 
 @app.route('/config/notifications')
 @auth.login_required
 def frontend_config_notifications():
 	return FrontendController().config_notifications()
 
+@app.route('/config/notifications/add', defaults={'id': None, 'mode': 'add'}, methods=['GET', 'POST'])
+@app.route('/config/notifications/edit/<int:id>', defaults={'mode': 'edit'})
+@auth.login_required
+def frontend_config_notifications_change(mode, id):
+	return FrontendController().config_notifications_change(mode, id)
+
 @app.route('/config/notifications/<int:id>/subscriptions')
 @auth.login_required
 def frontend_config_subscriptions(id):
 	return FrontendController().config_subscriptions(id)
+
+@app.route('/config/subscriptions/add', defaults={'sid': None, 'mode': 'add'})
+@app.route('/config/subscriptions/edit/<int:sid>', defaults={'mode': 'edit'})
+@auth.login_required
+def frontend_config_subscriptions_change(mode, nid, sid):
+	return FrontendController().config_subscriptions_change(mode, nid, sid)
 
 @app.route('/tutorial/notifications')
 def frontend_tutorial_notifications():

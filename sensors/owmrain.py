@@ -80,7 +80,7 @@ class OwmRainSnow(BaseSensor):
 		else:
 			return False
 	
-	def get_setting_html(self, key, value):
+	def get_setting_html(self, key, value = None):
 		if key == "apikey":
 			return SettingManager().get_input_field(key, value)
 		else:

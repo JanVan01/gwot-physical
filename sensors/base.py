@@ -35,7 +35,7 @@ class BaseSensor(object):
 	def validate_setting(self, key, value):
 		return False
 	
-	def get_setting_html(self, key, value):
+	def get_setting_html(self, key, value = None):
 		return None
 		
 	def get_setting(self, key):
