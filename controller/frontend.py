@@ -102,7 +102,7 @@ class FrontendController(BaseController):
 				return str(value)
 			else:
 				return self.unknownValue
-	
+
 	def _get_module_chooser(self, title, url, folder, suffix):
 		data = {
 			"title": title,
@@ -123,19 +123,19 @@ class FrontendController(BaseController):
 
 	def config_sensors(self):
 		data = {"sensors": Sensors().get_all()}
-		return self.get_view('config_sensor.html').data(data)	
+		return self.get_view('config_sensor.html').data(data)
 
 	def config_sensors_change(self, mode, id):
 		if mode == 'add' and 'module' not in request.args:
 			if request.method == 'POST':
 				filename = OS().upload_file('sensors/', 'file');
 			return self._get_module_chooser("Add Sensor", "/config/sensors/add", "sensors", "Sensor")
-		
+
 		data = {
 			"edit": (mode == 'edit'),
 			"mode": mode,
 			"sensor": None,
-			"sensor_inpl": None,
+			"sensor_impl": None,
 			"sensor_module": None,
 			"modules": OS().get_classes("sensors", "Sensor")
 		}
@@ -181,7 +181,7 @@ class FrontendController(BaseController):
 			if request.method == 'POST':
 				filename = OS().upload_file('notifiers/', 'file');
 			return self._get_module_chooser("Add Notification Service", "/config/notifications/add", "notifiers", "Notifier")
-		
+
 		data = {
 			"edit": (mode == 'edit'),
 			"mode": mode,
