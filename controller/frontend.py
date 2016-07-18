@@ -120,7 +120,7 @@ class FrontendController(BaseController):
 	def config_sensors(self):
 		data = {"sensors": Sensors().get_all()}
 		if 'mode' in request.args and request.args['mode'] == 'edit' and 'id' in request.args:
-			sensor = self.get_model('models.sensors', 'Sensors').get(request.args['id'])
+			sensor = Sensors().get(request.args['id'])
 			if sensor is not None:
 				data['mode'] = 'edit'
 				data['id'] = sensor.get_id()
@@ -133,12 +133,12 @@ class FrontendController(BaseController):
 		return self.get_view('config_sensor.html').data(data)
 
 	def config_locations(self):
-		data = data = {
+		data = {
 			"locations": Locations().get_all(),
 			"default_location": ConfigManager.Instance().get_location()
 		}
 		if 'mode' in request.args and request.args['mode'] == 'edit' and 'id' in request.args:
-			location = self.get_model('models.locations', 'Locations').get(request.args['id'])
+			location = Locations().get(request.args['id'])
 			if location is not None:
 				data['mode'] = 'edit'
 				data['id'] = location.get_id()
@@ -165,12 +165,6 @@ class FrontendController(BaseController):
 		}
 		return self.get_view('config_subscriptions.html').data(data)
 
-	def config_locations(self):
-		data = {
-			"locations": Locations().get_all(),
-			"default_location": ConfigManager.Instance().get_location()
-		}
-
 	def data(self):
 		locations = Locations().get_all()
 		sensors = Sensors().get_all()
@@ -191,9 +185,7 @@ class FrontendController(BaseController):
 		return self.get_view('about.html').data(data)
 
 	def _get_location(self, id):
-		location_model = self.get_model('models.locations', 'Location')
-		location_model.set_id(id)
-		location_model.read()
+		location_model = Locations().get(id)
 		location = {}
 		location['id'] = location_model.get_id()
 		location['name'] = location_model.get_name()
@@ -203,9 +195,8 @@ class FrontendController(BaseController):
 		return location
 
 	def _get_all_locations(self):
-		locations_model = self.get_model('models.locations', 'Locations')
 		locations = []
-		for l in locations_model.get_all():
+		for l in Locations().get_all():
 			location = {}
 			location['id'] = l.get_id()
 			location['name'] = l.get_name()
@@ -216,9 +207,8 @@ class FrontendController(BaseController):
 		return locations
 
 	def _get_sensors(self):
-		sensor_model = self.get_model('models.sensors', 'Sensors')
 		sensors = []
-		for s in sensor_model.get_all():
+		for s in Sensors().get_all():
 			sensor = {}
 			sensor['id'] = s.get_id()
 			sensor['module'] = s.get_module()
