@@ -54,9 +54,9 @@ INSERT INTO Sensors (module, class, type, description, unit, settings) VALUES ('
 INSERT INTO Sensors (module, class, type, description, unit, settings) VALUES ('sensors.owmrain', 'OwmRainSnow', 'OpenWeatherMap Rain+Snow', 'Sum of rain and snow. Source: OpenWeatherMap', 'mm/3h', '{"apikey": ""}');
 
 -- Default data for notifications
-INSERT INTO notifiers (id, module, class, description, settings, active) VALUES (1, 'notifiers.email', 'EmailNotifier', 'E-Mail', '{"sender": "no-reply@localhost"}', false);
-INSERT INTO notifiers (id, module, class, description, settings, active) VALUES (2, 'notifiers.mqtt', 'MqttNotifier', 'MQTT Broker', NULL, false);
-INSERT INTO notifiers (id, module, class, description, settings, active) VALUES (3, 'notifiers.opensensemap', 'OpenSenseMapNotifier', 'OpenSenseMap', '{"sensebox_id": ""}', false);
+INSERT INTO notifiers (module, class, description, settings, active) VALUES ('notifiers.email', 'EmailNotifier', 'E-Mail', '{"sender": "no-reply@localhost"}', false);
+INSERT INTO notifiers (module, class, description, settings, active) VALUES ('notifiers.mqtt', 'MqttNotifier', 'MQTT Broker', NULL, false);
+INSERT INTO notifiers (module, class, description, settings, active) VALUES ('notifiers.opensensemap', 'OpenSenseMapNotifier', 'OpenSenseMap', '{"sensebox_id": ""}', false);
 
-INSERT INTO subscribers (id, notifier, sensor, settings) VALUES (1, 2, 1, NULL);
-INSERT INTO subscribers (id, notifier, sensor, settings) VALUES (2, 3, 1, '{"sensor_id": ""}');
+INSERT INTO subscribers (notifier, sensor, settings) VALUES (2, 1, NULL);
+INSERT INTO subscribers (notifier, sensor, settings) VALUES (3, 1, '{"sensor_id": ""}');
