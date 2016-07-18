@@ -128,6 +128,9 @@ class Subscribers(BaseMultiModel):
 
 	def get_all(self):
 		return self._get_all("SELECT * FROM Subscribers ORDER BY id")
+	
+	def get_all_by_notifier(self, notifier_id):
+		return self._get_all("SELECT * FROM Subscribers WHERE notifier = %s ORDER BY id", [notifier_id])
 
 	def get_all_active_by_sensor(self, sensor_id):
 		return self._get_all("SELECT s.* FROM Subscribers s INNER JOIN Notifiers n ON s.notifier = n.id WHERE n.active = true And s.sensor = %s", [sensor_id])

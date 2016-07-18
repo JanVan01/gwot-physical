@@ -1,8 +1,9 @@
 from controller.base import BaseController
 
+from models.locations import Locations
+
 class LocationController(BaseController):
 		
 	def list(self):
-		model = self.get_model('models.locations', 'Locations')
-		data = model.get_all()
+		data = Locations().get_all()
 		return self.get_view().data(data)
