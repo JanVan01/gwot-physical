@@ -37,7 +37,7 @@
 					<td>
 						<a href="#" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-map-marker"></span> Show on Map</a>
 						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-						<a href="#" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
+						<a href="javascript:remove_location({{ location.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
 					</td>
 				</tr>
 				{% else %}

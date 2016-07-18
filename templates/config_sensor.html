@@ -38,7 +38,7 @@
 					<td>
 						<a href="/api/1.0/data/trigger?sensor={{ sensor.get_id() }}" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-flash"></span> Trigger</a>
 						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-						<a href="#" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
+						<a href="javascript:remove_sensor({{ sensor.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
 					</td>
 				</tr>
 				{% else %}

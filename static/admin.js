@@ -61,6 +61,29 @@ function request(method, url, success, data) {
 	$.ajax(options);
 }
 
+function remove_sensor(id) {
+	remove_x('/api/1.0/config/sensor/' + id)
+}
+
+function remove_notifier(id) {
+	remove_x('/api/1.0/config/notification/' + id)
+}
+
+function remove_location(id) {
+	remove_x('/api/1.0/config/location/' + id)
+}
+
+function remove_subscription(id) {
+	remove_x('/api/1.0/config/subscription/' + id)
+}
+
+function remove_x(url) {
+	if (!confirm('Are you sure you want to delete the selected entry?')) {
+		return;
+	}
+	request('DELETE', url, 'The data has been deleted successfully.');
+}
+
 function change_password() {
 	pw1 = $('#password').val();
 	pw2 = $('#password2').val();
