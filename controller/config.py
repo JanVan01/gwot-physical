@@ -45,8 +45,7 @@ class ConfigController(BaseController):
             location = Locations().get(id)
             if location is None:
                 self.get_view().bad_request('Location does not exist')
-            deleted = location.delete()
-            if deleted:
+            if location.delete():
                 self.get_view().success()
             else:
                 self.get_view().error()
@@ -95,8 +94,10 @@ class ConfigController(BaseController):
 
     def sensor(self, id):
         if (request.method == 'DELETE'):
-            deleted = Locations().get(id).delete()
-            if deleted:
+            sensor = Sensors().get(id)
+            if sensor is None:
+                self.get_view().bad_request('Location does not exist')
+            if sensor.delete():
                 self.get_view().success()
             else:
                 self.get_view().error()
