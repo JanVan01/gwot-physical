@@ -3,7 +3,53 @@
 {% block navigation %}config_settings{% endblock navigation %}
 
 {% block admin_content %}
-  <h2>Config</h2>
+  <div class="panel panel-default">
+  	<div class="panel-heading clearfix">
+  		<h1 class="panel-title pull-left">Config</h1>
+      <a href="/config?mode=edit" class="btn btn-xs btn-warning pull-right"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+  	</div>
+  	<div class="panel-body">
+      <div class="table-responsive">
+    		<table class="table table-hover">
+          <tbody>
+            <tr>
+              <td><strong>Name:</strong></td>
+              <td>{{ data.name }}</td>
+            </tr>
+            <tr>
+              <td><strong>Interval:</strong></td>
+              <td>{{ data.interval }}</td>
+            </tr>
+            <tr>
+              <td><strong>Location:</strong></td>
+              <td><table>
+                <tr>
+                  <td>Name:</td>
+                  <td>{{ data.location.name }}</td>
+                </tr>
+                <tr>
+                  <td>ID:</td>
+                  <td>{{data.location.id}}</td>
+                </tr>
+                <tr>
+                  <td>Latitude:</td>
+                  <td>{{data.location.lat}}</td>
+                </tr>
+                <tr>
+                  <td>Longitude:</td>
+                  <td>{{data.location.lon}}</td>
+                </tr>
+                <tr>
+                  <td>Height:</td>
+                  <td>{{data.location.height}}</td>
+                </tr>
+              </table>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <h2></h2>
   <table class="config_info">
     <tr>
       <td>Name:</td>
@@ -66,4 +112,4 @@
   </table>
   <a class="btn btn-default" href="/config/sensors?mode=edit&id={{sensor.id}}">Edit this Sensor</a>
   {% endfor %}
-{% endblock content %}
+{% endblock admin_content %}

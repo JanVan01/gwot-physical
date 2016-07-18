@@ -118,35 +118,41 @@ class FrontendController(BaseController):
 		return self.get_view('config_password.html').data({})
 
 	def config_sensors(self):
-		data = {"sensors": Sensors().get_all()}
-		if 'mode' in request.args and request.args['mode'] == 'edit' and 'id' in request.args:
-			sensor = Sensors().get(request.args['id'])
-			if sensor is not None:
-				data['mode'] = 'edit'
-				data['id'] = sensor.get_id()
-				data['module'] = sensor.get_module()
-				data['class_name'] = sensor.get_class()
-				data['type'] = sensor.get_type()
-				data['description'] = sensor.get_description()
-				data['unit'] = sensor.get_unit()
+		if 'mode' in request.args:
+			data = {}
+			if request.args['mode'] == 'edit' and 'id' in request.args:
+				sensor = Sensors().get(request.args['id'])
+				if sensor is not None:
+					print(sensor.get_description())
+					data['mode'] = 'edit'
+					data['sensor'] = sensor
+					return self.get_view('config_sensor.html').data(data)
+			elif request.args['mode'] == 'add':
+				data['mode'] = 'add'
+				data['sensor'] = None
 				return self.get_view('config_sensor.html').data(data)
+		data = {"sensors": Sensors().get_all()}
 		return self.get_view('config_sensor.html').data(data)
 
 	def config_locations(self):
+		if 'mode' in request.args:
+			data = {}
+			if request.args['mode'] == 'edit' and 'id' in request.args:
+				location = Locations().get(request.args['id'])
+				if location is not None:
+					data['mode'] = 'edit'
+					data['location'] = location
+					return self.get_view('config_location.html').data(data)
+			elif request.args['mode'] == 'add':
+				data['mode'] = 'add'
+				data['location'] = None
+				return self.get_view('config_location.html').data(data)
+
 		data = {
 			"locations": Locations().get_all(),
 			"default_location": ConfigManager.Instance().get_location()
-		}
-		if 'mode' in request.args and request.args['mode'] == 'edit' and 'id' in request.args:
-			location = Locations().get(request.args['id'])
-			if location is not None:
-				data['mode'] = 'edit'
-				data['id'] = location.get_id()
-				data['name'] = location.get_name()
-				data['lat'] = location.get_latitude()
-				data['lon'] = location.get_longitude()
-				data['height'] = location.get_height()
-				return self.get_view('config_location.html').data(data)
+			}
+
 		return self.get_view('config_location.html').data(data)
 
 	def config_notifications(self):

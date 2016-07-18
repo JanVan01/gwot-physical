@@ -102,6 +102,41 @@ function change_password() {
 	);
 }
 
+function update_config(){
+	name = $('#name').val();
+	interval = $('#interval').val();
+	location = $('#location').val();
+	error_msg("<strong>Error!</strong> The passwords don't match.");
+	return;
+	request(
+		'PUT', '/api/1.0/config',
+		'Config updated successfully',
+		{
+			name: name,
+			interval: interval,
+			location:location
+		}
+	);
+
+
+}
+
+function create_location(){
+
+}
+
+function update_location(){
+
+}
+
+function create_sensor(){
+
+}
+
+function update_sensor(){
+
+}
+
 var markerGroup = [];
 var mymap = null;
 function create_location_map(data) {

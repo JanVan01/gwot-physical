@@ -3,13 +3,13 @@
 {% block navigation %}config_sensors{% endblock navigation %}
 
 {% block admin_content %}
-
+{% if not data.mode %}
 <div class="panel panel-default admin-dashboard">
 	<div class="panel-heading clearfix">
 		<h1 class="panel-title pull-left">Sensors</h1>
 		<span class=" pull-right">
 			<a href="/api/1.0/data/trigger" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-flash"></span> Trigger all</a>
-			<a href="#" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-plus"></span> Add</a>
+			<a href="/config/sensors?mode=add" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-plus"></span> Add</a>
 	</div>
 	<div class="table-responsive">
 		<table class="table table-hover">
@@ -39,7 +39,7 @@
 						{% if sensor.is_active() %}
 						<a href="/api/1.0/data/trigger?sensor={{ sensor.get_id() }}" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-flash"></span> Trigger</a>
 						{% endif %}
-						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+						<a href="/config/sensors?mode=edit&id={{ sensor.get_id() }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 						<a href="javascript:remove_sensor({{ sensor.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
 					</td>
 				</tr>
@@ -52,31 +52,47 @@
 		</table>
 	</div>
 </div>
-{% if data.mode == 'edit' %}
-<h2>Edit Sensor</h2>
 {% else %}
-<h2>New Sensor</h2>
-{% endif %}
-<form>
-  {% if data.mode =='edit' %}
-  <label for="id"> ID:</label>
-  <input type="text" id="id" name="id" class="form-control" value={{data.id}} readonly>
-  {% endif %}
-  <label for="module"> Module:</label>
-  <input type="text" id="module" name="module" class="form-control" value={{data.module}}>
-  <label for="class_name"> Class:</label>
-  <input type="text" id="class_name" name="class_name" class="form-control" value={{data.class_name}}>
-  <label for="type"> Type:</label>
-  <input type="text" id="type" name="type" class="form-control" value={{data.type}}>
-  <label for="description"> Description:</label>
-  <input type="text" id="description" name="description" class="form-control" value={{data.description}}>
-  <label for="unit"> Unit:</label>
-  <input type="text" id="unit" name="unit" class="form-control" value={{data.unit}}>
-</form>
-<script src="{{ url_for('static', filename='js/submit.js') }}"></script>
-{% if data.mode == 'edit' %}
-<button  class="btn btn-default" onclick="submit_form('/api/1.0/config/sensor', 'PUT')">Save Changes</button>
-{% else %}
-<button  class="btn btn-default" onclick="submit_form('/api/1.0/config/sensor', 'POST')">Create new Sensor</button>
+<div id="alert"></div>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{% if data.mode == 'edit' %}
+		<h1 class="panel-title">Edit Sensor</h1>
+		{% else %}
+		<h1 class="panel-title">New Sensor</h1>
+		{% endif %}
+	</div>
+	<div class="panel-body">
+		<form id="ajax_form" onsubmit="change_password(); return false;">
+			{% if data.mode =='edit' %}
+			<div class="form-group">
+			  <label for="id"> ID:</label>
+			  <input type="text" id="id" name="id" class="form-control" value="{{data.sensor.get_id()}}" readonly>
+			</div>
+		  {% endif %}
+			<div class="form-group">
+				<label for="module"> Module:</label>
+			  <input type="text" id="module" name="module" class="form-control" value="{{data.sensor.get_module()}}">
+			</div>
+			<div class="form-group">
+			  <label for="class_name"> Class:</label>
+			  <input type="text" id="class_name" name="class_name" class="form-control" value="{{data.sensor.get_class()}}">
+			</div>
+			<div class="form-group">
+			  <label for="type"> Type:</label>
+			  <input type="text" id="type" name="type" class="form-control" value="{{data.sensor.get_type()}}">
+			</div>
+			<div class="form-group">
+			  <label for="description"> Description:</label>
+			  <input type="text" id="description" name="description" class="form-control" value="{{data.sensor.get_description()}}">
+			</div>
+			<div class="form-group">
+			  <label for="unit"> Unit:</label>
+			  <input type="text" id="unit" name="unit" class="form-control" value="{{data.sensor.get_unit()}}">
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>
 {% endif %}
 {% endblock admin_content %}

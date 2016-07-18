@@ -19,10 +19,11 @@
 {% endblock admin_resources %}
 
 {% block admin_content %}
+{% if not data.mode %}
 <div class="panel panel-default admin-dashboard">
 	<div class="panel-heading clearfix">
 		<h1 class="panel-title pull-left">Locations</h1>
-		<a href="#" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
+		<a href="/config/locations?mode=add" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
 	</div>
 	<div class="table-responsive">
 		<table class="table table-hover">
@@ -52,7 +53,7 @@
 					</td>
 					<td class="text-right">
 						<a href="javascript:show_marker_on_location_map({{ loop.index0 }});" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-map-marker"></span> Show on Map</a>
-						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+						<a href="/config/locations?mode=edit&id={{ location.get_id() }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 						<a href="javascript:remove_location({{ location.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
 					</td>
 				</tr>
@@ -73,29 +74,43 @@
 
 	</div>
 </div>
-{% if data.mode == 'edit' %}
-<h2>Edit Location</h2>
 {% else %}
-<h2>New Location</h2>
-{% endif %}
-<form>
-  {% if data.mode =='edit' %}
-  <label for="id"> ID:</label>
-  <input type="text" id="id" name="id" class="form-control" value={{data.id}} readonly>
-  {% endif %}
-  <label for="name"> Name:</label>
-  <input type="text" id="name" name="name" class="form-control" value={{data.name}}>
-  <label for="lat"> Latitude:</label>
-  <input type="number" id="lat" name="lat" class="form-control" value={{data.lat}}>
-  <label for="lon"> Longitude:</label>
-  <input type="number" id="lon" name="lon" class="form-control" value={{data.lon}}>
-  <label for="height"> Height:</label>
-  <input type="number" id="height" name="height" class="form-control" value={{data.height}}>
-</form>
-<script src="{{ url_for('static', filename='js/submit.js') }}"></script>
-{% if data.mode == 'edit' %}
-<button  class="btn btn-default" onclick="submit_form('/api/1.0/config/location', 'PUT')">Save Changes</button>
-{% else %}
-<button  class="btn btn-default" onclick="submit_form('/api/1.0/config/location', 'POST')">Create new Location</button>
+<div id="alert"></div>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{% if data.mode == 'edit' %}
+		<h1 class="panel-title">Edit Location</h1>
+		{% else %}
+		<h1 class="panel-title">New Location</h1>
+		{% endif %}
+	</div>
+	<div class="panel-body">
+		<form id="ajax_form" onsubmit="change_password(); return false;">
+			{% if data.mode =='edit' %}
+			<div class="form-group">
+			  <label for="id"> ID:</label>
+			  <input type="text" id="id" name="id" class="form-control" value="{{data.location.get_id()" }} readonly="readonly">
+			</div>
+		  {% endif %}
+			<div class="form-group">
+			  <label for="name"> Name:</label>
+			  <input type="text" id="name" name="name" class="form-control" value="{{data.location.get_name()}}">
+			</div>
+			<div class="form-group">
+			  <label for="lat"> Latitude:</label>
+			  <input type="number" id="lat" name="lat" class="form-control" value="{{data.location.get_latitude()}}">
+			</div>
+			<div class="form-group">
+			  <label for="lon"> Longitude:</label>
+			  <input type="number" id="lon" name="lon" class="form-control" value="{{data.location.get_longitude()}}">
+			</div>
+			<div class="form-group">
+			  <label for="height"> Height:</label>
+			  <input type="number" class="form-control" id="height" name="height" value="{{data.location.get_height()}}">
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>
 {% endif %}
 {% endblock admin_content %}

@@ -1,29 +1,33 @@
-{% extends "base/frontend.html" %}
+{% extends "base/admin.html" %}
 
-{% block navigation %}
-<li><a href="/">Home</a></li>
-<li><a href="/data">Data</a></li>
-<li class="active"><a href="/config">Config</a></li>
-<li><a href="/about">About</a></li>
-{% endblock navigation %}
+{% block navigation %}config_settings{% endblock navigation %}
 
-{% block content %}
-<h2>Edit Config</h2>
-<form>
-  <label for="name"> Name:</label>
-  <input type="text" id="name" name="name" class="form-control" value={{data.name}}>
-  <label for="interval"> Interval:</label>
-  <input type="number" id="interval" name="interval" class="form-control" value={{data.interval}}>
-  <label for="location"> Location:</label>
-  <select id="interval" class="form-control" name="location">
-    {% for location in data.all_locations %}
-    <option value={{location.id}}>{{location.name}}</option>
-    {% endfor %}
-  </select>
-  <a class="btn btn-default" href="/config/locations">add new location</a>
-</form>
-<script src="{{ url_for('static', filename='js/submit.js') }}"></script>
-
-<button  class="btn btn-default" onclick="submit_form('/api/1.0/config', 'PUT')">Save Changes</button>
-
-{% endblock content %}
+{% block admin_content %}
+<div id="alert"></div>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h1 class="panel-title">Edit Config</h1>
+	</div>
+	<div class="panel-body">
+    <form id="ajax_form" onsubmit="update_config(); return false;">
+      <div class="form-group">
+        <label for="name"> Name</label>
+        <input type="text" class="form-control" id="name" name="name" value={{data.name}}>
+      </div>
+      <div class="form-group">
+        <label for="interval"> Interval</label>
+        <input type="number" class="form-control" id="interval" name="interval" value={{data.interval}}>
+      </div>
+      <div class="form-group">
+        <label for="location"> Location</label>
+        <select class="form-control" id="location" name="location">
+          {% for location in data.all_locations %}
+          <option value={{location.id}}>{{location.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+  </div>
+</div>
+{% endblock admin_content %}
