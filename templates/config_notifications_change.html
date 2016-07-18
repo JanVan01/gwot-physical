@@ -12,7 +12,7 @@
 		{% endif %}
 	</div>
 	<div class="panel-body">
-		<form id="ajax_form" onsubmit="change_sensor({% if data.edit %}{{data.notifier.get_id()}}{% endif %}); return false;">
+		<form id="ajax_form" onsubmit="change_notification({% if data.edit %}{{data.notifier.get_id()}}{% endif %}); return false;">
 			<div class="form-group">
 				<label for="module">Module:</label>
 				<input type="text" id="module" name="module" class="form-control" value="{{data.notifier_module}}" readonly="readonly">

@@ -182,6 +182,34 @@ function change_sensor(id){
 	);
 }
 
+function change_notification(id){
+	var classpath = split_module($('#module').val());
+	var data = {
+		module: classpath.module,
+		class_name: classpath.class,
+		active: $('#active').is(':checked'),
+		description: $('#description').val(),
+		settings: {}
+	};
+	$('.custom-settings').each(function() {
+		var elem = $( this );
+		data.settings[elem.attr('id')] = elem.val();
+	});
+	var method = 'POST'; // Create
+	if (id) {
+		data.id = id;
+		method = 'PUT'; // Update
+	}
+	request(
+		method, '/api/1.0/config/notification',
+		function() {
+			'Notification has been saved successfully.',
+			window.location = '/config/notifications'
+		},
+		data
+	);
+}
+
 var markerGroup = [];
 var mymap = null;
 function create_location_map(data) {
