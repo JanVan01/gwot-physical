@@ -129,12 +129,14 @@ class ConfigController(BaseController):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
-            if 'description' in input and 'module' in input and 'class_name' in input and 'active' in input:
+            if ('description' in input and 'module' in input and 'class_name' in input
+                    and 'active' in input and 'settings' in input):
                 sensor = Sensors().create()
                 try:
                     sensor.set_module(str(input['module']))
                     sensor.set_class(str(input['class_name']))
                     sensor.set_description(str(input['description']))
+                    sensor.set_settings(input['settings'])
                     sensor.set_active(bool(input['active']))
                     if not sensor.create():
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
@@ -182,19 +184,25 @@ class ConfigController(BaseController):
         elif (request.method == 'POST'):
             input = request.get_json()
             if(input is None):
+                print('json')
                 return self.get_view().bad_request('Expected json')
-            if 'description' in input and 'module' in input and 'class_name' in input and 'active' in input:
+            if ('description' in input and 'module' in input and 'class_name' in input
+                    and 'active' in input and 'settings' in input):
                 notification = Notifiers().create()
                 try:
                     notification.set_module(str(input['module']))
                     notification.set_class(str(input['class_name']))
                     notification.set_description(str(input['description']))
+                    notification.set_settings(input['settings'])
                     notification.set_active(bool(input['active']))
                     if not notification.create():
+                        print('not create')
                         return self.get_view().bad_request('The notification you are trying to update does not exist try to create it instead')
                 except ValueError:
+                    print('value')
                     return self.get_view().bad_request('input not in the right format')
             else:
+                print('fields')
                 return self.get_view().bad_request('not all necessary field set')
             return self.get_view().success()
 
