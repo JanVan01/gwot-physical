@@ -46,6 +46,7 @@ def frontend_config_sensors():
 @app.route('/config/sensors/edit/<int:id>', defaults={'mode': 'edit'})
 @auth.login_required
 def frontend_config_sensors_change(mode, id):
+	print(id)
 	return FrontendController().config_sensors_change(mode, id)
 
 @app.route('/config/locations')
@@ -135,15 +136,17 @@ def sensor_list():
 def config_config():
     return ConfigController().complete_config()
 
-@app.route('/api/1.0/config/location', methods=['GET', 'PUT', 'POST'])
+@app.route('/api/1.0/config/location/<int:id>', methods=['DELETE'])
+@app.route('/api/1.0/config/location', defaults={'id': None}, methods=['GET', 'PUT', 'POST'])
 @auth.login_required
-def config_location():
-	return ConfigController().location()
+def config_location(id):
+	return ConfigController().location(id)
 
-@app.route('/api/1.0/config/sensor', methods=['PUT', 'POST'])
+@app.route('/api/1.0/config/sensor/<int:id>', methods=['DELETE'])
+@app.route('/api/1.0/config/sensor', defaults = {'id': None}, methods=['PUT', 'POST'])
 @auth.login_required
-def config_sensor():
-	return ConfigController().sensor()
+def config_sensor(id):
+	return ConfigController().sensor(id)
 
 @app.route('/api/1.0/config/password', methods=['PUT'])
 @auth.login_required

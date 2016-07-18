@@ -2,6 +2,7 @@ from controller.base import BaseController
 from flask import request
 from models.config import ConfigManager
 from utils.utils import Validate
+from models.locations import Locations
 from models.locations import Location
 from models.sensors import Sensor
 
@@ -36,10 +37,19 @@ class ConfigController(BaseController):
                 return self.get_view().bad_request('Input not in the right format')
             return self.get_view().success()
 
-    def location(self):
+    def location(self, id):
         if (request.method == 'GET'):
             data = {}
             return self.get_view(template_file='location_form.html').data(data)
+        elif (request.method == 'DELETE'):
+            location = Locations().get(id)
+            if location is None:
+                self.get_view().bad_request('Location does not exist')
+            deleted = location.delete()
+            if deleted:
+                self.get_view().success()
+            else:
+                self.get_view().error()
         elif (request.method == 'PUT'):
             input = request.get_json()
             if(input is None):
@@ -83,8 +93,14 @@ class ConfigController(BaseController):
                 return self.get_view().bad_request('not all necessary field available')
             return self.get_view().success()
 
-    def sensor(self):
-        if (request.method == 'PUT'):
+    def sensor(self, id):
+        if (request.method == 'DELETE'):
+            deleted = Locations().get(id).delete()
+            if deleted:
+                self.get_view().success()
+            else:
+                self.get_view().error()
+        elif (request.method == 'PUT'):
             input = request.get_json()
             if(input is None):
                 return self.get_view().bad_request('expected json')
