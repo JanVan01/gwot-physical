@@ -29,7 +29,7 @@ class OpenSenseMapNotifier(BaseNotifier):
 	
 	def get_setting_name(self, key):
 		if key == "sensor_id":
-			return "Sensor ID"
+			return "Sensebox Sensor ID"
 		elif key == "sensebox_id":
 			return "Sensebox ID"
 		else:

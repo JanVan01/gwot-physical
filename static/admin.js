@@ -210,6 +210,32 @@ function change_notification(id){
 	);
 }
 
+function change_subscription(nid, sid) {
+	var data = {
+		notifier: nid,
+		sensor: $('#sensor').val(),
+		settings: {}
+	};
+	$('.custom-settings').each(function() {
+		var elem = $( this );
+		data.settings[elem.attr('id')] = elem.val();
+	});
+	var method = 'POST'; // Create
+	if (sid) {
+		data.id = sid;
+		method = 'PUT'; // Update
+	}
+	request(
+		method, '/api/1.0/config/subscription',
+		function() {
+			'Subscription has been saved successfully.',
+			window.location = '/config/notifications/'+nid+'/subscriptions/'+sid
+		},
+		data
+	);
+}
+
+
 var markerGroup = [];
 var mymap = null;
 function create_location_map(data) {

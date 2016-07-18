@@ -186,7 +186,7 @@ class FrontendController(BaseController):
 			"edit": (mode == 'edit'),
 			"mode": mode,
 			"notifier": None,
-			"notifier_inpl": None,
+			"notifier_impl": None,
 			"notifier_module": None,
 			"modules": OS().get_classes("notifiers", "Notifier")
 		}
@@ -212,7 +212,23 @@ class FrontendController(BaseController):
 		return self.get_view('config_subscriptions.html').data(data)
 
 	def config_subscriptions_change(self, mode, nid, sid):
-		return;
+		data = {
+			"edit": (mode == 'edit'),
+			"mode": mode,
+			"subscriber": None,
+			"notifier": None,
+			"notifier_impl": None,
+			"sensors": Sensors().get_all()
+		}
+		if mode == 'edit' and nid is not None:
+			subscriber = Subscribers().get(sid)
+			data['subscriber'] = subscriber
+			data['notifier'] = subscriber.get_notifier_object()
+		elif mode == 'add':
+			data['notifier'] = Notifiers().get(nid)
+		data["notifier_impl"] = data['notifier'].get_notifier_impl()
+
+		return self.get_view('config_subscriptions_change.html').data(data)
 
 	def data(self):
 		locations = Locations().get_all()

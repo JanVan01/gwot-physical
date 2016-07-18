@@ -76,8 +76,8 @@ def frontend_config_notifications_change(mode, id):
 def frontend_config_subscriptions(id):
 	return FrontendController().config_subscriptions(id)
 
-@app.route('/config/subscriptions/add', defaults={'sid': None, 'mode': 'add'})
-@app.route('/config/subscriptions/edit/<int:sid>', defaults={'mode': 'edit'})
+@app.route('/config/notifications/<int:nid>/subscriptions/add', defaults={'sid': None, 'mode': 'add'})
+@app.route('/config/notifications/<int:nid>/subscriptions/edit/<int:sid>', defaults={'mode': 'edit'})
 @auth.login_required
 def frontend_config_subscriptions_change(mode, nid, sid):
 	return FrontendController().config_subscriptions_change(mode, nid, sid)
