@@ -101,3 +101,28 @@ function change_password() {
 		{password: pw1}
 	);
 }
+
+var markerGroup = [];
+var mymap = null;
+function create_location_map(data) {
+	mymap = L.map('map').setView([0, 0], 1);
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
+		id: 'mapbox.streets'
+	}).addTo(mymap);
+	for (i = 0; i < data.length; i++) {
+		var loc = data[i];
+		var marker = L.marker(L.latLng(loc.lon, loc.lat)).addTo(mymap).bindPopup(loc.name);
+		markerGroup.push(marker);
+	}
+	var featureGroup = new L.featureGroup(markerGroup);
+	mymap.fitBounds(featureGroup.getBounds());
+}
+
+function show_marker_on_location_map(index) {
+	var marker = markerGroup[index];
+	var featureGroup = new L.featureGroup([marker]);
+	mymap.fitBounds(featureGroup.getBounds());
+	marker.openPopup();
+}
