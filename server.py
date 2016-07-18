@@ -137,7 +137,7 @@ def config_config():
     return ConfigController().complete_config()
 
 @app.route('/api/1.0/config/location/<int:id>', methods=['DELETE'])
-@app.route('/api/1.0/config/location', defaults={'id': None}, methods=['GET', 'PUT', 'POST'])
+@app.route('/api/1.0/config/location', defaults={'id': None}, methods=['PUT', 'POST'])
 @auth.login_required
 def config_location(id):
 	return ConfigController().location(id)
@@ -147,6 +147,18 @@ def config_location(id):
 @auth.login_required
 def config_sensor(id):
 	return ConfigController().sensor(id)
+
+@app.route('/api/1.0/config/notification/<int:id>', methods=['DELETE'])
+@app.route('/api/1.0/config/notification', defaults = {'id': None}, methods=['PUT', 'POST'])
+@auth.login_required
+def config_notification(id):
+	return ConfigController().notification(id)
+
+@app.route('/api/1.0/config/subscription/<int:id>', methods=['DELETE'])
+@app.route('/api/1.0/config/subscription', defaults = {'id': None}, methods=['PUT', 'POST'])
+@auth.login_required
+def config_subscription(id):
+	return ConfigController().subscription(id)
 
 @app.route('/api/1.0/config/password', methods=['PUT'])
 @auth.login_required

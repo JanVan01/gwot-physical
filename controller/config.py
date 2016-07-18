@@ -2,6 +2,7 @@ from controller.base import BaseController
 from flask import request
 from models.config import ConfigManager
 from models.locations import Locations
+from models.notifiers import Notifiers
 from models.sensors import Sensors
 from utils.utils import Validate
 
@@ -19,7 +20,6 @@ class ConfigController(BaseController):
             data['name'] = self.config.get_name()
             data['interval'] = self.config.get_interval()
             data['location'] = self._get_location(self.config.get_location())
-
             return self.get_view(template_file='config.html').data(data)
         elif (request.method == 'PUT'):
             input = request.get_json()
@@ -37,9 +37,7 @@ class ConfigController(BaseController):
             return self.get_view().success()
 
     def location(self, id):
-        if (request.method == 'GET'):
-            return self.get_view(template_file='location_form.html').data()
-        elif (request.method == 'DELETE'):
+        if (request.method == 'DELETE'):
             location = Locations().get(id)
             if location is None:
                 self.get_view().bad_request('Location does not exist')
@@ -52,7 +50,7 @@ class ConfigController(BaseController):
             if(input is None):
                 return self.get_view().bad_request('expected json')
             if('id' in input):
-                location = Locations.get()
+                location = Locations().get()
                 try:
                     location.set_id(int(input['id']))
                     if('name' in input):
@@ -74,7 +72,7 @@ class ConfigController(BaseController):
             if(input is None):
                 return self.get_view().bad_request('expected json')
             if('name' in input and 'lat' in input and 'lon' in input and 'height' in input):
-                location = Locations.get()
+                location = Locations().get()
                 try:
                     location.set_name(str(input['name']))
                     location.set_position(float(input['lat']), float(input['lon']))
@@ -91,8 +89,6 @@ class ConfigController(BaseController):
             return self.get_view().success()
 
     def sensor(self, id):
-        if request.method == 'GET':
-            return self.get_view(template_file='sensor_form.html').data()
         if (request.method == 'DELETE'):
             sensor = Sensors().get(id)
             if sensor is None:
@@ -107,7 +103,7 @@ class ConfigController(BaseController):
                 return self.get_view().bad_request('expected json')
             if('id' in input):
                 try:
-                    sensor = Sensors.get(int(input['id']))
+                    sensor = Sensors().get(int(input['id']))
                     if sensor is None:
                         return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
                     if 'module' in input:
@@ -132,7 +128,7 @@ class ConfigController(BaseController):
             if(input is None):
                 return self.get_view().bad_request('expected json')
             if 'description' in input and 'module' in input and 'class_name' in input and 'active' in input:
-                sensor = Sensors.get()
+                sensor = Sensors().get()
                 try:
                     sensor.set_module(str(input['module']))
                     sensor.set_class(str(input['class_name']))
@@ -145,6 +141,63 @@ class ConfigController(BaseController):
             else:
                 return self.get_view().bad_request('not all necessary field set')
             return self.get_view().success()
+
+    def notification(self, id):
+        if (request.method == 'DELETE'):
+            notification = Notifiers().get(id)
+            if notification is None:
+                self.get_view().bad_request('Location does not exist')
+            if notification.delete():
+                self.get_view().success()
+            else:
+                self.get_view().error()
+        elif (request.method == 'PUT'):
+            input = request.get_json()
+            if(input is None):
+                return self.get_view().bad_request('expected json')
+            if('id' in input):
+                try:
+                    notification = Notifiers().get(int(input['id']))
+                    if notification is None:
+                        return self.get_view().bad_request('The Notification you are trying to update does not exist try to create it instead')
+                    if 'module' in input:
+                        notification.set_module(str(input['module']))
+                    if 'class_name' in input:
+                        notification.set_class(str(input['class_name']))
+                    if 'description' in input:
+                        notification.set_description(str(input['description']))
+                    if 'settings' in input:
+                        notification.set_settings(input['settings'])
+                    if 'active' in input:
+                        notification.set_active(bool(input['active']))
+                    if not notification.update():
+                        return self.get_view().bad_request('The Notification you are trying to update does not exist try to create it instead')
+                except ValueError:
+                    return self.get_view().bad_request('Input not in the right format')
+            else:
+                return self.get_view().bad_request('Not all necessary field set')
+            return self.get_view().success()
+        elif (request.method == 'POST'):
+            input = request.get_json()
+            if(input is None):
+                return self.get_view().bad_request('Expected json')
+            if 'description' in input and 'module' in input and 'class_name' in input and 'active' in input:
+                notification = Notifiers().get()
+                try:
+                    notification.set_module(str(input['module']))
+                    notification.set_class(str(input['class_name']))
+                    notification.set_description(str(input['description']))
+                    notification.set_active(bool(input['active']))
+                    if not notification.create():
+                        return self.get_view().bad_request('The notification you are trying to update does not exist try to create it instead')
+                except ValueError:
+                    return self.get_view().bad_request('input not in the right format')
+            else:
+                return self.get_view().bad_request('not all necessary field set')
+            return self.get_view().success()
+
+    def subscription(self, id):
+        return self.get_view().error()
 
     def password(self):
         input = request.get_json()
