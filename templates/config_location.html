@@ -19,11 +19,10 @@
 {% endblock admin_resources %}
 
 {% block admin_content %}
-{% if not data.mode %}
 <div class="panel panel-default admin-dashboard">
 	<div class="panel-heading clearfix">
 		<h1 class="panel-title pull-left">Locations</h1>
-		<a href="/config/locations?mode=add" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
+		<a href="/config/locations/add" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
 	</div>
 	<div class="table-responsive">
 		<table class="table table-hover">
@@ -39,7 +38,7 @@
 			</thead>
 			<tbody>
 				{% for location in data.locations %}
-				<tr>
+				<tr id="entry_{{ location.get_id() }}">
 					<td>{{ location.get_name() }}</td>
 					<td>{{ location.get_longitude() }}</td>
 					<td>{{ location.get_latitude() }}</td>
@@ -53,7 +52,7 @@
 					</td>
 					<td class="text-right">
 						<a href="javascript:show_marker_on_location_map({{ loop.index0 }});" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-map-marker"></span> Show on Map</a>
-						<a href="/config/locations?mode=edit&id={{ location.get_id() }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+						<a href="/config/locations/edit/{{ location.get_id() }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 						<a href="javascript:remove_location({{ location.get_id() }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
 					</td>
 				</tr>
@@ -74,43 +73,4 @@
 
 	</div>
 </div>
-{% else %}
-<div id="alert"></div>
-<div class="panel panel-default">
-	<div class="panel-heading">
-		{% if data.mode == 'edit' %}
-		<h1 class="panel-title">Edit Location</h1>
-		{% else %}
-		<h1 class="panel-title">New Location</h1>
-		{% endif %}
-	</div>
-	<div class="panel-body">
-		<form id="ajax_form" onsubmit="change_password(); return false;">
-			{% if data.mode =='edit' %}
-			<div class="form-group">
-			  <label for="id"> ID:</label>
-			  <input type="text" id="id" name="id" class="form-control" value="{{data.location.get_id()" }} readonly="readonly">
-			</div>
-		  {% endif %}
-			<div class="form-group">
-			  <label for="name"> Name:</label>
-			  <input type="text" id="name" name="name" class="form-control" value="{{data.location.get_name()}}">
-			</div>
-			<div class="form-group">
-			  <label for="lat"> Latitude:</label>
-			  <input type="number" id="lat" name="lat" class="form-control" value="{{data.location.get_latitude()}}">
-			</div>
-			<div class="form-group">
-			  <label for="lon"> Longitude:</label>
-			  <input type="number" id="lon" name="lon" class="form-control" value="{{data.location.get_longitude()}}">
-			</div>
-			<div class="form-group">
-			  <label for="height"> Height:</label>
-			  <input type="number" class="form-control" id="height" name="height" value="{{data.location.get_height()}}">
-			</div>
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
-	</div>
-</div>
-{% endif %}
 {% endblock admin_content %}

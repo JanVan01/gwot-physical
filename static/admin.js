@@ -62,26 +62,32 @@ function request(method, url, success, data) {
 }
 
 function remove_sensor(id) {
-	remove_x('/api/1.0/config/sensor/' + id)
+	remove_x('sensor', id)
 }
 
 function remove_notifier(id) {
-	remove_x('/api/1.0/config/notification/' + id)
+	remove_x('notification', id)
 }
 
 function remove_location(id) {
-	remove_x('/api/1.0/config/location/' + id)
+	remove_x('location', id)
 }
 
 function remove_subscription(id) {
-	remove_x('/api/1.0/config/subscription/' + id)
+	remove_x('subscription', id)
 }
 
-function remove_x(url) {
+function remove_x(endpoint, id) {
 	if (!confirm('Are you sure you want to delete the selected entry?')) {
 		return;
 	}
-	request('DELETE', url, 'The data has been deleted successfully.');
+	request(
+		'DELETE', '/api/1.0/config/'+endpoint+'/'+id, 
+		function() {
+			success_msg('The data has been deleted successfully.');
+			$('#entry_' + id).remove();
+		}
+	);
 }
 
 function change_password() {
@@ -103,37 +109,25 @@ function change_password() {
 }
 
 function update_config(){
-	name = $('#name').val();
-	interval = $('#interval').val();
-	location = $('#location').val();
-	error_msg("<strong>Error!</strong> The passwords don't match.");
-	return;
+	var name = $('#name').val();
+	var interval = $('#interval').val();
+	var location = $('#location').val();
 	request(
 		'PUT', '/api/1.0/config',
-		'Config updated successfully',
+		'Settings updated successfully.',
 		{
 			name: name,
 			interval: interval,
-			location:location
+			location: location
 		}
 	);
+}
 
+function change_location(id){
 
 }
 
-function create_location(){
-
-}
-
-function update_location(){
-
-}
-
-function create_sensor(){
-
-}
-
-function update_sensor(){
+function change_sensor(id){
 
 }
 

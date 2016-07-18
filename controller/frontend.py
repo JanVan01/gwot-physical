@@ -1,13 +1,13 @@
 from controller.base import BaseController
-from views.html import HtmlView
+from flask import request
 from models.config import ConfigManager
 from models.locations import Locations
 from models.measurements import Measurements
-from models.sensors import Sensors
 from models.notifiers import Notifiers
+from models.sensors import Sensors
 from models.subscribers import Subscribers
-from flask import request
 import time
+from views.html import HtmlView
 
 class FrontendController(BaseController):
 
@@ -78,7 +78,7 @@ class FrontendController(BaseController):
 			'max': self.__getaggregatevalue(start, location, sensor, 'max')
 		}
 
-	def __getaggregatevalue(self, start, location, sensor, type = 'avg'):
+	def __getaggregatevalue(self, start, location, sensor, type='avg'):
 		filterObj = {
 			'start': start,
 			'location': [str(location)],
@@ -104,62 +104,59 @@ class FrontendController(BaseController):
 
 
 	def config(self):
-		data = {}
-		data['name'] = self.config_manager.get_name()
-		data['interval'] = self.config_manager.get_interval()
-		data['location'] = self._get_location(self.config_manager.get_location())
-		data['sensors'] = self._get_sensors()
-		if 'mode' in request.args and request.args['mode'] == 'edit':
-			data['all_locations'] = self._get_all_locations()
-			return self.get_view('config_edit.html').data(data)
+		data = {
+			"config": ConfigManager.Instance(),
+			"locations": Locations().get_all()
+		}
 		return self.get_view('config.html').data(data)
 
 	def config_password(self):
-		return self.get_view('config_password.html').data({})
+		return self.get_view('config_password.html').data()
 
 	def config_sensors(self):
-		if 'mode' in request.args:
-			data = {}
-			if request.args['mode'] == 'edit' and 'id' in request.args:
-				sensor = Sensors().get(request.args['id'])
-				if sensor is not None:
-					print(sensor.get_description())
-					data['mode'] = 'edit'
-					data['sensor'] = sensor
-					return self.get_view('config_sensor.html').data(data)
-			elif request.args['mode'] == 'add':
-				data['mode'] = 'add'
-				data['sensor'] = None
-				return self.get_view('config_sensor.html').data(data)
 		data = {"sensors": Sensors().get_all()}
 		return self.get_view('config_sensor.html').data(data)
 
-	def config_locations(self):
-		if 'mode' in request.args:
-			data = {}
-			if request.args['mode'] == 'edit' and 'id' in request.args:
-				location = Locations().get(request.args['id'])
-				if location is not None:
-					data['mode'] = 'edit'
-					data['location'] = location
-					return self.get_view('config_location.html').data(data)
-			elif request.args['mode'] == 'add':
-				data['mode'] = 'add'
-				data['location'] = None
-				return self.get_view('config_location.html').data(data)
+	def config_sensors_change(self, mode, id):
+		data = {
+			"mode": mode
+		}
+		if mode == 'edit' and id is not None:
+			sensor = Sensors().get(id)
+			data['sensor'] = sensor
+		elif request.args['mode'] == 'add':
+			data['sensor'] = None
 
+		return self.get_view('config_sensor_change.html').data(data)
+
+	def config_locations(self):
 		data = {
 			"locations": Locations().get_all(),
 			"default_location": ConfigManager.Instance().get_location()
-			}
+		}
 
 		return self.get_view('config_location.html').data(data)
+
+	def config_locations_change(self, mode, id):
+		data = {
+			"mode": mode
+		}
+		if mode == 'edit' and id is not None:
+			location = Locations().get(id)
+			data['location'] = location
+		elif request.args['mode'] == 'add':
+			data['location'] = Location()
+
+		return self.get_view('config_location_change.html').data(data)
 
 	def config_notifications(self):
 		data = {
 			"notifiers": Notifiers().get_all()
 		}
 		return self.get_view('config_notifications.html').data(data)
+
+	def config_notifications_change(self, nid):
+		return;
 
 	def config_subscriptions(self, nid):
 		notifier = Notifiers().get(nid)
@@ -170,6 +167,9 @@ class FrontendController(BaseController):
 			"subscribers": Subscribers().get_all_by_notifier(nid)
 		}
 		return self.get_view('config_subscriptions.html').data(data)
+
+	def config_subscriptions_change(self, nid, sid):
+		return;
 
 	def data(self):
 		locations = Locations().get_all()
@@ -189,38 +189,3 @@ class FrontendController(BaseController):
 	def about(self):
 		data = {}
 		return self.get_view('about.html').data(data)
-
-	def _get_location(self, id):
-		location_model = Locations().get(id)
-		location = {}
-		location['id'] = location_model.get_id()
-		location['name'] = location_model.get_name()
-		location['lat'] = location_model.get_latitude()
-		location['lon'] = location_model.get_longitude()
-		location['height'] = location_model.get_height()
-		return location
-
-	def _get_all_locations(self):
-		locations = []
-		for l in Locations().get_all():
-			location = {}
-			location['id'] = l.get_id()
-			location['name'] = l.get_name()
-			location['lat'] = l.get_latitude()
-			location['lon'] = l.get_longitude()
-			location['height'] = l.get_height()
-			locations.append(location)
-		return locations
-
-	def _get_sensors(self):
-		sensors = []
-		for s in Sensors().get_all():
-			sensor = {}
-			sensor['id'] = s.get_id()
-			sensor['module'] = s.get_module()
-			sensor['class_name'] = s.get_class()
-			sensor['type'] = s.get_type()
-			sensor['description'] = s.get_description()
-			sensor['unit'] = s.get_unit()
-			sensors.append(sensor)
-		return sensors

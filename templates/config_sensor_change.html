@@ -1,0 +1,40 @@
+{% extends "base/admin.html" %}
+
+{% block navigation %}config_sensors{% endblock navigation %}
+
+{% block admin_content %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{% if data.mode == 'edit' %}
+		<h1 class="panel-title">Edit Sensor</h1>
+		{% else %}
+		<h1 class="panel-title">Add Sensor</h1>
+		{% endif %}
+	</div>
+	<div class="panel-body">
+		<form id="ajax_form" onsubmit="change_sensor({% if data.mode =='edit' %}{{data.location.get_id()}}{% endif %}); return false;">
+			<div class="form-group">
+				<label for="module">Module:</label>
+				<input type="text" id="module" name="module" class="form-control" value="{{data.sensor.get_module()}}">
+			</div>
+			<div class="form-group">
+				<label for="class_name">Class:</label>
+				<input type="text" id="class_name" name="class_name" class="form-control" value="{{data.sensor.get_class()}}">
+			</div>
+			<div class="form-group">
+				<label for="type">Type:</label>
+				<input type="text" id="type" name="type" class="form-control" value="{{data.sensor.get_type()}}">
+			</div>
+			<div class="form-group">
+				<label for="description">Description:</label>
+				<input type="text" id="description" name="description" class="form-control" value="{{data.sensor.get_description()}}">
+			</div>
+			<div class="form-group">
+				<label for="unit">Unit:</label>
+				<input type="text" id="unit" name="unit" class="form-control" value="{{data.sensor.get_unit()}}">
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>
+{% endblock admin_content %}

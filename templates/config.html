@@ -3,113 +3,45 @@
 {% block navigation %}config_settings{% endblock navigation %}
 
 {% block admin_content %}
-  <div class="panel panel-default">
-  	<div class="panel-heading clearfix">
-  		<h1 class="panel-title pull-left">Config</h1>
-      <a href="/config?mode=edit" class="btn btn-xs btn-warning pull-right"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
-  	</div>
-  	<div class="panel-body">
-      <div class="table-responsive">
-    		<table class="table table-hover">
-          <tbody>
-            <tr>
-              <td><strong>Name:</strong></td>
-              <td>{{ data.name }}</td>
-            </tr>
-            <tr>
-              <td><strong>Interval:</strong></td>
-              <td>{{ data.interval }}</td>
-            </tr>
-            <tr>
-              <td><strong>Location:</strong></td>
-              <td><table>
-                <tr>
-                  <td>Name:</td>
-                  <td>{{ data.location.name }}</td>
-                </tr>
-                <tr>
-                  <td>ID:</td>
-                  <td>{{data.location.id}}</td>
-                </tr>
-                <tr>
-                  <td>Latitude:</td>
-                  <td>{{data.location.lat}}</td>
-                </tr>
-                <tr>
-                  <td>Longitude:</td>
-                  <td>{{data.location.lon}}</td>
-                </tr>
-                <tr>
-                  <td>Height:</td>
-                  <td>{{data.location.height}}</td>
-                </tr>
-              </table>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-  <h2></h2>
-  <table class="config_info">
-    <tr>
-      <td>Name:</td>
-      <td>{{ data.name }}</td>
-    </tr>
-    <tr>
-      <td>Password:</td>
-      <td><a class="btn btn-default" href="/config/password">New Password</a></td>
-    </tr>
-    <tr>
-      <td>Interval:</td>
-      <td>{{ data.interval }}</td>
-    </tr>
-    <tr>
-      <td>Location:</td>
-      <td><table>
-        <tr>
-          <td>Name:</td>
-          <td>{{ data.location.name }}</td>
-        </tr>
-        <tr>
-          <td>ID:</td>
-          <td>{{data.location.id}}</td>
-        </tr>
-        <tr>
-          <td>Latitude:</td>
-          <td>{{data.location.lat}}</td>
-        </tr>
-        <tr>
-          <td>Longitude:</td>
-          <td>{{data.location.lon}}</td>
-        </tr>
-        <tr>
-          <td>Height:</td>
-          <td>{{data.location.height}}</td>
-        </tr>
-        <a class="btn btn-default" href="/config/locations?mode=edit&id={{data.location.id}}">edit location</a>
-      </table></td>
-    </tr>
-    <tr><td></td>
-      <td><a class="btn btn-default" href="/config?mode=edit">Edit config</a></td>
-    </tr>
-  </table>
-  <h4>Sensors:</h4>
-  <a class="btn btn-default" href="/config/sensors">Add new Sensor</a>
-  {% for sensor in data.sensors %}
-  <table>
-    <tr>
-      <td>Type:</td>
-      <td>{{ sensor.type }}</td>
-    </tr>
-    <tr>
-      <td>Description:</td>
-      <td>{{sensor.description}}</td>
-    </tr>
-    <tr>
-      <td>ID:</td>
-      <td>{{sensor.id}}</td>
-    </tr>
-  </table>
-  <a class="btn btn-default" href="/config/sensors?mode=edit&id={{sensor.id}}">Edit this Sensor</a>
-  {% endfor %}
+<div id="alert"></div>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h1 class="panel-title">Change Settings</h1>
+	</div>
+	<div class="panel-body">
+		<form id="ajax_form" onsubmit="update_config(); return false;">
+			<div class="form-group">
+				<label for="name">Device Name</label>
+				<input type="text" class="form-control" id="name" name="name" value="{{ data.config.get_name() }}">
+			</div>
+			<div class="form-group">
+				<label for="interval">Default interval for mesurements</label>
+				<input type="number" class="form-control" id="interval" name="interval" value="{{ data.config.get_interval() }}">
+			</div>
+			<div class="form-group">
+				<label for="location">Current Location</label>
+				<select class="form-control" id="location" name="location">
+					{% for location in data.locations %}
+					<option value="{{ location.get_id() }}"{% if location.get_id() == data.config.get_location() %} selected="selected"{% endif %}>{{ location.get_name() }}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<div class="form-group">
+				<label>Port</label>
+				<div>
+					{{ data.config.get_port() }}<br />
+					<small>Please configure this in the config.ini manually and restart the service afterwards.</small>
+				</div>
+			</div>
+			<div class="form-group">
+				<label>Database</label>
+				<div>
+					Hosted on <em>{{ data.config.get_dbhost() }}</em> using database <em>{{ data.config.get_dbname() }}</em> and user <em>{{ data.config.get_dbuser() }}</em>.<br />
+					<small>Please change this in the config.ini manually.</small>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>
 {% endblock admin_content %}

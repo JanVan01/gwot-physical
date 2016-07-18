@@ -6,7 +6,7 @@
 <div class="panel panel-default admin-dashboard">
 	<div class="panel-heading clearfix">
 		<h1 class="panel-title pull-left">Notification Services &raquo; Subscriptions</h1>
-		<a href="#" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
+		<a href="/config/subscriptions/add" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
 	</div>
 	<div class="table-responsive">
 		<table class="table table-hover">
@@ -21,13 +21,13 @@
 			</thead>
 			<tbody>
 				{% for client in data.subscribers %}
-				<tr>
-					<td><a href="#{{ client.get_sensor() }}" class="btn btn-xs btn-default">{{ client.get_sensor_object().get_type() }}</a></td>
+				<tr id="entry_{{ client.get_id() }}">
+					<td><a href="/config/sensors/edit/{{ client.get_sensor() }}" class="btn btn-xs btn-default">{{ client.get_sensor_object().get_type() }}</a></td>
 					{% for key in data.notifier_impl.get_subscriber_settings() %}
 					<td>{{ client.get_setting(key) }}</td>
 					{% endfor %}
 					<td class="text-right">
-						<a href="#" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+						<a href="/config/subscriptions/edit/{{client.get_id()}}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 						<a href="javascript:remove_subscription({{client.get_id()}})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
 					</td>
 				</tr>
