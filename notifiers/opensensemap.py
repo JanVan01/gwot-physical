@@ -22,10 +22,10 @@ class OpenSenseMapNotifier(BaseNotifier):
 			print("Sending OpenSenseMap notification to " + url + " and got response " + str(r.status_code))
 	
 	def get_subscriber_settings(self):
-		return {"sensor_id"}
+		return ["sensor_id"]
 	
 	def get_notifier_settings(self):
-		return {"sensebox_id"}
+		return ["sensebox_id"]
 	
 	def get_setting_name(self, key):
 		if key == "sensor_id":

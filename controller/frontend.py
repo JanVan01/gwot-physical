@@ -53,7 +53,7 @@ class FrontendController(BaseController):
 				'accum': self.__getminmaxavgvalue(time.strftime('2015-01-01T00:00:00Z'), location, sensor_id),
 				'last': self.__getlastvalue(location, sensor_id)['last'],
 				'datetime': self.__getlastvalue(location, sensor_id)['datetime'],
-				'trend': Measurements().calc_trend(location, sensor_id)['description']
+				'trend': Measurements().calc_trend(sensor_id, location)['description']
 			}
 		return self.get_view('index.html').data(data)
 

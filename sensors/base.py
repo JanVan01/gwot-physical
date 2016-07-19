@@ -27,7 +27,7 @@ class BaseSensor(object):
 		return (minutes is None or minutes >= interval)
 	
 	def get_setting_keys(self):
-		return {}
+		return []
 	
 	def get_setting_name(self, key):
 		return None

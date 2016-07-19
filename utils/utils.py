@@ -156,12 +156,18 @@ class Validate:
 
 class SettingManager:
 	
-	def get_input_field(self, key, value = None):
+	def get_input_field(self, key, value = None, type = "text"):
 		if value is None:
 			value = ""
 		else:
 			value = self.htmlspecialchars(value)
-		return "<input type='text' id="+key+" name='"+key+"' class='custom-settings form-control' value='"+value+"' />"
+			
+		if type == "float":
+			code = 'type="number" step="any"'
+		else:
+			code = 'type="' + type + '"'
+			
+		return '<input ' + code + ' id="' + key + '" name="' + key + '" class="custom-settings form-control" value="' + value + '" />'
 	
 	def htmlspecialchars(self, value):
 		value.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")
