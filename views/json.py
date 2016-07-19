@@ -42,7 +42,7 @@ class JSON(object):
 	# JSON serializer for objects not serializable by default json code
 	def __json_serial(self, obj):
 		if isinstance(obj, datetime):
-			return obj.isoformat()
+			return obj.strftime("%Y-%m-%dT%H:%M:%SZ")
 		
 		elif isinstance(obj, timedelta):
 			return str(obj)
