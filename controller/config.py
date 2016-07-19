@@ -237,12 +237,16 @@ class ConfigController(BaseController):
             if(input is None):
                 return self.get_view().bad_request('Expected json')
             if ('notifier' in input and 'sensor' in input and 'settings' in input):
-                notification = Notifiers().create()
+                subscription = Subscribers().create()
                 try:
                     subscription.set_notifier(int(input['notifier']))
                     subscription.set_sensor(int(input['sensor']))
                     subscription.set_settings(input['settings'])
+<<<<<<< HEAD
                     if not notification.create():
+=======
+                    if not subscription.create():
+>>>>>>> master
                         return self.get_view().bad_request('The subscription you are trying to update does not exist try to create it instead')
                 except ValueError:
                     return self.get_view().bad_request('input not in the right format')

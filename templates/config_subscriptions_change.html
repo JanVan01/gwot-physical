@@ -17,7 +17,7 @@
 				<label for="module">Sensor:</label>
 				<select class="form-control" id="sensor" name="sensor">
 					{% for sensor in data.sensors %}
-					<option value="{{ sensor.get_id() }}"{% if data.edit and Fsensor.get_id() == data.subscriber.get_sensor() %} selected="selected"{% endif %}>{{ sensor.get_type() }} ({{ sensor.get_description() }})</option>
+					<option value="{{ sensor.get_id() }}"{% if data.edit and sensor.get_id() == data.subscriber.get_sensor() %} selected="selected"{% endif %}>{{ sensor.get_type() }} ({{ sensor.get_description() }})</option>
 					{% endfor %}
 				</select>
 			</div>
