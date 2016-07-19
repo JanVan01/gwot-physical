@@ -316,3 +316,13 @@ function show_marker_on_location_map(index) {
 	map.fitBounds(featureGroup.getBounds());
 	marker.openPopup();
 }
+
+function set_location_active(id){
+	request(
+		'PUT', '/api/1.0/config',
+		function(){
+			window.location = '/config/locations';
+		},
+		{location: id}
+	);
+}

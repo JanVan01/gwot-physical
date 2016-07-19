@@ -50,7 +50,7 @@
 						{% if location.get_id() == data.default_location %}
 						<span class="text-success glyphicon glyphicon-ok" aria-hidden="true"></span>
 						{% else %}
-						<span class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></span>
+						<a href="javascript:set_location_active({{location.get_id()}})" class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></a>
 						{% endif %}
 					</td>
 					<td class="text-right">
