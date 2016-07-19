@@ -114,7 +114,10 @@ class ConfigController(BaseController):
                     if 'description' in input:
                         sensor.set_description(str(input['description']))
                     if 'settings' in input:
-                        sensor.set_settings(input['settings'])
+                        if not self.__validate_sensor_settings(sensor, input['settings']):
+                            return self.get_view().bad_request('Settings not in the right format')
+                        else:
+                            sensor.set_settings(input['settings'])
                     if 'active' in input:
                         sensor.set_active(bool(input['active']))
                     if not sensor.update():
@@ -135,8 +138,11 @@ class ConfigController(BaseController):
                     sensor.set_module(str(input['module']))
                     sensor.set_class(str(input['class_name']))
                     sensor.set_description(str(input['description']))
-                    sensor.set_settings(input['settings'])
                     sensor.set_active(bool(input['active']))
+                    if not self.__validate_sensor_settings(sensor, input['settings']):
+                        return self.get_view().bad_request('Settings not in the right format')
+                    else:
+                        sensor.set_settings(input['settings'])
                     if not sensor.create():
                         return self.get_view().bad_request('The sensor you are trying to create does not exist')
                 except ValueError:
@@ -172,7 +178,10 @@ class ConfigController(BaseController):
                     if 'description' in input:
                         notification.set_description(str(input['description']))
                     if 'settings' in input:
-                        notification.set_settings(input['settings'])
+                        if not self.__validate_notification_settings(notification, input['settings']):
+                            return self.get_view().bad_request('Settings not in the right format')
+                        else:
+                            notification.set_settings(input['settings'])
                     if 'public' in input:
                         notification.set_public(bool(input['public']))
                     if 'active' in input:
@@ -196,7 +205,10 @@ class ConfigController(BaseController):
                     notification.set_class(str(input['class_name']))
                     notification.set_name(str(input['name']))
                     notification.set_description(str(input['description']))
-                    notification.set_settings(input['settings'])
+                    if not self.__validate_notification_settings(notification, input['settings']):
+                        return self.get_view().bad_request('Settings not in the right format')
+                    else:
+                        notification.set_settings(input['settings'])
                     notification.set_active(bool(input['active']))
                     if 'public' in input:
                         notification.set_public(bool(input['public']))
@@ -225,13 +237,19 @@ class ConfigController(BaseController):
                 try:
                     subscription = Subscribers().get(int(input['id']))
                     if subscription is None:
-                        return self.get_view().bad_request('The Notification you are trying to update does not exist try to create it instead')
+                        return self.get_view().bad_request('The subscription you are trying to update does not exist try to create it instead')
+                    notification = Notifiers().get(int(input['notifier']))
+                    if notification is None:
+                        return self.get_view().bad_request('The notifier of your subscription does not exist')
                     if 'notifier' in input:
                         subscription.set_notifier(int(input['notifier']))
                     if 'sensor' in input:
                         subscription.set_sensor(int(input['sensor']))
                     if 'settings' in input:
-                        subscription.set_settings(input['settings'])
+                        if not self.__validate_subscription_settings(notification, input['settings']):
+                            return self.get_view().bad_request('Settings not in the right format')
+                        else:
+                            subscription.set_settings(input['settings'])
                     if not subscription.update():
                         return self.get_view().bad_request('The Subscription you are trying to update does not exist try to create it instead')
                 except ValueError:
@@ -246,9 +264,15 @@ class ConfigController(BaseController):
             if ('notifier' in input and 'sensor' in input and 'settings' in input):
                 subscription = Subscribers().create()
                 try:
+                    notification = Notifiers().get(int(input['notifier']))
+                    if notification is None:
+                        return self.get_view().bad_request('The notifier of your subscription does not exist')
                     subscription.set_notifier(int(input['notifier']))
                     subscription.set_sensor(int(input['sensor']))
-                    subscription.set_settings(input['settings'])
+                    if not self.__validate_subscription_settings(notification, input['settings']):
+                        return self.get_view().bad_request('Settings not in the right format')
+                    else:
+                        subscription.set_settings(input['settings'])
                     if not subscription.create():
                         return self.get_view().bad_request('The subscription could not be created')
                 except ValueError:
@@ -279,16 +303,27 @@ class ConfigController(BaseController):
         location['height'] = location_model.get_height()
         return location
 
-    def _validate_sensor_settings(self, sensor, settings):
+    def __validate_sensor_settings(self, sensor, settings):
         sensor_impl = sensor.get_sensor_impl()
-        for key, value in settings.items():
-            if not sensor_impl.validate(key, value):
-                return False
-        return True
+        sensor_settings = sensor_impl.get_settings()
+        return self.__validate_settings(sensor_impl, sensor_settings, settings)
 
-    def _validate_notification_settings(self, notification, settings):
-        notification_impl = notification.get_notification_impl()
-        for key, value in settings.items():
-            if not notification_impl.validate(key, value):
+    def __validate_notification_settings(self, notification, settings):
+        notification_impl = notification.get_notifier_impl()
+        notification_settings = notification_impl.get_notifier_settings()
+        return self.__validate_settings(notification_impl, notification_settings, settings)
+
+
+    def __validate_subscription_settings(self, notification, settings):
+        notification_impl = notification.get_notifier_impl()
+        subscription_settings = notification_impl.get_subscriber_settings()
+        return self.__validate_settings(notification_impl, subscription_settings, settings)
+
+
+    def __validate_settings(self, impl, impl_settings, input_settings):
+        for key in impl_settings:
+            if key in input_settings:
+                return impl.validate_setting(key, input_settings[key])
+            else:
                 return False
         return True
