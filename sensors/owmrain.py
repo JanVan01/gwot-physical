@@ -66,7 +66,7 @@ class OwmRainSnow(BaseSensor):
 		return super().is_due(minutes, 60) # Free plan updates every 1 to 2 hours
 
 	def get_setting_keys(self):
-		return {"apikey"}
+		return ["apikey"]
 	
 	def get_setting_name(self, key):
 		if key == "apikey":

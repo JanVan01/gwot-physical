@@ -93,7 +93,10 @@ class Notifier(BaseModel):
 		self.id = id
 
 	def get_notifier_impl(self):
-		return OS().create_object(self.module, self.class_name)
+		obj = OS().create_object(self.module, self.class_name)
+		if obj is not None:
+			obj.set_settings(self.get_settings())
+		return obj
 
 	def set_notifier_impl(self, obj):
 		if isinstance(obj, BaseNotifier):
@@ -191,16 +194,22 @@ class NotificationThread(threading.Thread):
 		subs = Subscribers().get_all_active_by_sensor(self.measurement.get_sensor())
 
 		if len(subs) > 0:
-			# Cache all notifiers in a list with ids as keys
-			notifs = {}
+			# Cache all notifiers + implementations in a list with ids as keys
+			notifiers = {}
 			for entry in Notifiers().get_all():
-				notifs[entry.get_id()] = entry
+				impl = entry.get_notifier_impl()
+				impl.prepare()
+				notifiers[entry.get_id()] = {
+					"model": entry,
+					"impl": impl
+				}
 
 			# Go thorugh all subscribers and send notification
 			for sub in subs:
-				notifier = notifs[sub.get_notifier()]
-				notifier_impl = notifier.get_notifier_impl()
-				if notifier_impl is not None:
-					notifier_impl.send(notifier, sub, self.measurement)
+				notifier = notifiers[sub.get_notifier()]
+				try:
+					notifier.impl.send(notifier.model, sub, self.measurement)
+				except:
+					print("Could not send notification of type " + notifier.impl.get_module() + "." + notifier.impl.get_class())
 
 		ThreadObserver.Instance().remove(self)

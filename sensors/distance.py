@@ -175,7 +175,7 @@ class DistanceSensor(BaseSensor):
 		return (minutes >= interval)
 
 	def get_setting_keys(self):
-		return {"trigger_pin", "data_pin"}
+		return ["trigger_pin", "data_pin"]
 
 	def get_setting_name(self, key):
 		if key == "trigger_pin":
@@ -193,7 +193,7 @@ class DistanceSensor(BaseSensor):
 
 	def get_setting_html(self, key, value = None):
 		if key == "trigger_pin" or key == "data_pin":
-			return SettingManager().get_input_field(key, value)
+			return SettingManager().get_input_field(key, value, "number")
 		else:
 			return None
 

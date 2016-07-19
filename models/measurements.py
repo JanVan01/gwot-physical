@@ -241,9 +241,9 @@ class Measurements(BaseMultiModel):
 		newest = last[0]
 		oldest = last[pivot]
 
-		data['since'] = oldest.get_datetime()
-		data['until'] = newest.get_datetime()
-		data['timedelta'] = data['until'] - data['since']
+		data['oldest'] = oldest
+		data['newest'] = newest
+		data['timedelta'] = newest.get_datetime() - oldest.get_datetime()
 		hourdelta = data['timedelta'].total_seconds() / (60*60)
 		hours = int(hourdelta)
 		minutes = int((hourdelta - hours) * 60)
@@ -259,6 +259,20 @@ class Measurements(BaseMultiModel):
 		data['description'] += str(minutes) + ' minutes by ' + str(abs(data['change_perhour'])) + ' ' + sensorObj.get_unit() + '/h'
 
 		return data
+
+	def reaches_limit_in_time(self, limit, hours, trend):
+		if trend['change_perhour'] == 0:
+			return False
+
+		estimated = trend['newest'].get_value() + hours * trend['change_perhour']
+		
+		critical = False
+		if trend['change_perhour'] > 0 and estimated > limit:
+			critical = True
+		elif trend['change_perhour'] < 0 and estimated < limit:
+			critical = True
+			
+		return critical
 
 	def filter_defaults(self, args = None, limit = 100):
 		defaults = {
