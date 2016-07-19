@@ -18,11 +18,23 @@
 				<input type="text" id="module" name="module" class="form-control" value="{{data.notifier_module}}" readonly="readonly">
 			</div>
 			<div class="form-group">
-				<label for="description">Description:</label>
-				<input type="text" id="description" name="description" class="form-control" value="{% if data.edit %}{{data.notifier.get_description()}}{% endif %}">
+				<label for="name">Name:</label>
+				<input type="text" id="name" name="name" class="form-control" value="{% if data.edit %}{{data.notifier.get_name()}}{% endif %}">
 			</div>
 			<div class="form-group">
-				<label for="description">Active:</label>
+				<label for="description">Description (public):</label>
+				<textarea id="description" name="description" class="form-control">{% if data.edit %}{{data.notifier.get_description()}}{% endif %}</textarea>
+			</div>
+			<div class="form-group">
+				<label for="public">Open for public subscriptions:</label>
+				{% if data.notifier_impl.is_public() %}
+				<input type="checkbox" id="public" name="public" class="form-control"{% if not data.edit or data.notifier.is_public() %} checked="checked"{% endif %}>
+				{% else %}
+				<div>This module can't be used for public subscriptions.</div>  
+				{% endif %}
+			</div>
+			<div class="form-group">
+				<label for="active">Active:</label>
 				<input type="checkbox" id="active" name="active" class="form-control"{% if not data.edit or data.notifier.is_active() %} checked="checked"{% endif %}>
 			</div>
 			{% for key in data.notifier_impl.get_notifier_settings() %}

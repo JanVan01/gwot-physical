@@ -1,0 +1,32 @@
+{% extends "base/frontend.html" %}
+
+{% block navigation %}subscriptions{% endblock navigation %}
+
+{% block content %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h1 class="panel-title">Add Subscription for <em>{{data.notifier.get_name()}}</em></h1>
+	</div>
+	<div class="panel-body">
+		{{data.notifier.get_description() | nl2br}}
+		<hr />
+		<form id="ajax_form" onsubmit="add_subscription({{data.notifier.get_id()}}); return false;">
+			<div class="form-group">
+				<label for="module">Sensor:</label>
+				<select class="form-control" id="sensor" name="sensor">
+					{% for sensor in data.sensors %}
+					<option value="{{ sensor.get_id() }}"{% if data.edit and sensor.get_id() == data.subscriber.get_sensor() %} selected="selected"{% endif %}>{{ sensor.get_type() }} ({{ sensor.get_description() }})</option>
+					{% endfor %}
+				</select>
+			</div>
+			{% for key in data.notifier_impl.get_subscriber_settings() %}
+			<div class="form-group">
+				<label for="{{ key }}">{{ data.notifier_impl.get_setting_name(key) }}:</label>
+				{{ data.notifier_impl.get_setting_html(key) | safe }}
+			</div>
+			{% endfor %}
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>
+{% endblock content %}

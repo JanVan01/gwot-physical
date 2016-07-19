@@ -7,13 +7,15 @@ import threading
 class Notifier(BaseModel):
 
 	def __init__(self, id = None):
-		super().__init__(['id', 'module', 'class_name', 'description', 'settings', 'active'])
+		super().__init__(['id', 'module', 'class_name', 'name', 'description', 'settings', 'public', 'active'])
 		self.id = id
 		self.module = None
 		self.class_name = None
+		self.name = None
 		self.description = None
 		self.settings = None
 		self.active = False
+		self.public = False
 
 	def from_dict(self, dict):
 		super().from_dict(dict)
@@ -23,10 +25,14 @@ class Notifier(BaseModel):
 			self.set_module(dict['module'])
 		if 'class' in dict:
 			self.set_class(dict['class'])
+		if 'name' in dict:
+			self.set_name(dict['name'])
 		if 'description' in dict:
 			self.set_description(dict['description'])
 		if 'settings' in dict:
 			self.set_settings(dict['settings'])
+		if 'public' in dict and dict['public'] is not None:
+			self.set_public(dict['public'])
 		if 'active' in dict and dict['active'] is not None:
 			self.set_active(dict['active'])
 
@@ -36,7 +42,7 @@ class Notifier(BaseModel):
 			return False
 
 		cur = Database.Instance().dict_cursor()
-		cur.execute("INSERT INTO Notifiers (module, class, description, settings, active) VALUES (%s, %s, %s, %s, %s) RETURNING id", [self.module, self.class_name, self.description, self._settings_dump(self.settings), self.active])
+		cur.execute("INSERT INTO Notifiers (module, class, name, description, settings, public, active) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id", [self.module, self.class_name, self.name, self.description, self._settings_dump(self.settings), self.public, self.active])
 		data = cur.fetchone()
 		self.id = data['id']
 		if self.id > 0:
@@ -62,7 +68,7 @@ class Notifier(BaseModel):
 			return False
 
 		cur = Database.Instance().dict_cursor()
-		cur.execute("UPDATE Notifiers SET module = %s, class = %s, description = %s, settings = %s, active = %s WHERE id = %s", [self.module, self.class_name, self.description, self._settings_dump(self.settings), self.active, self.id])
+		cur.execute("UPDATE Notifiers SET module = %s, class = %s, name = %s, description = %s, settings = %s, public = %s, active = %s WHERE id = %s", [self.module, self.class_name, self.name, self.description, self._settings_dump(self.settings), self.public, self.active, self.id])
 		if cur.rowcount > 0:
 			return True
 		else:
@@ -109,6 +115,12 @@ class Notifier(BaseModel):
 	def set_class(self, class_name):
 		self.class_name = class_name
 
+	def get_name(self):
+		return self.name
+
+	def set_name(self, name):
+		self.name = name
+
 	def get_description(self):
 		return self.description
 
@@ -140,6 +152,16 @@ class Notifier(BaseModel):
 			return
 		self.active = active
 
+	def is_public(self):
+		return self.public
+
+	def set_public(self, public):
+		if not self.get_notifier_impl().is_public():
+			return;
+		if self.public is None:
+			return
+		self.public = public
+
 class Notifiers(BaseMultiModel):
 
 	def create(self, pk = None):
@@ -147,6 +169,9 @@ class Notifiers(BaseMultiModel):
 
 	def get_all(self):
 		return self._get_all("SELECT * FROM Notifiers ORDER BY id")
+
+	def get_all_active_public(self):
+		return self._get_all("SELECT * FROM Notifiers WHERE public = TRUE AND active = TRUE ORDER BY name")
 
 	def notify(self, measurement):
 		thread = NotificationThread(measurement)
