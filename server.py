@@ -46,7 +46,6 @@ def frontend_config_sensors():
 @app.route('/config/sensors/edit/<int:id>', defaults={'mode': 'edit'})
 @auth.login_required
 def frontend_config_sensors_change(mode, id):
-	print(id)
 	return FrontendController().config_sensors_change(mode, id)
 
 @app.route('/config/locations')
@@ -76,8 +75,8 @@ def frontend_config_notifications_change(mode, id):
 def frontend_config_subscriptions(id):
 	return FrontendController().config_subscriptions(id)
 
-@app.route('/config/subscriptions/add', defaults={'sid': None, 'mode': 'add'})
-@app.route('/config/subscriptions/edit/<int:sid>', defaults={'mode': 'edit'})
+@app.route('/config/notifications/<int:nid>/subscriptions/add', defaults={'sid': None, 'mode': 'add'})
+@app.route('/config/notifications/<int:nid>/subscriptions/edit/<int:sid>', defaults={'mode': 'edit'})
 @auth.login_required
 def frontend_config_subscriptions_change(mode, nid, sid):
 	return FrontendController().config_subscriptions_change(mode, nid, sid)

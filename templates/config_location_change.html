@@ -2,6 +2,16 @@
 
 {% block navigation %}config_locations{% endblock navigation %}
 
+{% block admin_resources %}
+<link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+<script type="text/javascript">
+	$(function() {
+		create_location_chooser_map();
+	});
+</script>
+{% endblock admin_resources %}
+
 {% block admin_content %}
 <div class="panel panel-default">
 	<div class="panel-heading">
@@ -18,12 +28,10 @@
 				<input type="text" id="name" name="name" class="form-control" value="{% if data.edit %}{{data.location.get_name()}}{% endif %}">
 			</div>
 			<div class="form-group">
-				<label for="lat">Latitude:</label>
-				<input type="number" id="lat" name="lat" class="form-control" value="{% if data.edit %}{{data.location.get_latitude()}}{% endif %}">
-			</div>
-			<div class="form-group">
-				<label for="lon">Longitude:</label>
-				<input type="number" id="lon" name="lon" class="form-control" value="{% if data.edit %}{{data.location.get_longitude()}}{% endif %}">
+				<label for="lat">Location:</label>
+				<div id="map" style="height: 400px;"></div>
+				<input type="hidden" id="lat" name="lat" value="{% if data.edit %}{{data.location.get_latitude()}}{% endif %}">
+				<input type="hidden" id="lon" name="lon" value="{% if data.edit %}{{data.location.get_longitude()}}{% endif %}">
 			</div>
 			<div class="form-group">
 				<label for="height">Height (cm):</label>

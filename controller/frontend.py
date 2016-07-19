@@ -33,27 +33,28 @@ class FrontendController(BaseController):
 		locationObj = Locations().get(location)
 
 		data = {
-			"setup": False,
-			"location": locationObj,
-			"default_sensor": sensor_id,
-			"sensors": {}
+			'setup': False,
+			'location': locationObj,
+			'default_sensor': sensor_id,
+			'sensors': {}
 		}
 
 		if locationObj is None or sensor_id is None:
-			data["setup"] = True
+			data['setup'] = True
 
 		for sensor in sensor_data:
 			sensor_id = sensor.get_id()
 			data['sensors'][sensor_id] = {
-				"sensor": sensor,
-				"hourly": self.__getminmaxavgvalue(time.strftime("%Y-%m-%dT%H:00:00Z"), location, sensor_id),
-				"daily": self.__getminmaxavgvalue(time.strftime("%Y-%m-%dT00:00:00Z"), location, sensor_id),
-				"monthly": self.__getminmaxavgvalue(time.strftime("%Y-%m-01T00:00:00Z"), location, sensor_id),
-				"yearly": self.__getminmaxavgvalue(time.strftime("%Y-01-01T00:00:00Z"), location, sensor_id),
-				"accum": self.__getminmaxavgvalue(time.strftime("2015-01-01T00:00:00Z"), location, sensor_id),
-				"last": self.__getlastvalue(location, sensor_id)
+				'sensor': sensor,
+				'hourly': self.__getminmaxavgvalue(time.strftime('%Y-%m-%dT%H:00:00Z'), location, sensor_id),
+				'daily': self.__getminmaxavgvalue(time.strftime('%Y-%m-%dT00:00:00Z'), location, sensor_id),
+				'monthly': self.__getminmaxavgvalue(time.strftime('%Y-%m-01T00:00:00Z'), location, sensor_id),
+				'yearly': self.__getminmaxavgvalue(time.strftime('%Y-01-01T00:00:00Z'), location, sensor_id),
+				'accum': self.__getminmaxavgvalue(time.strftime('2015-01-01T00:00:00Z'), location, sensor_id),
+				'last': self.__getlastvalue(location, sensor_id)['last'],
+				'datetime': self.__getlastvalue(location, sensor_id)['datetime'],
+				'trend': self.multi_model.calc_trend(location, sensor_id)['description']
 			}
-
 		return self.get_view('index.html').data(data)
 
 	def __getlastvalue(self, location, sensor):
@@ -68,7 +69,7 @@ class FrontendController(BaseController):
 		else:
 			value = mlist[0].get_value()
 			if value is not None:
-				return str(value)
+				return {'last': str(value), 'datetime': mlist[0].datetime.strftime("%a %b %d %Y %H:%M:%S")}
 			else:
 				return self.unknownValue
 
@@ -186,7 +187,7 @@ class FrontendController(BaseController):
 			"edit": (mode == 'edit'),
 			"mode": mode,
 			"notifier": None,
-			"notifier_inpl": None,
+			"notifier_impl": None,
 			"notifier_module": None,
 			"modules": OS().get_classes("notifiers", "Notifier")
 		}
@@ -212,7 +213,23 @@ class FrontendController(BaseController):
 		return self.get_view('config_subscriptions.html').data(data)
 
 	def config_subscriptions_change(self, mode, nid, sid):
-		return;
+		data = {
+			"edit": (mode == 'edit'),
+			"mode": mode,
+			"subscriber": None,
+			"notifier": None,
+			"notifier_impl": None,
+			"sensors": Sensors().get_all()
+		}
+		if mode == 'edit' and nid is not None:
+			subscriber = Subscribers().get(sid)
+			data['subscriber'] = subscriber
+			data['notifier'] = subscriber.get_notifier_object()
+		elif mode == 'add':
+			data['notifier'] = Notifiers().get(nid)
+		data["notifier_impl"] = data['notifier'].get_notifier_impl()
+
+		return self.get_view('config_subscriptions_change.html').data(data)
 
 	def data(self):
 		locations = Locations().get_all()
