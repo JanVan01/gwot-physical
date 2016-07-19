@@ -241,7 +241,7 @@ class ConfigController(BaseController):
                 try:
                     subscription.set_notifier(int(input['notifier']))
                     subscription.set_sensor(int(input['sensor']))
-                    notification.set_settings(input['settings'])
+                    subscription.set_settings(input['settings'])
                     if not notification.create():
                         return self.get_view().bad_request('The subscription you are trying to update does not exist try to create it instead')
                 except ValueError:
@@ -271,3 +271,17 @@ class ConfigController(BaseController):
         location['lon'] = location_model.get_longitude()
         location['height'] = location_model.get_height()
         return location
+
+    def _validate_sensor_settings(self, sensor, settings):
+        sensor_impl = sensor.get_sensor_impl()
+        for key, value in settings.items():
+            if not sensor_impl.validate(key, value):
+                return False
+        return True
+
+    def _validate_notification_settings(self, notification, settings):
+        notification_impl = notification.get_notification_impl()
+        for key, value in settings.items():
+            if not notification_impl.validate(key, value):
+                return False
+        return True
