@@ -244,7 +244,17 @@ class FrontendController(BaseController):
 		return self.get_view('tutorial_notifications.html').data()
 
 	def subscriptions(self):
-		return self.get_view('subscriptions.html').data()
+		data = Notifiers().get_all_active_public()
+		return self.get_view('subscriptions.html').data(data)
+
+	def subscriptions_add(self, id):
+		notifier = Notifiers().get(id)
+		data = {
+			"notifier": notifier,
+			"notifier_impl": notifier.get_notifier_impl(),
+			"sensors": Sensors().get_all()
+		}
+		return self.get_view('subscriptions_add.html').data(data)
 
 	def about(self):
 		return self.get_view('about.html').data()

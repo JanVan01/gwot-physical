@@ -12,7 +12,8 @@
 		<table class="table table-hover">
 			<thead>
 				<tr>
-					<th>Description</th>
+					<th>Name</th>
+					<th>Public</th>
 					<th>Active</th>
 					<th>&nbsp;</th>
 				</tr>
@@ -20,7 +21,16 @@
 			<tbody>
 				{% for service in data.notifiers %}
 				<tr id="entry_{{ service.get_id() }}">
-					<td>{{ service.get_description() }}</td>
+					<td>{{ service.get_name() }}</td>
+					<td>
+						{% if not service.get_notifier_impl().is_public() %}
+						<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+						{% elif service.is_public() %}
+						<span class="text-success glyphicon glyphicon-ok" aria-hidden="true"></span>
+						{% else %}
+						<span class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></span>
+						{% endif %}
+					</td>
 					<td>
 						{% if service.is_active() %}
 						<span class="text-success glyphicon glyphicon-ok" aria-hidden="true"></span>

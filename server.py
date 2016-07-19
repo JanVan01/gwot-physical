@@ -3,6 +3,7 @@
 import sys
 assert sys.version_info >= (3,0)
 
+import re
 from flask import Flask
 from flask_httpauth import HTTPBasicAuth
 from controller.data import DataController
@@ -10,14 +11,17 @@ from controller.location import LocationController
 from controller.sensor import SensorController
 from controller.config import ConfigController
 from controller.frontend import FrontendController
+from controller.notification import NotificationController
 from utils.utils import OS, ThreadObserver
 from views.json import JSON
 from models.config import ConfigManager
+from jinja2 import evalcontextfilter, Markup, escape
 
 
 OS().cwd(__file__)
 app = Flask(__name__)
 auth = HTTPBasicAuth()
+_paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 @app.route('/')
 def frontend_home():
@@ -97,6 +101,10 @@ def frontend_about():
 def frontend_subscriptions():
 	return FrontendController().subscriptions()
 
+@app.route('/subscriptions/add/<int:id>')
+def frontend_subscriptions_add(id):
+	return FrontendController().subscriptions_add(id)
+
 @app.route('/api/1.0/data/trigger')
 @auth.login_required
 def data_trigger():
@@ -129,6 +137,14 @@ def location_list():
 @app.route('/api/1.0/sensor/list')
 def sensor_list():
 	return SensorController().list()
+
+@app.route('/api/1.0/notification/list')
+def notification_list():
+	return NotificationController().list()
+
+@app.route('/api/1.0/notification/subscription', methods=['POST'])
+def notification_subscription():
+	return NotificationController().subscription()
 
 @app.route('/api/1.0/config', methods=['GET', 'PUT'])
 @auth.login_required
@@ -175,6 +191,15 @@ def json2table(data):
 @app.template_filter('json')
 def to_json(data):
 	return JSON().build(data)
+
+@app.template_filter('nl2br')
+@evalcontextfilter
+def nl2br(eval_ctx, value):
+	result = u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', '<br>\n') \
+		for p in _paragraph_re.split(escape(value)))
+	if eval_ctx.autoescape:
+		result = Markup(result)
+	return result
 
 @app.after_request
 def after_request(response):

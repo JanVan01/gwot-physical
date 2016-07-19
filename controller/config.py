@@ -138,7 +138,7 @@ class ConfigController(BaseController):
                     sensor.set_settings(input['settings'])
                     sensor.set_active(bool(input['active']))
                     if not sensor.create():
-                        return self.get_view().bad_request('The sensor you are trying to update does not exist try to create it instead')
+                        return self.get_view().bad_request('The sensor you are trying to create does not exist')
                 except ValueError:
                     return self.get_view().bad_request('input not in the right format')
             else:
@@ -167,10 +167,14 @@ class ConfigController(BaseController):
                         notification.set_module(str(input['module']))
                     if 'class_name' in input:
                         notification.set_class(str(input['class_name']))
+                    if 'name' in input:
+                        notification.set_name(str(input['name']))
                     if 'description' in input:
                         notification.set_description(str(input['description']))
                     if 'settings' in input:
                         notification.set_settings(input['settings'])
+                    if 'public' in input:
+                        notification.set_public(bool(input['public']))
                     if 'active' in input:
                         notification.set_active(bool(input['active']))
                     if not notification.update():
@@ -185,16 +189,19 @@ class ConfigController(BaseController):
             if(input is None):
                 return self.get_view().bad_request('Expected json')
             if ('description' in input and 'module' in input and 'class_name' in input
-                    and 'active' in input and 'settings' in input):
+                    and 'active' in input and 'settings' in input and 'name' in input ):
                 notification = Notifiers().create()
                 try:
                     notification.set_module(str(input['module']))
                     notification.set_class(str(input['class_name']))
+                    notification.set_name(str(input['name']))
                     notification.set_description(str(input['description']))
                     notification.set_settings(input['settings'])
                     notification.set_active(bool(input['active']))
+                    if 'public' in input:
+                        notification.set_public(bool(input['public']))
                     if not notification.create():
-                        return self.get_view().bad_request('The notification you are trying to update does not exist try to create it instead')
+                        return self.get_view().bad_request('The notification could not be created')
                 except ValueError:
                     return self.get_view().bad_request('input not in the right format')
             else:
@@ -242,12 +249,8 @@ class ConfigController(BaseController):
                     subscription.set_notifier(int(input['notifier']))
                     subscription.set_sensor(int(input['sensor']))
                     subscription.set_settings(input['settings'])
-<<<<<<< HEAD
-                    if not notification.create():
-=======
                     if not subscription.create():
->>>>>>> master
-                        return self.get_view().bad_request('The subscription you are trying to update does not exist try to create it instead')
+                        return self.get_view().bad_request('The subscription could not be created')
                 except ValueError:
                     return self.get_view().bad_request('input not in the right format')
             else:
