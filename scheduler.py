@@ -18,5 +18,5 @@ if __name__ == '__main__':
 	# Send json to cmd line for debugging
 	json = JSON()
 	print(json.build(data))
-	
-	ThreadObserver.Instance().wait();
+
+	ThreadObserver.Instance().wait()

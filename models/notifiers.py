@@ -182,7 +182,7 @@ class Notifiers(BaseMultiModel):
 class NotificationThread(threading.Thread):
 
 	def __init__(self, measurement):
-		super().__init__();
+		super().__init__()
 		self.measurement = measurement
 		ThreadObserver.Instance().add(self)
 
