@@ -102,7 +102,7 @@ class FrontendController(BaseController):
 				return str(value)
 			else:
 				return self.unknownValue
-	
+
 	def _get_module_chooser(self, title, url, folder, suffix):
 		data = {
 			"title": title,
@@ -123,19 +123,19 @@ class FrontendController(BaseController):
 
 	def config_sensors(self):
 		data = {"sensors": Sensors().get_all()}
-		return self.get_view('config_sensor.html').data(data)	
+		return self.get_view('config_sensor.html').data(data)
 
 	def config_sensors_change(self, mode, id):
 		if mode == 'add' and 'module' not in request.args:
 			if request.method == 'POST':
 				filename = OS().upload_file('sensors/', 'file');
 			return self._get_module_chooser("Add Sensor", "/config/sensors/add", "sensors", "Sensor")
-		
+
 		data = {
 			"edit": (mode == 'edit'),
 			"mode": mode,
 			"sensor": None,
-			"sensor_inpl": None,
+			"sensor_impl": None,
 			"sensor_module": None,
 			"modules": OS().get_classes("sensors", "Sensor")
 		}
@@ -176,8 +176,30 @@ class FrontendController(BaseController):
 		}
 		return self.get_view('config_notifications.html').data(data)
 
-	def config_notifications_change(self, nid):
-		return;
+	def config_notifications_change(self, mode, nid):
+		if mode == 'add' and 'module' not in request.args:
+			if request.method == 'POST':
+				filename = OS().upload_file('notifiers/', 'file')
+			return self._get_module_chooser("Add Notification Service", "/config/notifications/add", "notifiers", "Notifier")
+
+		data = {
+			"edit": (mode == 'edit'),
+			"mode": mode,
+			"notifier": None,
+			"notifier_impl": None,
+			"notifier_module": None,
+			"modules": OS().get_classes("notifiers", "Notifier")
+		}
+		if mode == 'edit' and nid is not None:
+			notifier = Notifiers().get(nid)
+			data['notifier'] = notifier
+			data['notifier_module'] = notifier.get_classpath()
+			data['notifier_impl'] = notifier.get_notifier_impl()
+		elif mode == 'add':
+			data['notifier_module'] = request.args.get('module')
+			data['notifier_impl'] = OS().create_object(data['notifier_module'])
+
+		return self.get_view('config_notifications_change.html').data(data)
 
 	def config_subscriptions(self, nid):
 		notifier = Notifiers().get(nid)
@@ -189,8 +211,24 @@ class FrontendController(BaseController):
 		}
 		return self.get_view('config_subscriptions.html').data(data)
 
-	def config_subscriptions_change(self, nid, sid):
-		return;
+	def config_subscriptions_change(self, mode, nid, sid):
+		data = {
+			"edit": (mode == 'edit'),
+			"mode": mode,
+			"subscriber": None,
+			"notifier": None,
+			"notifier_impl": None,
+			"sensors": Sensors().get_all()
+		}
+		if mode == 'edit' and nid is not None:
+			subscriber = Subscribers().get(sid)
+			data['subscriber'] = subscriber
+			data['notifier'] = subscriber.get_notifier_object()
+		elif mode == 'add':
+			data['notifier'] = Notifiers().get(nid)
+		data["notifier_impl"] = data['notifier'].get_notifier_impl()
+
+		return self.get_view('config_subscriptions_change.html').data(data)
 
 	def data(self):
 		locations = Locations().get_all()

@@ -1,0 +1,42 @@
+{% extends "base/admin.html" %}
+
+{% block navigation %}config_notifications{% endblock navigation %}
+
+{% block admin_content %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{% if data.edit %}
+		<h1 class="panel-title">Edit Notification Service</h1>
+		{% else %}
+		<h1 class="panel-title">Add Notification Service</h1>
+		{% endif %}
+	</div>
+	<div class="panel-body">
+		<form id="ajax_form" onsubmit="change_notification({% if data.edit %}{{data.notifier.get_id()}}{% endif %}); return false;">
+			<div class="form-group">
+				<label for="module">Module:</label>
+				<input type="text" id="module" name="module" class="form-control" value="{{data.notifier_module}}" readonly="readonly">
+			</div>
+			<div class="form-group">
+				<label for="description">Description:</label>
+				<input type="text" id="description" name="description" class="form-control" value="{% if data.edit %}{{data.notifier.get_description()}}{% endif %}">
+			</div>
+			<div class="form-group">
+				<label for="description">Active:</label>
+				<input type="checkbox" id="active" name="active" class="form-control"{% if not data.edit or data.notifier.is_active() %} checked="checked"{% endif %}>
+			</div>
+			{% for key in data.notifier_impl.get_notifier_settings() %}
+			<div class="form-group">
+				<label for="{{ key }}">{{ data.notifier_impl.get_setting_name(key) }}:</label>
+				{% if data.edit %}
+				{{ data.notifier_impl.get_setting_html(key, data.notifier.get_setting(key)) | safe }}
+				{% else %}
+				{{ data.notifier_impl.get_setting_html(key) | safe }}
+				{% endif %}
+			</div>
+			{% endfor %}
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>
+{% endblock admin_content %}

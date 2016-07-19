@@ -6,7 +6,7 @@
 <div class="panel panel-default admin-dashboard">
 	<div class="panel-heading clearfix">
 		<h1 class="panel-title pull-left">Notification Services &raquo; Subscriptions</h1>
-		<a href="/config/subscriptions/add" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
+		<a href="/config/notifications/{{ data.notifier.get_id() }}/subscriptions/add" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Add</a>
 	</div>
 	<div class="table-responsive">
 		<table class="table table-hover">
@@ -27,7 +27,7 @@
 					<td>{{ client.get_setting(key) }}</td>
 					{% endfor %}
 					<td class="text-right">
-						<a href="/config/subscriptions/edit/{{client.get_id()}}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+						<a href="/config/notifications/{{ data.notifier.get_id() }}/subscriptions/edit/{{client.get_id()}}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 						<a href="javascript:remove_subscription({{client.get_id()}})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
 					</td>
 				</tr>

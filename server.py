@@ -75,8 +75,8 @@ def frontend_config_notifications_change(mode, id):
 def frontend_config_subscriptions(id):
 	return FrontendController().config_subscriptions(id)
 
-@app.route('/config/subscriptions/add', defaults={'sid': None, 'mode': 'add'})
-@app.route('/config/subscriptions/edit/<int:sid>', defaults={'mode': 'edit'})
+@app.route('/config/notifications/<int:nid>/subscriptions/add', defaults={'sid': None, 'mode': 'add'})
+@app.route('/config/notifications/<int:nid>/subscriptions/edit/<int:sid>', defaults={'mode': 'edit'})
 @auth.login_required
 def frontend_config_subscriptions_change(mode, nid, sid):
 	return FrontendController().config_subscriptions_change(mode, nid, sid)
@@ -135,15 +135,29 @@ def sensor_list():
 def config_config():
     return ConfigController().complete_config()
 
-@app.route('/api/1.0/config/location', methods=['GET', 'PUT', 'POST'])
+@app.route('/api/1.0/config/location/<int:id>', methods=['DELETE'])
+@app.route('/api/1.0/config/location', defaults={'id': None}, methods=['PUT', 'POST'])
 @auth.login_required
-def config_location():
-	return ConfigController().location()
+def config_location(id):
+	return ConfigController().location(id)
 
-@app.route('/api/1.0/config/sensor', methods=['PUT', 'POST'])
+@app.route('/api/1.0/config/sensor/<int:id>', methods=['DELETE'])
+@app.route('/api/1.0/config/sensor', defaults = {'id': None}, methods=['PUT', 'POST'])
 @auth.login_required
-def config_sensor():
-	return ConfigController().sensor()
+def config_sensor(id):
+	return ConfigController().sensor(id)
+
+@app.route('/api/1.0/config/notification/<int:id>', methods=['DELETE'])
+@app.route('/api/1.0/config/notification', defaults = {'id': None}, methods=['PUT', 'POST'])
+@auth.login_required
+def config_notification(id):
+	return ConfigController().notification(id)
+
+@app.route('/api/1.0/config/subscription/<int:id>', methods=['DELETE'])
+@app.route('/api/1.0/config/subscription', defaults = {'id': None}, methods=['PUT', 'POST'])
+@auth.login_required
+def config_subscription(id):
+	return ConfigController().subscription(id)
 
 @app.route('/api/1.0/config/password', methods=['PUT'])
 @auth.login_required
