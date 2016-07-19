@@ -20,7 +20,7 @@ function dismiss_alert() {
 
 function success_redirect(message, url) {
 	success_msg(message);
-	setTimeout(function(){ window.location = url; }, 3000);
+	setTimeout(function(){ window.location = url; }, 1000);
 }
 
 function alert_msg(message, classy) {
