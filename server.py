@@ -46,7 +46,6 @@ def frontend_config_sensors():
 @app.route('/config/sensors/edit/<int:id>', defaults={'mode': 'edit'})
 @auth.login_required
 def frontend_config_sensors_change(mode, id):
-	print(id)
 	return FrontendController().config_sensors_change(mode, id)
 
 @app.route('/config/locations')
