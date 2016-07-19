@@ -34,7 +34,6 @@
 					<th>Height</th>
 					<th>
 						Active
-						<a href="/config" class="btn btn-xs btn-default">Change</a>
 					</th>
 					<th>&nbsp;</th>
 				</tr>
@@ -50,13 +49,15 @@
 						{% if location.get_id() == data.default_location %}
 						<span class="text-success glyphicon glyphicon-ok" aria-hidden="true"></span>
 						{% else %}
-						<span class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></span>
+						<a href="javascript:set_location_active({{location.get_id()}})" class="text-danger glyphicon glyphicon-remove" aria-hidden="true"></a>
 						{% endif %}
 					</td>
 					<td class="text-right">
 						<a href="javascript:show_marker_on_location_map({{ loop.index0 }});" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-map-marker"></span> Show on Map</a>
 						<a href="/config/locations/edit/{{ location.get_id() }}" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+						{% if location.get_id() != data.default_location %}
 						<a href="javascript:remove_location({{ location.get_id() }}, {{ loop.index0 }})" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Remove</a>
+						{% endif %}
 					</td>
 				</tr>
 				{% else %}

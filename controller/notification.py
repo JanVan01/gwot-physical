@@ -1,23 +1,36 @@
-import paho.mqtt.publish as publish # needed to push messages to subscribers
-#import json # needed to construct the output and return a json
+from controller.base import BaseController
+from models.notifiers import Notifiers
+from models.subscribers import Subscribers
+from models.sensors import Sensors
+from flask import request
 
-    # Takes some input (data) and pushs it to the MQTT-broker 'mosquitto'.
-    # Subscrubers of the channel 'everyMeasurement' will recieve
+class NotificationController(BaseController):
+		
+	def list(self):
+		data = Notifiers().get_all_active_public()
+		return self.get_view().data(data)
 
-# Todo: Consturct response with loop over list
-def publishMeasurement(data):
-    publishEveryMeasurement(data)
-    publishByThreshold(data)
+	def subscription(self):
+		input = request.get_json()
+		if input is None:
+			return self.get_view().bad_request('Expected json')
+		if 'notifier' in input and 'sensor' in input and 'settings' in input:
+			notifier = Notifiers().get(input['notifier'])
+			if notifier is None or not notifier.is_public():
+				return self.get_view().bad_request('Not a valid notifier')
+			sensor = Sensors().get(input['sensor'])
+			if sensor is None:
+				return self.get_view().bad_request('Not a valid sensor')
 
-def publishEveryMeasurement(data):
-    # data = []
-    # for i in range(len(data)):
-    #     sensor_data = {} # new object to be passed to data
-    #     data[i].
-    message = str(data).encode('unicode_escape')
-    publish.single("everyMeasurement", message, hostname="localhost")
-
-def publishByThreshold(data):
-    if data[0].value > 200:
-        message = str(data[0].value).encode('unicode_escape')
-        publish.single("publishByThreshold", message, hostname="localhost")
+			subscription = Subscribers().create()
+			try:
+				subscription.set_notifier(int(input['notifier']))
+				subscription.set_sensor(int(input['sensor']))
+				subscription.set_settings(input['settings'])
+				if not subscription.create():
+					return self.get_view().bad_request('The subscription you are trying to create does not exist try to create it instead')
+			except ValueError:
+				return self.get_view().bad_request('input not in the right format')
+		else:
+			return self.get_view().bad_request('not all necessary field set')
+		return self.get_view().success()

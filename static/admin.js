@@ -1,62 +1,3 @@
-function error_msg(message) {
-	alert_msg(message, 'danger');
-}
-
-function warning_msg(message) {
-	alert_msg(message, 'warning');
-}
-
-function info_msg(message) {
-	alert_msg(message, 'info');
-}
-
-function success_msg(message) {
-	alert_msg(message, 'success');
-}
-
-function dismiss_alert() {
-	$('#alert').hide();
-}
-
-function alert_msg(message, classy) {
-	$('#alert').removeClass('alert-danger');
-	$('#alert').removeClass('alert-warning');
-	$('#alert').removeClass('alert-info');
-	$('#alert').removeClass('alert-success');
-	$('#alert').addClass("alert-" + classy);
-	$('#alert_message').html(message);
-	$('#alert').show();
-}
-
-function request(method, url, success, data) {
-	var options = {
-		url: url,
-		method: method,
-		error: function (ajax, status, error) {
-			error_msg('<strong>Error!</strong> Sorry, the requested action could not be executed.');
-		},
-		contentType: 'application/json',
-		dataType: "json",
-		headers: {
-			accept: 'application/json'
-		}
-	};
-	if (typeof success === 'function') {
-		options.success = function (data, status, ajax) {
-			success(data);
-		};
-	} else if (typeof success === 'string') {
-		options.success = function (data, status, ajax) {
-			success_msg(success);
-		};
-	}
-	if (data) {
-		options.processData = false;
-		options.data = JSON.stringify(data);
-	}
-	$.ajax(options);
-}
-
 function remove_sensor(id) {
 	remove_x('sensor', id);
 }
@@ -151,8 +92,7 @@ function change_location(id) {
 	request(
 		method, '/api/1.0/config/location',
 		function () {
-			success_msg('Sensor has been saved successfully.');
-			window.location = '/config/locations';
+			success_redirect('Sensor has been saved successfully.', '/config/locations');
 		},
 		data
 	);
@@ -180,8 +120,7 @@ function change_sensor(id) {
 	request(
 		method, '/api/1.0/config/sensor',
 		function () {
-			success_msg('Sensor has been saved successfully.');
-			window.location = '/config/sensors'
+			success_redirect('Sensor has been saved successfully.', '/config/sensors');
 		},
 		data
 	);
@@ -193,9 +132,13 @@ function change_notification(id) {
 		module: classpath.module,
 		class_name: classpath.class,
 		active: $('#active').is(':checked'),
+		name: $('#name').val(),
 		description: $('#description').val(),
 		settings: {}
 	};
+	if ($('#public').length > 0) {
+		data.public = $('#public').is(':checked');
+	}
 	$('.custom-settings').each(function () {
 		var elem = $(this);
 		data.settings[elem.attr('id')] = elem.val();
@@ -208,8 +151,7 @@ function change_notification(id) {
 	request(
 		method, '/api/1.0/config/notification',
 		function () {
-			success_msg('Notification has been saved successfully.');
-			window.location = '/config/notifications';
+			success_redirect('Notification has been saved successfully.', '/config/notifications');
 		},
 		data
 	);
@@ -233,8 +175,7 @@ function change_subscription(nid, sid) {
 	request(
 		method, '/api/1.0/config/subscription',
 		function () {
-			success_msg('Subscription has been saved successfully.');
-			window.location = '/config/notifications/' + nid + '/subscriptions';
+			success_redirect('Subscription has been saved successfully.', '/config/notifications/' + nid + '/subscriptions');
 		},
 		data
 	);
@@ -315,4 +256,14 @@ function show_marker_on_location_map(index) {
 	var featureGroup = new L.featureGroup([marker]);
 	map.fitBounds(featureGroup.getBounds());
 	marker.openPopup();
+}
+
+function set_location_active(id){
+	request(
+		'PUT', '/api/1.0/config',
+		function(){
+			window.location = '/config/locations';
+		},
+		{location: id}
+	);
 }

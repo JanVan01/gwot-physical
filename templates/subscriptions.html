@@ -3,5 +3,15 @@
 {% block navigation %}subscriptions{% endblock navigation %}
 
 {% block content %}
-
+{% for service in data %}
+<div class="panel panel-default admin-dashboard">
+	<div class="panel-heading clearfix">
+		<h1 class="panel-title pull-left">{{ service.get_name() }}</h1>
+		<a href="/subscriptions/add/{{ service.get_id() }}" class="btn btn-xs btn-success pull-right"><span class="glyphicon glyphicon-plus"></span> Subscribe</a>
+	</div>
+	<div class="panel-body">{{ service.get_description() | nl2br }}</div>
+</div>	
+{% else %}
+	<div class="row col-md-12">Sorry, there is currently no public notification service offered by this device.</div>
+{% endfor %}
 {% endblock content %}
