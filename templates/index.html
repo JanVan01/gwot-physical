@@ -14,56 +14,68 @@
 {% block content %}
 <div class="container-fluid">
 	<div class="row">
-		<h1 class="col-md-12">Welcome to the smart device <em>{{ config.get_name() }}</em>.</h1>
+		<h1 class="col-md-12 text-center welcome-heading">Welcome to the smart sensing device <em>{{ config.get_name() }}</em>.</h1>
 	</div>
 	{% if data.setup %}
 	<div class="alert alert-danger" role="alert">This device has not been configured correctly. Please change your <a href="/config">configuration</a>.</div>
 	{% else %}
 	<div class="row">
 		<div class="col-md-6">
-			<h2>Sensors</h2>
-			{% for key, value in data.sensors.items() %}
-			<input type="radio" name="sensors" value="{{ key }}" onchange="updateData(this.value);" /> <span data-toggle="tooltip" data-placement="top" title="{{ value.sensor.get_description() }}">{{ value.sensor.get_type() }}</span><br />
-			{% endfor %}
-			<div>
-				<h3>Last measurement</h3>
-				<div>Measured on: <span id="last_time"></span></div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Sensors</h2>
+				</div>
+				<div class="panel-body" id="sensors">
+					{% for key, value in data.sensors.items() %}
+					<input type="radio" name="sensors" value="{{ key }}" onchange="updateData(this.value);" /> <span data-toggle="tooltip" data-placement="top" title="{{ value.sensor.get_description() }}">{{ value.sensor.get_type() }}</span><br />
+					{% endfor %}
+				</div>
 			</div>
-			<br/>
-			<div id="last_value"></div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Last measurement: <span id="last_time"></span></h2>
+				</div>
+				<div class="panel-body" id="last_value_container"><div id="last_value"></div></div>
+			</div>
 		</div>
 		<div class="col-md-6">
-			<h2>Location: {{ data.location.get_name() }}</h2>
-			<div id="map" style="height: 340px;"></div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Location: {{ data.location.get_name() }}</h2>
+				</div>
+				<div class="panel-body" id="map"></div>
+			</div>
 		</div>
 	</div>
-	<hr />
 	<div class="row">
-		<h2 class="col-md-12">Data overview for sensor <em id="title_sensor"></em></h2>
-	</div>
-	<div class="row table-responsive">
-		<table class="table col-md-12">
-			<thead>
-				<tr>
-					<td width="17%"><em>Unit: <strong id="unit"></strong></em></td>
-					<th width="16%">Hourly</th>
-					<th width="16%">Daily</th>
-					<th width="16%">Monthly</th>
-					<th width="16%">Yearly</th>
-					<th width="16%">Accumulated</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr id="min_values"></tr>
-				<tr id="avg_values"></tr>
-				<tr id="max_values"></tr>
-			</tbody>
-		</table>
-	</div>
-	<div class="row" id="last_box">
-		<div class="col-md-6">
-			<h3 id="trend"></h3>
-			<br/>
+		<div class="col-md-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Data overview for sensor <em id="title_sensor"></em></h2>
+				</div>
+				<div class="panel-body table-responsive">
+					<table class="table col-md-12">
+						<thead>
+							<tr>
+								<td width="17%"><em>Unit: <strong id="unit"></strong></em></td>
+								<th width="16%">Hourly</th>
+								<th width="16%">Daily</th>
+								<th width="16%">Monthly</th>
+								<th width="16%">Yearly</th>
+								<th width="16%">Accumulated</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr id="min_values"></tr>
+							<tr id="avg_values"></tr>
+							<tr id="max_values"></tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="panel-footer">
+					<strong>Trend:</strong> <span id="trend"></span>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="row">
@@ -82,7 +94,5 @@
 	});
 	</script>
 	{% endif %}
-
 </div>
-
 {% endblock content %}

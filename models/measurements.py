@@ -159,6 +159,16 @@ class Measurements(BaseMultiModel):
 		filter = self.filter_defaults(filter, 1)
 		filterSql = self.__build_filter(filter, "WHERE")
 		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value DESC LIMIT " + str(filter['limit']))
+
+	def get_time_range(self, filter = None):
+		filter = self.filter_defaults(filter, 1)
+		filterSql = self.__build_filter(filter, "WHERE")
+		cur = Database.Instance().dict_cursor()
+		cur.execute("SELECT MIN(m.datetime) AS min, MAX(m.datetime) AS max FROM Measurements m " + filterSql)
+		if cur.rowcount > 0:
+			return cur.fetchone()
+		else:
+			return None
 	
 	def calc_trend(self, sensor, location = None):
 		data = {

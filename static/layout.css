@@ -40,3 +40,39 @@ body {
 	background:#fff;
 	padding:0 10px;
 }
+
+#dateslider {
+	padding-top: 30px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+#eventStart {
+	padding-top: 0.75em;
+	margin-left: -15px;
+}
+#eventEnd {
+	padding-top: 0.75em;
+	margin-right: -15px;
+}
+
+#data #sensors, #data #locations, #data #dateslider, #home #sensors {
+	height: 150px;
+	overflow-y: auto;
+}
+
+#home #map {
+	height: 350px;
+}
+
+#home #last_value_container {
+	padding-top: 0px;
+	padding-bottom: 5px;
+}
+
+#home #last_value_container div {
+	height: 130px;
+}
+
+.welcome-heading {
+	padding-bottom: 1em;
+}

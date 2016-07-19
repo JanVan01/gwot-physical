@@ -232,10 +232,12 @@ class FrontendController(BaseController):
 		return self.get_view('config_subscriptions_change.html').data(data)
 
 	def data(self):
-		locations = Locations().get_all()
-		sensors = Sensors().get_all()
-		datacollection = {'locations': locations, 'sensors': sensors}
-		return self.get_view('data.html').data(datacollection)
+		data = {
+			'locations': Locations().get_all(),
+			'sensors': Sensors().get_all(),
+			'timerange': Measurements().get_time_range()
+		}
+		return self.get_view('data.html').data(data)
 
 	def tutorial_sensors(self):
 		return self.get_view('tutorial_sensors.html').data()
