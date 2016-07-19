@@ -26,7 +26,7 @@ class Subscriber(BaseModel):
 			return False
 
 		cur = Database.Instance().dict_cursor()
-		cur.execute("INSERT INTO Subscribers (settings, sensor, notifier) VALUES (%s, %s, %s, %s) RETURNING id", [self._settings_dump(self.settings), self.sensor, self.notifier])
+		cur.execute("INSERT INTO Subscribers (settings, sensor, notifier) VALUES (%s, %s, %s) RETURNING id", [self._settings_dump(self.settings), self.sensor, self.notifier])
 		data = cur.fetchone()
 		self.id = data['id']
 		if self.id > 0:

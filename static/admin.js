@@ -234,7 +234,7 @@ function change_subscription(nid, sid) {
 		method, '/api/1.0/config/subscription',
 		function () {
 			success_msg('Subscription has been saved successfully.');
-			window.location = '/config/notifications/' + nid + '/subscriptions/' + sid;
+			window.location = '/config/notifications/' + nid + '/subscriptions';
 		},
 		data
 	);
