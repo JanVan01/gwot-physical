@@ -172,8 +172,8 @@ class DistanceSensor(BaseSensor):
 			if new_interval < interval:
 				interval = new_interval
 
-		if DangerListener.Instance().state = 'danger':
-			interval = 1
+		if DangerListener.Instance().state == 'danger':
+			interval = 2
 
 		return (minutes >= interval)
 
