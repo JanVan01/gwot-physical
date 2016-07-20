@@ -51,7 +51,7 @@ class OwmRainSnow(BaseSensor):
 			quality = 0.0
 
 		if value is not None:
-			value = self._round(value)
+			value = self.round(value)
 			return SensorMeasurement(value, quality)
 		else:
 			return None

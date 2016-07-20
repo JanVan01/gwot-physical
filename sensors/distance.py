@@ -143,7 +143,7 @@ class DistanceSensor(BaseSensor):
 			quality = 0.0
 		else:
 			quality = 1.0
-		value = self._round(value)
+		value = self.round(value)
 		return SensorMeasurement(value, quality)
 
 	def high_precision(self):
@@ -210,5 +210,5 @@ class GaugeSensor(DistanceSensor):
 			return None
 
 		value = location.get_height() - data.get_value()
-		value = self._round(value)
+		value = self.round(value)
 		return SensorMeasurement(value, data.get_quality())

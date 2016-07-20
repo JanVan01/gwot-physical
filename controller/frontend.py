@@ -47,11 +47,11 @@ class FrontendController(BaseController):
 			last = self.__getlastvalue(location, sensor_id)
 			data['sensors'][sensor_id] = {
 				'sensor': sensor,
-				'hourly': self.__getminmaxavgvalue(time.strftime('%Y-%m-%dT%H:00:00Z'), location, sensor_id),
-				'daily': self.__getminmaxavgvalue(time.strftime('%Y-%m-%dT00:00:00Z'), location, sensor_id),
-				'monthly': self.__getminmaxavgvalue(time.strftime('%Y-%m-01T00:00:00Z'), location, sensor_id),
-				'yearly': self.__getminmaxavgvalue(time.strftime('%Y-01-01T00:00:00Z'), location, sensor_id),
-				'accum': self.__getminmaxavgvalue(time.strftime('2015-01-01T00:00:00Z'), location, sensor_id),
+				'hourly': self.__getminmaxavgvalue(time.strftime('%Y-%m-%dT%H:00:00Z'), location, sensor),
+				'daily': self.__getminmaxavgvalue(time.strftime('%Y-%m-%dT00:00:00Z'), location, sensor),
+				'monthly': self.__getminmaxavgvalue(time.strftime('%Y-%m-01T00:00:00Z'), location, sensor),
+				'yearly': self.__getminmaxavgvalue(time.strftime('%Y-01-01T00:00:00Z'), location, sensor),
+				'accum': self.__getminmaxavgvalue(time.strftime('2015-01-01T00:00:00Z'), location, sensor),
 				'last': last['last'],
 				'datetime': last['datetime'],
 				'trend': Measurements().calc_trend(sensor_id, location)['description']
@@ -84,7 +84,7 @@ class FrontendController(BaseController):
 		filterObj = {
 			'start': start,
 			'location': [str(location)],
-			'sensor': [str(sensor)],
+			'sensor': [str(sensor.get_id())],
 			'limit': 1
 		}
 		multi_model = Measurements()
@@ -100,6 +100,9 @@ class FrontendController(BaseController):
 		else:
 			value = mlist[0].get_value()
 			if value is not None:
+				impl = sensor.get_sensor_impl()
+				if impl is not None:
+					value = impl.round(value)
 				return str(value)
 			else:
 				return self.unknownValue
