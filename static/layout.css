@@ -55,9 +55,19 @@ body {
 	margin-right: -15px;
 }
 
-#data #sensors, #data #locations, #data #dateslider, #home #sensors {
+#data #sensors, #data #locations, #home #sensors {
 	height: 150px;
 	overflow-y: auto;
+}
+
+#data #dateslider-container {
+	height: 150px;
+	background-color: rgb(245, 245, 245);
+}
+#data #dateslider {
+	min-height: 100px;
+	max-height: 130px;
+	background-color: white;
 }
 
 #home #map {

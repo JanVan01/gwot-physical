@@ -204,7 +204,7 @@ class Measurements(BaseMultiModel):
 			"sensor": [sensor],
 			"location": [location],
 			"limit": 1000,
-			"quality": 0.25
+			"quality": 0.5
 		})
 		
 		if len(last) < 3:

@@ -28,7 +28,7 @@
 				</div>
 				<div class="panel-body" id="locations">
 					{% for value in data.locations %}
-					<input type="radio" name="location" value="{{ value.get_id() }}" onchange="locationChanged(this.value);" /> {{ value.get_name() }}<br />
+					<input type="radio" name="location" value="{{ value.get_id() }}" onchange="filtersChanged()" /> {{ value.get_name() }}<br />
 					{% endfor %}
 				</div>
 			</div>
@@ -40,21 +40,26 @@
 				</div>
 				<div class="panel-body" id="sensors">
 					{% for value in data.sensors %}
-					<input type="radio" name="sensor" value="{{ value.get_id() }}" onchange="sensorChanged(this.value);" /> <span data-toggle="tooltip" data-placement="top" title="{{ value.get_description() }}">{{ value.get_type() }}</span><br />
+					<input type="radio" name="sensor" value="{{ value.get_id() }}" onchange="filtersChanged()" /> <span data-toggle="tooltip" data-placement="top" title="{{ value.get_description() }}">{{ value.get_type() }}</span><br />
 					{% endfor %}
 				</div>
 			</div>
 		</div>
 		<div class="col-md-6">
-			<div class="panel panel-default">
+			<div class="panel panel-default" style="height: 100%;">
 				<div class="panel-heading">
 					<h2 class="panel-title">Time range</h2>
 				</div>
-				<div class="panel-body" id="dateslider">
-					<div id="slider"></div>
-					<div class="clearfix">
-						<span class="pull-left" id="eventStart"></span>
-						<span class="pull-right" id="eventEnd"></span>
+				<div id="dateslider-container">
+					<div class="panel-body" id="dateslider">
+						<div id="slider"></div>
+						<div class="clearfix">
+							<span class="pull-left" id="eventStart"></span>
+							<span class="pull-right" id="eventEnd"></span>
+						</div>
+					</div>
+					<div class="panel-footer">
+						<h2 class="panel-title"><input type="checkbox" name="outliers" id="outliers" onchange="filtersChanged()" value="0.5" /> Exclude outliers</h2>
 					</div>
 				</div>
 			</div>

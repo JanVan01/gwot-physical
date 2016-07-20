@@ -10,7 +10,7 @@ from utils.utils import SettingManager
 class EmailNotifier(BaseNotifier):
 
 	def send(self, notifier, subscriber, measurement):
-		if measurement.get_quality() < 0.1:
+		if measurement.get_quality() < 0.5:
 			return # ignore measurements with a bad quality
 		
 		name = ConfigManager.Instance().get_name()

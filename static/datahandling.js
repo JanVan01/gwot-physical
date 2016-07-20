@@ -4,10 +4,10 @@ var uncertainty = function(items, qualities) {
     var result = [];
     var inInterval = null;
     for (var i = 0; i < items.length; i++) {
-        if (!inInterval && qualities[i] == 0) { // new inIntervalingpoint only when no one was set
+        if (!inInterval && qualities[i] < 0.5) { // new inIntervalingpoint only when no one was set
             inInterval = items[i];
         }
-        if (inInterval && qualities[i] == 1) {
+        if (inInterval && qualities[i] >= 0.5) {
             result.push({
                 start: inInterval,
                 end: items[i]
@@ -41,6 +41,13 @@ function drawGraph(currentSensor, currentLocation, startDate, endDate) {
 	if (endDate) {
 		endDate = moment(parseInt(endDate)).utc().endOf('date').format();
 		url += '&end=' + endDate;
+	}
+	if (endDate) {
+		endDate = moment(parseInt(endDate)).utc().endOf('date').format();
+		url += '&end=' + endDate;
+	}
+	if($('#outliers').is(':checked')) {
+		url += '&quality=' + $('#outliers').val();
 	}
     $.ajax({
         url: url,
@@ -104,28 +111,16 @@ function drawGraph(currentSensor, currentLocation, startDate, endDate) {
 }
 
 
-//Signatur: sensorChanged: Number
-//Descriptino: Action performed, if a sensor is selected
-function sensorChanged(sensorId) {
+//Signatur: filtersChanged: Number
+//Action performed if a selection is changed
+function filtersChanged() {
+    var currentSensor = getSelectedButtonValue('sensor');
     var currentLocation = getSelectedButtonValue('location');
     try {
-        var i = slider.noUiSlider.get(); //Already a datums-slide in action?
-        drawGraph(sensorId, currentLocation, i[0], i[1]);
-    } catch (err) {
-        drawGraph(sensorId, currentLocation);
-    }
-
-}
-
-//Signatur: locationChanged: Number
-//Action performed if a location is selected
-function locationChanged(locationId) {
-    var currentSensor = getSelectedButtonValue('sensor');
-    try {
         var i = slider.noUiSlider.get();
-        drawGraph(currentSensor, locationId, i[0], i[1]);
+        drawGraph(currentSensor, currentLocation, i[0], i[1]);
     } catch (err) {
-        drawGraph(currentSensor, locationId);
+        drawGraph(currentSensor, currentLocation);
     }
 }
 
