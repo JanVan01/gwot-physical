@@ -147,6 +147,9 @@ class Notifier(BaseModel):
 			settings = self._settings_load(settings)
 		self.settings = settings
 
+	def set_setting(self, key, value):
+		self.settings[key] = value
+
 	def is_active(self):
 		return self.active
 

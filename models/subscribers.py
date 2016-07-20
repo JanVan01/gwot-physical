@@ -92,6 +92,9 @@ class Subscriber(BaseModel):
 			settings = self._settings_load(settings)
 		self.settings = settings
 
+	def set_setting(self, key, value):
+		self.settings[key] = value
+
 	def get_sensor(self):
 		return self.sensor
 
