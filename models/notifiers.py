@@ -160,7 +160,7 @@ class Notifier(BaseModel):
 
 	def set_public(self, public):
 		if not self.get_notifier_impl().is_public():
-			return;
+			return
 		if self.public is None:
 			return
 		self.public = public
@@ -203,13 +203,12 @@ class NotificationThread(threading.Thread):
 					"model": entry,
 					"impl": impl
 				}
-
 			# Go thorugh all subscribers and send notification
 			for sub in subs:
 				notifier = notifiers[sub.get_notifier()]
 				try:
-					notifier.impl.send(notifier.model, sub, self.measurement)
+					notifier['impl'].send(notifier['model'], sub, self.measurement)
 				except:
-					print("Could not send notification of type " + notifier.impl.get_module() + "." + notifier.impl.get_class())
+					print("Could not send notification of type " + notifier['model'].get_module() + "." + notifier['model'].get_class())
 
 		ThreadObserver.Instance().remove(self)
