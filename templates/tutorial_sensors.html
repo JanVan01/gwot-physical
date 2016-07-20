@@ -2,6 +2,232 @@
 
 {% block navigation %}tutorial_sensors{% endblock navigation %}
 
-{% block content %}
+{% block resources%}
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/vs.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/languages/python.min.js"></script>
+<script type="text/javascript">
+	hljs.initHighlightingOnLoad();
+	$(function() { toc(); });
+</script>
+{% endblock resources%}
 
+{% block content %}
+<h1>Implementing custom sensors</h1>
+
+<h2>Introduction</h2>
+
+<p>In this tutorial you'll be introduced on the basics of custom sensor development.
+	Afterwards these file could be uploaded to this device and be used as aggregating sensor.</p>
+<p>In this exmaple we will implement a sensor that is measuring the "Load Average" of our device.
+	The Load Average specifies how stressed our device is. Other examples for sensors could be a temperature sensor,
+	a light sensor or any sensor that is requesting data from external sources including web APIs.</p>
+
+<h2>Implementing the basics</h2>
+<p>All sensor classes are stored in the <code>sensors</code> directory and the class names need to be suffixed with <code>Sensor</code>.
+	This means we could name our Sensor <code>LoadAverageSensor</code> and store it in the file <code>sensors/loadavg.py</code>.
+	Internally our module name is then <code>sensors.loadavg.LoadAverageSensor</code>.</p>
+<p>All classes need to be derived from the class <code>BaseSensor</code> which is part of the Python module <code>sensors.base</code>.
+	You need to implement at least the following three methods:</p>
+	<ul>
+		<li><code>get_type()</code>: Returns a name of the used sensor as string, usually the model name of the physical sensor.</li>
+		<li><code>get_unit()</code>: Returns the unit of the values measured as string.</li>
+		<li><code>get_measurement()</code>: Returns a <code>SensorMeasurement</code> object (mdoule: <code>sensor.base</code>)
+			containing the measured value and a quality between 0.0 (worst) and 1.0 (best).
+			The quality should express the accuracy of the value.</li>
+	</ul>
+<p>Taking this into account our sensor class looks like this:</p>
+<pre><code class="python">import os # Import os module for getting the load average
+from sensors.base import BaseSensor, SensorMeasurement # Include BaseSensor and SensorMeasurement classes
+
+# We call our class LoadAverageSensor and derive it from BaseSensor
+class LoadAverageSensor(BaseSensor):
+
+	 # Returns a name of the used sensor as string
+	def get_type(self):
+		return "LoadAvg"
+	
+	# Returns the unit of the values measured
+	def get_unit(self):
+		# Actually the load average has no real unit, therefore we leave it empty.
+		return ""
+	
+	# Here the measurement is taking place.
+	# It returns a SensorMeasurement object containing the measured value and a quality between 0.0 (worst) and 1.0 (best).
+	# The quality should express the accuracy of the value.
+	def get_measurement(self):
+		# Returns a list of three values stating the load average in the last one, five and fifteen minutes. 
+		load_values = os.getloadavg()
+		# We return the load average for the last five minute only
+		# The quality is always stated as best (1.0) as they are always exact
+		return SensorMeasurement(load_values[1], 1.0)
+</code></pre>
+
+<h2>Advanced usage</h2>
+<p>Besides these mandatory methods you can implement some optional methods to customize your sensor further. 
+	If not implemented the default behaviour from the BaseSensor class is executed.</p>
+<h3>Influencing the interval of measurements</h3>
+<p>You can influence the interval of the measurements taken by overriding the method <code>is_due</code>.
+	It has two parameters:</p>
+	<ul>
+		<li><code>minutes</code>: Is a floating point number specyfing the minutes since the
+			last measurement taken for this sensor. Is <code>None</code> if no previous measurement was taken.</li>
+		<li><code>interval</code>: Is an integer stating the default interval specified in the config file.</li>
+	</ul>
+<p>It returns a boolean stating <code>True</code> in case a measurement should be taken, <code>False</code> if not.</p>
+<p>Based on these two parameters you can determine whether you want to take a new measurement or not. 
+	As we are storing the load average of the last five minutes it would be useful to take a measurement all five minutes.</p>
+<pre><code class="python"># Returns a boolean stating true in case a measurement should be taken, false if not
+	def is_due(self, minutes, interval):
+		return super().is_due(minutes, 5)
+</code></pre>
+
+<h3>Allow custom configurations</h3>
+<p>Sensors can even have their own settings so that users can customize them to their needs.
+	This could be helpful for changing the pins that are used to connect the sensor to the Raspberry Pi for example.
+	You'll need to implement the following four methods:</p>
+	<ul>
+		<li><code>get_setting_keys()</code>: Returns a list of setting identifiers we want to support.</li>
+		<li><code>get_setting_name(key)</code>: Takes a setting identifier (previously defined in <code>get_setting_keys()</code>) 
+			and returns the title of the setting which is shown to the user.</li>
+		<li><code>validate_setting(key, value)</code>: Takes a setting identifier (previously defined in <code>get_setting_keys()</code>)
+			and the value specified by a user. The method returns whether the value is valid for the specfied key (<code>True</code>) or
+			not (<code>False</code>). So this method does the input validation for the user supplied values for the settings.</li>
+		<li><code>get_setting_html(key, value)</code>: Returns the HTML component where the user can input his data. This should be either a 
+			<code>select</code>, <code>input</code> or <code>textarea</code> element.
+			There are pre-implemented methods that generate the code for you in the class <code>SettingManager</code> (module: <code>utils.utils</code>).
+			Unfortunately radio buttons and checkboxes are only supported partially.</li>
+	</ul>
+<p>In this example we could let the user choose which load average value should be stored (1 min, 5 min, 15 min).
+	The identifier for this setting is <code>avg_length</code>, but you are free to choose whatever name you like using the characters a-z, 0-9 and _.</p>
+<pre><code class="python">from utils.utils import SettingManager # Inport SettingManager for HTML output
+	
+	# Returns all setting identifiers that are supported.
+	def get_setting_keys(self):
+		return ["avg_length"]
+	
+	# Returns the title for the UI for the specified setting identifier
+	def get_setting_name(self, key):
+		# For the setting identifier 'avg_length' return the title
+		if key == 'avg_length':
+			return "Load average time frame"
+		else:
+			return None
+	
+	# Input validation of the value for the user specified data
+	def validate_setting(self, key, value):
+		# Check for the setting identifier 'avg_length' whether the value is one of 0, 1 or 2
+		if key == 'avg_length' and (value == 0 or value == 1 or value == 2):
+			return True
+		else:
+			return False
+	
+	# Returns the HTML component where the user can input his data
+	def get_setting_html(self, key, value = None):
+		# Specify the values for a select element as touples in a list.
+		# The first element is the internal value you can use in your code, the second element is the visible title for the option.
+		values = [[0, "1 min average"], [1, "5 min average"], [2, "15 min average"]]
+		return SettingManager().get_select_field(key, values, value)
+</code></pre>
+<p>Afterwards you can use the following four methods of the class <code>Sensor</code> in the module <code>models.sensors</code>.
+	In the <code>BaseSensor</code> based classes - which we are implemnting here - you can only use the getter methods.
+	set_setting is not available and set_settings is not storing the data and is intended only for internal use.
+	<ul>
+		<li><code>get_setting(key)</code>: Returns the stored value for the specified setting identifier (<code>key</code>).</li>
+		<li><code>get_srttings()</code>: Returns all settings as key-value-pairs stored in a <code>dict</code>.</li>
+		<li><code>set_settings(dict)</code>: Takes the settings as <code>dict</code> containing key-value-pairs ans stores them.</li>
+		<li><code>set_settings(key, value)</code>: Updates the value stored for the specified setting identifier (<code>key</code>).</li>
+	</ul>
+
+<h3>Specifying the precision</h3>
+<p>You can spefify the precision of your values.
+	Then they are rounded for your use automatically. You can specify a precision for high and low precision use cases.
+	The values are stored with high precision in the database and are usually shown in this precision to the user.
+	Low precision is currently only used for our trend calculation, but might be used for something else later.</p>
+<p>Both methods (<code>high_precision()</code> and <code>low_precision()</code>) are returning the number of decimals for rounding.
+	The returned value could be also negative, then it will be rounded to group of ten (-1), hundred (-2), etc.</p>
+<p>For <code>high_precision()</code> the default number of decimals is 2 and for <code>low_precision()</code> it's 0. 
+	 A high precision of 2 is good for this use case so we leave it as is and don't need to implement it. It's just mentioned for completeness.
+	 A low precision of 0 is to unprecise for load averages therefore we change it to 1 decimal.
+	</p>
+<pre><code class="python"># Returns the number of decimals that are relevant for normal and high precision use.
+#	def high_precision(self):
+#		return 2
+
+	# Returns the number of decimals that are relevant for low precision use, e.g. trend calculation.
+	def low_precision(self):
+		return 1
+</code></pre>
+
+<h2>The final result</h2>
+<p>This is the final class which one could use to sense the load average of the device.
+	Note that we changed the <code>get_measurement()</code> method a little to consider the setting we added later in this tutorial.</p>
+<pre><code class="python">from utils.utils import SettingManager # Inport SettingManager for HTML output
+from sensors.base import BaseSensor, SensorMeasurement # Include BaseSensor and SensorMeasurement classes
+import os # Import os module for getting the load average
+
+# We call our class LoadAverageSensor and derive it from BaseSensor
+class LoadAverageSensor(BaseSensor):
+
+	 # Returns a name of the used sensor as string
+	def get_type(self):
+		return "LoadAvg"
+	
+	# Returns the unit of the values measured
+	def get_unit(self):
+		# Actually the load average has no real unit, therefore we leave it empty.
+		return ""
+	
+	# Here the measurement is taking place.
+	# It returns a SensorMeasurement object containing the measured value and a quality between 0.0 (worst) and 1.0 (best).
+	# The quality should express the accuracy of the value.
+	def get_measurement(self):
+		# Returns a list of three values stating the load average in the last one, five and fifteen minutes. 
+		load_values = os.getloadavg()
+		# We return the load average for the last five minute only
+		# The quality is always stated as best (1.0) as they are always exact
+		return SensorMeasurement(load_values[1], 1.0)
+
+	# Returns a boolean stating true in case a measurement should be taken, false if not
+	def is_due(self, minutes, interval):
+		return super().is_due(minutes, 5)
+
+	# Returns all setting identifiers that are supported.
+	def get_setting_keys(self):
+		return ["avg_length"]
+	
+	# Returns the title for the UI for the specified setting identifier
+	def get_setting_name(self, key):
+		# For the setting identifier 'avg_length' return the title
+		if key == 'avg_length':
+			return "Load average time frame"
+		else:
+			return None
+	
+	# Input validation of the value for the user specified data
+	def validate_setting(self, key, value):
+		# Check for the setting identifier 'avg_length' whether the value is one of 0, 1 or 2
+		if key == 'avg_length' and (value == 0 or value == 1 or value == 2):
+			return True
+		else:
+			return False
+	
+	# Returns the HTML component where the user can input his data
+	def get_setting_html(self, key, value = None):
+		# Specify the values for a select element as touples in a list.
+		# The first element is the internal value you can use in your code, the second element is the visible title for the option.
+		values = [[0, "1 min average"], [1, "5 min average"], [2, "15 min average"]]
+		return SettingManager().get_select_field(key, values, value)
+
+	# Returns the number of decimals that are relevant for normal and high precision use.
+	# The default value is 2 and this is good for this use case. Therefore it is commented here.
+#	def high_precision(self):
+#		return 2
+
+	# Returns the number of decimals that are relevant for low precision use, e.g. trend calculation.
+	def low_precision(self):
+		return 1
+</code></pre>
+<p>You could now <a href="/config/sensors/add">upload it to your device</a>.</p>
+<p>&nbsp;</p>
 {% endblock content %}

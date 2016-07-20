@@ -2,6 +2,284 @@
 
 {% block navigation %}tutorial_notifications{% endblock navigation %}
 
-{% block content %}
+{% block resources%}
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/vs.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/languages/python.min.js"></script>
+<script type="text/javascript">
+	hljs.initHighlightingOnLoad();
+	$(function() { toc(); });
+</script>
+{% endblock resources%}
 
+{% block content %}
+<h1>Implementing custom notification services</h1>
+
+<h2>Introduction</h2>
+
+<p>In this tutorial you'll be introduced on the basics of custom notification services (called notifier internally) and subscriptions (called subsribers internally).
+	Afterwards these file could be uploaded to this device and be used to inform users about new measurements.</p>
+<p>In this exmaple we will implement a notification service that is sending eMails to users
+	on every measurement that is higher than an user-defined threshold.</p>
+<p>Please note that every subscription is per sensor. You need one subscription per sensor, you can't subscibe all sensors at once!</p>
+
+<h2>Implementing the basics</h2>
+<p>All notifier classes are stored in the <code>notifiers</code> directory and the class names need to be suffixed with <code>Notifier</code>.
+	This means we could name our class <code>EmailThresholdNotifier</code> and store it in the file <code>notifiers/emailthreshold.py</code>.
+	Internally our module name is then <code>notifiers.emailthreshold.EmailThresholdNotifier</code>.</p>
+<p>All classes need to be derived from the class <code>BaseNotifier</code> which is part of the Python module <code>notifiers.base</code>.</p>
+<p>You need to implement at least the method <code>send(notifier, subscriber, measurement)</code>.
+	It is called on every measurement taken and decides based on the parameters given
+	(objects of type <code>Notifier</code>, <code>Subscriber</code> and <code>Measurement</code> from the <code>models</code> directory)
+	whether to do something or not. It doesn't return anything.</p>
+<p>Taking this into account our basic notifier class looks like in the following example.
+	Note that we currently don't bother about hard-coded e-mail addresses.</p>
+<pre><code class="python">import smtplib
+from email.mime.text import MIMEText
+from notifiers.base import BaseNotifier
+from models.config import ConfigManager
+
+class EmailThresholdNotifier(BaseNotifier):
+
+	def send(self, notifier, subscriber, measurement):
+		 # Ignore measurements with a bad quality
+		if measurement.get_quality() < 0.5:
+			return
+		
+		# Get the name of the device
+		name = ConfigManager.Instance().get_name()
+		# Build a message
+		message = "Device: " + name + "\r\nSensor: " + str(measurement.get_sensor()) + "\r\nMeasurement value: " + str(measurement.get_value())
+		# Set address of recipent
+		recipent = "recipent.mail@mailprover.com"
+		# Set address of sender (your email address)
+		sender = "your.mail@mailprovider.com"
+
+		msg = MIMEText(message)
+		msg['Subject'] = "New notification from " + name # Set the title of the e-mail
+		msg['To'] = recipent
+		msg['From'] = sender
+
+		# Send the message via our SMTP server, but don't include the envelope header.
+		# This assumes you have a correctly configured SMTP server running on your device.
+		s = smtplib.SMTP('localhost')
+		s.sendmail(sender, [recipent], msg.as_string())
+		s.quit()
+</code></pre>
+
+<h2>Advanced usage</h2>
+<p>Besides these mandatory methods you can implement some optional methods to customize your notifier further. 
+	If not implemented the default behaviour from the BaseNotifier class is executed.</p>
+
+<h3>Allow custom configurations</h3>
+<p>Notifiers and Subscribers can even have their own settings so that users can customize them to their needs.
+	This could be helpful for specifying where to deliver the notification for example.
+	You'll need to implement the following five methods:</p>
+	<ul>
+		<li><code>get_subscriber_settings()</code>: Returns a list of setting identifiers we want to support individually for the subscribers.
+			The identifier for this settings can only contain the following characters a-z, 0-9 and _. Same applies for the next method.</li>
+		<li><code>get_notifier_settings()</code>: Returns a list of setting identifiers we want to support globally for the notifiers.
+			The setting identifier needs to be unique across <code>get_subscriber_settings()</code> and this method!</li>
+		<li><code>get_setting_name(key)</code>: Takes a setting identifier 
+			(previously defined in <code>get_subscriber_settings()</code> or <code>get_notifier_settings()</code>) 
+			and returns the title of the setting which is shown to the user.</li>
+		<li><code>validate_setting(key, value)</code>: Takes a setting identifier and the value specified by a user.
+			The method returns whether the value is valid for the specfied key (<code>True</code>) or
+			not (<code>False</code>). So this method does the input validation for the user supplied values for the settings.</li>
+		<li><code>get_setting_html(key, value)</code>: Returns the HTML component where the user can input his data. This should be either a 
+			<code>select</code>, <code>input</code> or <code>textarea</code> element.
+			There are pre-implemented methods that generate the code for you in the class <code>SettingManager</code> (module: <code>utils.utils</code>).
+			Unfortunately radio buttons and checkboxes are only supported partially.</li>
+	</ul>
+<p>In this example we could let the administrator choose which eMail address he wants the notifications to be sent from.
+	The subscriber can specify his eMail address where he wants his notifications to be sent to and additionally he can 
+	specify a threshold. He will be only informed when the measurement is higher than the specified theshold.</p>
+<pre><code class="python">from utils.utils import SettingManager, Validate
+
+	# Returns all setting identifiers that are supported to be set individually by subscribers.
+	# Must be unique for both get_subscriber_settings and get_notifier_settings
+	def get_subscriber_settings(self):
+		return ["email", "threshold"]
+	
+	# Returns all setting identifiers that are supported to be set globally for the notification service.
+	def get_notifier_settings(self):
+		return ["sender"]
+
+	# Returns the title for the UI for the specified setting identifier
+	def get_setting_name(self, key):
+		if key == "email":
+			return "E-mail address to be notified"
+		elif key == "sender":
+			return "Sending e-mail address"
+		elif key == "threshold":
+			return "Threshold"
+		else:
+			return None
+	
+	# Input validation of the value for the user specified data
+	def validate_setting(self, key, value):
+		if key == "email" or key == "sender":
+			regexp = "^[^@]+@[^@]+\.[^@]+$"
+			return (re.match(regexp, value) is not None)
+		if key == "threshold":
+			return Validate().floating(value)
+		else:
+			return False
+	
+	# Returns the HTML component where the user can input his data
+	def get_setting_html(self, key, value = None):
+		if key == "email" or key == "sender":
+			return SettingManager().get_input_field(key, value)
+		if key == "threshold":
+			return SettingManager().get_input_field(key, value, "float")
+		else:
+			return None
+</code></pre>
+<p>Afterwards you can use the following four methods of the classes <code>Notifier</code> (module: <code>models.notifiers</code>) and <code>Subscriber</code> (module: <code>models.subscribers</code>).
+	In the <code>BaseNotifier</code> based classes - which we are implemnting here - you can only use the getter methods.
+	set_setting is not available and set_settings is not storing the data and is intended only for internal use.
+	<ul>
+		<li><code>get_setting(key)</code>: Returns the stored value for the specified setting identifier (<code>key</code>).</li>
+		<li><code>get_srttings()</code>: Returns all settings as key-value-pairs stored in a <code>dict</code>.</li>
+		<li><code>set_settings(dict)</code>: Takes the settings as <code>dict</code> containing key-value-pairs ans stores them.</li>
+		<li><code>set_settings(key, value)</code>: Updates the value stored for the specified setting identifier (<code>key</code>).</li>
+	</ul>
+
+<h3>Allow the anyone to subscribe</h3>
+<p>You can allow by setting the return value of this method to <code>True</code> that this service can be set as publicly available.
+	Nevertheless this is only a general allowance for the administrator of the device to indicate that it could make sense to allow public subscriptions.
+	He can also disallow public subscriptions via another setting in the administration area.</p>
+<p>For our example, eMail notifications, it could make sense to allow users to subscribe to it.
+	So we are setting this to <code>True</code>.</p>
+<pre><code class="python"># Allow this service to be set as publicly available
+	def is_public(self):
+		return True
+</code></pre>
+
+<h3>Prepare the notification process</h3>
+<p>If you have some intensive work / calculation to do before all mails are sent
+	you can prepare this in this methos. This method is called before any calls to 
+	the <code>send()</code> method are taking place. Your precalculated data can
+	be stored in an object attribute for example.
+	This method doesn't have any parameters and doesn't return anything.</p>
+<p>We don't need this for this example, so it will be skipped in the full exmaple code.</p>
+<pre><code class="python">	def prepare(self):
+		# Do some heavy work here
+		# an set it to an object attribute, e.g.
+		# self.data = { ... }
+		return
+</code></pre>
+
+<h2>The final result</h2>
+<p>This is the final class.	Note that we changed the <code>send()</code> method a little to consider the setting we added later in this tutorial.</p>
+<pre><code class="python">import smtplib
+import re
+from email.mime.text import MIMEText
+from notifiers.base import BaseNotifier
+from models.config import ConfigManager
+from models.measurements import Measurements
+from models.sensors import Sensors
+from utils.utils import SettingManager, Validate
+
+class EmailNotifier(BaseNotifier):
+
+	def send(self, notifier, subscriber, measurement):
+		 # Ignore measurements with a bad quality
+		if measurement.get_quality() < 0.5:
+			return
+		
+		# Get the name of the device
+		name = ConfigManager.Instance().get_name()
+		# Build a message
+		message = "Device: " + name + "\r\nSensor: " + str(measurement.get_sensor()) + "\r\nMeasurement value: " + str(measurement.get_value())
+		# Set address of recipent
+		recipent = "recipent.mail@mailprover.com"
+		# Set address of sender (your email address)
+		sender = "your.mail@mailprovider.com"
+
+		msg = MIMEText(message)
+		msg['Subject'] = "New notification from " + name # Set the title of the e-mail
+		msg['To'] = recipent
+		msg['From'] = sender
+
+		# Send the message via our SMTP server, but don't include the envelope header.
+		# This assumes you have a correctly configured SMTP server running on your device.
+		s = smtplib.SMTP('localhost')
+		s.sendmail(sender, [recipent], msg.as_string())
+		s.quit()
+
+	def send(self, notifier, subscriber, measurement):
+		 # ignore measurements with a bad quality
+		if measurement.get_quality() < 0.5:
+			return
+
+		 # ignore measurements that don't reach the threshold
+		if measurement.get_value() < subscriber.get_setting('threshold'):
+			return
+
+		# Get the name of the device
+		name = ConfigManager.Instance().get_name()
+		# Build a message
+		message = "Device: " + name + "\r\nSensor: " + str(measurement.get_sensor()) + "\r\nMeasurement value: " + str(measurement.get_value())
+		# Set address of recipent - we retrieve this from the settings
+		recipent = subscriber.get_setting('email')
+		# Set address of sender - we retrieve this from the settings
+		sender = notifier.get_setting("sender")
+
+		msg = MIMEText(message)
+		msg['Subject'] = "New notification from " + name # Set the title of the e-mail
+		msg['To'] = recipent
+		msg['From'] = sender
+
+		# Send the message via our SMTP server, but don't include the envelope header.
+		# This assumes you have a correctly configured SMTP server running on your device.
+		s = smtplib.SMTP('localhost')
+		s.sendmail(sender, [recipent], msg.as_string())
+		s.quit()
+
+	# Allow this service to be set as publicly available
+	def is_public(self):
+		return True
+
+	# Returns all setting identifiers that are supported to be set individually by subscribers.
+	# Must be unique for both get_subscriber_settings and get_notifier_settings
+	def get_subscriber_settings(self):
+		return ["email", "threshold"]
+	
+	# Returns all setting identifiers that are supported to be set globally for the notification service.
+	def get_notifier_settings(self):
+		return ["sender"]
+
+	# Returns the title for the UI for the specified setting identifier
+	def get_setting_name(self, key):
+		if key == "email":
+			return "E-mail address to be notified"
+		elif key == "sender":
+			return "Sending e-mail address"
+		elif key == "threshold":
+			return "Threshold"
+		else:
+			return None
+	
+	# Input validation of the value for the user specified data
+	def validate_setting(self, key, value):
+		if key == "email" or key == "sender":
+			regexp = "^[^@]+@[^@]+\.[^@]+$"
+			return (re.match(regexp, value) is not None)
+		if key == "threshold":
+			return Validate().floating(value)
+		else:
+			return False
+	
+	# Returns the HTML component where the user can input his data
+	def get_setting_html(self, key, value = None):
+		if key == "email" or key == "sender":
+			return SettingManager().get_input_field(key, value)
+		if key == "threshold":
+			return SettingManager().get_input_field(key, value, "float")
+		else:
+			return None
+</code></pre>
+<p>You could now <a href="/config/notifications/add">upload it to your device</a>.</p>
+<p>&nbsp;</p>
 {% endblock content %}
