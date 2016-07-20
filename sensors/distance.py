@@ -172,6 +172,9 @@ class DistanceSensor(BaseSensor):
 			if new_interval < interval:
 				interval = new_interval
 
+		if DangerListener.Instance().state = 'danger':
+			interval = 1
+
 		return (minutes >= interval)
 
 	def get_setting_keys(self):

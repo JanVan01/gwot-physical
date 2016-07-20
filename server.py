@@ -16,12 +16,14 @@ from utils.utils import OS, ThreadObserver
 from views.json import JSON
 from models.config import ConfigManager
 from jinja2 import evalcontextfilter, Markup, escape
+from utils.danger_listener import DangerListener
 
 
 OS().cwd(__file__)
 app = Flask(__name__)
 auth = HTTPBasicAuth()
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
+DangerListener.Instance()
 
 @app.route('/')
 def frontend_home():

@@ -47,5 +47,35 @@ class MqttNotifier(BaseNotifier):
 		else:
 			return None
 
-	def is_public(self):
-		return False
+class MqttWarningNotifier(MqttNotifier):
+	def send(self, notifier, subscriber, measurement):
+		value = measurement.get_value()
+		threshold = subscriber.get_setting('threshold')
+		topic = notifier.get_setting('topic')
+		if value > float(threshold):
+			publish.single(topic, 'danger', hostname="localhost", qos=2)
+		else:
+			publish.single(topic, 'ok', hostname="localhost", qos=2)
+
+	def get_subscriber_settings(self):
+		return ['threshold']
+
+	def get_notifier_settings(self):
+		return ["topic"]
+
+	def get_setting_name(self, key):
+		if key == 'threshold':
+			return 'Threshold which has to be exeeded to result in a warning'
+		elif key == 'topic':
+			return 'Topic under which the warning is published'
+		else:
+			return None
+
+	def validate_setting(self, key, value):
+		if key == "threshold":
+			regexp = '^[-+]?\d+\.?\d*$'
+			return (re.match(regexp, value) is not None)
+		elif key == 'topic' and value != '':
+			return True
+		else:
+			return False
