@@ -44,6 +44,7 @@ class FrontendController(BaseController):
 
 		for sensor in sensor_data:
 			sensor_id = sensor.get_id()
+			last = self.__getlastvalue(location, sensor_id)
 			data['sensors'][sensor_id] = {
 				'sensor': sensor,
 				'hourly': self.__getminmaxavgvalue(time.strftime('%Y-%m-%dT%H:00:00Z'), location, sensor_id),
@@ -51,8 +52,8 @@ class FrontendController(BaseController):
 				'monthly': self.__getminmaxavgvalue(time.strftime('%Y-%m-01T00:00:00Z'), location, sensor_id),
 				'yearly': self.__getminmaxavgvalue(time.strftime('%Y-01-01T00:00:00Z'), location, sensor_id),
 				'accum': self.__getminmaxavgvalue(time.strftime('2015-01-01T00:00:00Z'), location, sensor_id),
-				'last': self.__getlastvalue(location, sensor_id)['last'],
-				'datetime': self.__getlastvalue(location, sensor_id)['datetime'],
+				'last': last['last'],
+				'datetime': last['datetime'],
 				'trend': Measurements().calc_trend(sensor_id, location)['description']
 			}
 		return self.get_view('index.html').data(data)
@@ -64,14 +65,13 @@ class FrontendController(BaseController):
 			'limit': 1
 		}
 		mlist = Measurements().get_last(filterObj)
-		if len(mlist) == 0:
-			return self.unknownValue
-		else:
+		
+		if len(mlist) > 0:
 			value = mlist[0].get_value()
 			if value is not None:
 				return {'last': str(value), 'datetime': mlist[0].datetime.strftime("%a %b %d %Y %H:%M:%S")}
-			else:
-				return self.unknownValue
+		
+		return {'last': self.unknownValue, 'datetime': self.unknownValue}
 
 	def __getminmaxavgvalue(self, start, location, sensor):
 		return {
