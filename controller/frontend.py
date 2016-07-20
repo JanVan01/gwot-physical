@@ -87,7 +87,8 @@ class FrontendController(BaseController):
 			'start': start,
 			'location': [str(location)],
 			'sensor': [str(sensor.get_id())],
-			'limit': 1
+			'limit': 1,
+			'quality': 0.5
 		}
 		multi_model = Measurements()
 		if type == 'min':
