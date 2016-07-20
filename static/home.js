@@ -2,20 +2,20 @@ function updateData (current_id) {
 	$("#title_sensor").text(sensordata[current_id].sensor.type);
 	$("#unit").text(sensordata[current_id].sensor.unit);
 	$("#min_values").html("<th>Minimum</th>" +
-			"<td>" + sensordata[current_id].daily.min + "</td>"
-			+ "<td>" + sensordata[current_id].hourly.min + "</td>"
+			"<td>" + sensordata[current_id].hourly.min + "</td>"
+			+ "<td>" + sensordata[current_id].daily.min + "</td>"
 			+ "<td>" + sensordata[current_id].monthly.min + "</td>"
 			+ "<td>" + sensordata[current_id].yearly.min + "</td>"
 			+ "<td>" + sensordata[current_id].accum.min + "</td>");
 	$("#avg_values").html("<th>Average</th>" +
-			"<td>" + sensordata[current_id].daily.avg + "</td>"
-			+ "<td>" + sensordata[current_id].hourly.avg + "</td>"
+			"<td>" + sensordata[current_id].hourly.avg + "</td>"
+			+ "<td>" + sensordata[current_id].daily.avg + "</td>"
 			+ "<td>" + sensordata[current_id].monthly.avg + "</td>"
 			+ "<td>" + sensordata[current_id].yearly.avg + "</td>"
 			+ "<td>" + sensordata[current_id].accum.avg + "</td>");
 	$("#max_values").html("<th>Maximum</th>" +
-			"<td>" + sensordata[current_id].daily.max + "</td>"
-			+ "<td>" + sensordata[current_id].hourly.max + "</td>"
+			"<td>" + sensordata[current_id].hourly.max + "</td>"
+			+ "<td>" + sensordata[current_id].daily.max + "</td>"
 			+ "<td>" + sensordata[current_id].monthly.max + "</td>"
 			+ "<td>" + sensordata[current_id].yearly.max + "</td>"
 			+ "<td>" + sensordata[current_id].accum.max + "</td>");

@@ -53,7 +53,7 @@ class FrontendController(BaseController):
 				'daily': self.__getminmaxavgvalue(time.strftime('%Y-%m-%dT00:00:00Z'), location, sensor),
 				'monthly': self.__getminmaxavgvalue(time.strftime('%Y-%m-01T00:00:00Z'), location, sensor),
 				'yearly': self.__getminmaxavgvalue(time.strftime('%Y-01-01T00:00:00Z'), location, sensor),
-				'accum': self.__getminmaxavgvalue(time.strftime('2015-01-01T00:00:00Z'), location, sensor),
+				'accum': self.__getminmaxavgvalue('2015-01-01T00:00:00Z', location, sensor),
 				'last': last['last'],
 				'datetime': last['datetime'],
 				'trend': Measurements().calc_trend(sensor_id, location)['description']
