@@ -80,3 +80,36 @@ function add_subscription(id) {
 		data
 	);
 }
+
+function toc() {
+	var toc = "<nav role='navigation' class='table-of-contents'><strong>Table of Contents</strong>";
+
+	var i = 0;
+	var h2 = 0;
+	var h3 = 0;
+	$(":header").each(function () {
+		var prefix = "";
+		var el = $(this);
+		var level = parseInt(el.prop("tagName").replace('H', ''));
+		if (level == 2) {
+			h2++;
+			h3 = 0;
+			prefix = h2 + "&nbsp;&nbsp;"
+		}
+		else if (level == 3) {
+			h3++;
+			prefix = "&nbsp;&nbsp;" + h2 + "." + h3 + "&nbsp;&nbsp;"
+		}
+		else {
+			return;
+		}
+		i++;
+		var name = "toc_header_" + i
+		el.prepend("<a name='" + name + "'></a>");
+		toc += "<br /><a href='#" + name + "'>" + prefix + el.text() + "</a>";
+	});
+
+	toc += "</nav>";
+
+	$("h1").after(toc);
+}

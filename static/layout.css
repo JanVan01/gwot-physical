@@ -91,3 +91,22 @@ body {
 	text-align: center;
 	font-size: 0.8em;
 }
+
+h2 a[name], h3 a[name] {
+	display: block;
+	width: 0;
+	height: 0;
+	position: relative;
+	top: -70px;
+	visibility: hidden;
+}
+
+.table-of-contents {
+	border-left: 1em solid #ddd;
+	padding: 0.5em 1em;
+}
+
+.table-of-contents strong {
+	font-size: 1.2em;
+	line-height: 2em;
+}
