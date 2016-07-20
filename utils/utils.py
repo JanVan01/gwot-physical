@@ -75,7 +75,7 @@ class Transform:
 	
 	def round(self, value, precision):
 		if precision < 0:
-			div = pow(10, abs(precsion))
+			div = pow(10, abs(precision))
 			temp = value / div
 			temp = round(temp)
 			value = temp * div
