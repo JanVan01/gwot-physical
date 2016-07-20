@@ -11,5 +11,5 @@ class DummySensor(BaseSensor):
 	
 	def get_measurement(self):
 		value = random.randint(1, 1000)
-		value = self._round(value)
+		value = self.round(value)
 		return SensorMeasurement(value, random.random())

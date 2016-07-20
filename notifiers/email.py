@@ -10,14 +10,15 @@ from utils.utils import SettingManager
 class EmailNotifier(BaseNotifier):
 
 	def send(self, notifier, subscriber, measurement):
-		if measurement.get_quality() < 0.1:
+		if measurement.get_quality() < 0.5:
 			return # ignore measurements with a bad quality
 		
 		name = ConfigManager.Instance().get_name()
 		fromAddr = notifier.get_setting("sender")
 		self._send_mail(
 			"New measurement notification from " + name,
-			"Device: " + name + "\r\nMeasurement value: " + str(measurement.get_value()) + "\r\nMeasurement quality: " + str(measurement.get_quality()),
+			# ToDo: Better e-mail content
+			"Device: " + name + "\r\nSensor: " + str(measurement.get_sensor()) + "\r\nMeasurement value: " + str(measurement.get_value()),
 			subscriber.get_setting('email'),
 			fromAddr
 		)
@@ -77,6 +78,7 @@ class EmailTrendNotifier(EmailNotifier):
 			self.trend_data[sensor.get_id()] = Measurements().calc_trend(sensor.get_id(), location)
 
 	def send(self, notifier, subscriber, measurement):
+		print("EmailTrend")
 		if measurement.get_sensor() not in self.trend_data:
 			return
 		
@@ -88,8 +90,9 @@ class EmailTrendNotifier(EmailNotifier):
 		name = ConfigManager.Instance().get_name()
 		fromAddr = self.get_setting("sender")
 		self._send_mail(
-			"New measurement notification from " + name,
-			"Device: " + name + "\r\nMeasurement value: " + str(measurement.get_value()) + "\r\nMeasurement quality: " + str(measurement.get_quality()),
+			"Warning from " + name,
+			# ToDo: Better e-mail content
+			"Limit " + str(limit) + " might be reached in " + str(self.hour_limit) + " hours. \r\nDevice: " + name + "\r\nSensor: " + str(measurement.get_sensor()) + "\r\nMeasurement value: " + str(measurement.get_value()),
 			subscriber.get_setting('email'),
 			fromAddr
 		)

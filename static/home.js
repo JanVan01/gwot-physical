@@ -22,14 +22,12 @@ function updateData (current_id) {
 
 	$("#last_time").text(sensordata[current_id].datetime);
 	$("#trend").text(sensordata[current_id].trend);
-	$("#curr_time").html("<i>Page generated on " + Date().slice(0,-9) + "</i>");
-	
+
 	if (sensordata[current_id].last === 'None') {
-		$("#last_box").hide();
+		$("#last_value_container").hide();
 		return;
 	}
-
-	$("#last_box").show();
+	$("#last_value_container").show();
 	
 	var pretty = (sensordata[current_id].sensor.type == 'HC-SR04'); // Not nice tosolve it like this, but in this usecase ...
 	var min = pretty ? 0 : sensordata[current_id].accum.min;

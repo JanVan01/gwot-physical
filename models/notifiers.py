@@ -205,8 +205,8 @@ class NotificationThread(threading.Thread):
 				}
 			# Go thorugh all subscribers and send notification
 			for sub in subs:
-				notifier = notifiers[sub.get_notifier()]
 				try:
+					notifier = notifiers[sub.get_notifier()]
 					notifier['impl'].send(notifier['model'], sub, self.measurement)
 				except:
 					print("Could not send notification of type " + notifier['model'].get_module() + "." + notifier['model'].get_class())

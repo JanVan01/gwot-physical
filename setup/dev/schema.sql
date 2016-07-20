@@ -37,8 +37,8 @@ CREATE TABLE Sensors (
 
 CREATE TABLE Subscribers (
   id SERIAL PRIMARY KEY,
-  notifier INTEGER NOT NULL REFERENCES Notifiers(id),
-  sensor INTEGER NOT NULL REFERENCES Sensors(id),
+  notifier INTEGER NOT NULL REFERENCES Notifiers(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  sensor INTEGER NOT NULL REFERENCES Sensors(id) ON DELETE CASCADE ON UPDATE CASCADE,
   settings TEXT DEFAULT NULL
 );
 
@@ -47,19 +47,19 @@ CREATE TABLE Measurements (
   datetime TIMESTAMP DEFAULT NOW(),
   value FLOAT NOT NULL,
   quality FLOAT DEFAULT NULL,
-  sensor INTEGER NOT NULL REFERENCES Sensors(id),
-  location INTEGER NOT NULL REFERENCES Locations(id)
+  sensor INTEGER NOT NULL REFERENCES Sensors(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  location INTEGER NOT NULL REFERENCES Locations(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Default data for ultrasonic distance sensor
-INSERT INTO Sensors (module, class, type, description, unit, settings) VALUES ('sensors.distance', 'GaugeSensor', 'HC-SR04', 'Ultrasonic distance sensor for water gauges', 'cm', '{"trigger_pin": "17", "data_pin": "27"}');
+INSERT INTO Sensors (module, class, type, description, unit, settings) VALUES ('sensors.distance', 'GaugeSensor', 'HC-SR04', 'Ultrasonic water-level sensor for water gauges', 'cm', '{"trigger_pin": "17", "data_pin": "27"}');
 INSERT INTO Sensors (module, class, type, description, unit, settings) VALUES ('sensors.owmrain', 'OwmRainSnow', 'OpenWeatherMap Rain+Snow', 'Sum of rain and snow. Source: OpenWeatherMap', 'mm/3h', '{"apikey": ""}');
 
 -- Default data for notifications
-INSERT INTO notifiers (module, class, name, description, settings, active) VALUES ('notifiers.email', 'EmailNotifier', 'E-Mail', 'Delivers every measurement to your e-mail inbox.', '{"sender": "no-reply@localhost"}', false);
-INSERT INTO notifiers (module, class, name, description, settings, active) VALUES ('notifiers.mqtt', 'MqttNotifier', 'MQTT Broker', '', NULL, false);
-INSERT INTO notifiers (module, class, name, description, settings, active) VALUES ('notifiers.opensensemap', 'OpenSenseMapNotifier', 'OpenSenseMap', '', '{"sensebox_id": ""}', false);
-INSERT INTO notifiers (module, class, name, description, settings, active) VALUES ('notifiers.email', 'EmailTrendNotifier', 'E-Mail', 'Sends a notification if a certain threshold is reached in the next 24 hours based on the current change rate.', '{"sender": "no-reply@localhost"}', false);
+INSERT INTO notifiers (module, class, name, description, settings, public, active) VALUES ('notifiers.email', 'EmailNotifier', 'eMail: All measurements', 'Delivers every measurement to your e-mail inbox.', '{"sender": "no-reply@localhost"}', true, false);
+INSERT INTO notifiers (module, class, name, description, settings, public, active) VALUES ('notifiers.mqtt', 'MqttNotifier', 'MQTT Broker', '', NULL, false, false);
+INSERT INTO notifiers (module, class, name, description, settings, public, active) VALUES ('notifiers.opensensemap', 'OpenSenseMapNotifier', 'OpenSenseMap', 'Publishes all measurements on http://www.opensensemap.org', '{"sensebox_id": ""}', false, false);
+INSERT INTO notifiers (module, class, name, description, settings, public, active) VALUES ('notifiers.email', 'EmailTrendNotifier', 'eMail: Trend based warnings', 'Sends a notification if a certain threshold is reached in the next 24 hours based on the current change rate.', '{"sender": "no-reply@localhost"}', true, false);
 
 INSERT INTO subscribers (notifier, sensor, settings) VALUES (2, 1, NULL);
 INSERT INTO subscribers (notifier, sensor, settings) VALUES (3, 1, '{"sensor_id": ""}');

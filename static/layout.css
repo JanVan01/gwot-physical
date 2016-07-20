@@ -40,3 +40,54 @@ body {
 	background:#fff;
 	padding:0 10px;
 }
+
+#dateslider {
+	padding-top: 30px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+#eventStart {
+	padding-top: 0.75em;
+	margin-left: -15px;
+}
+#eventEnd {
+	padding-top: 0.75em;
+	margin-right: -15px;
+}
+
+#data #sensors, #data #locations, #home #sensors {
+	height: 150px;
+	overflow-y: auto;
+}
+
+#data #dateslider-container {
+	height: 150px;
+	background-color: rgb(245, 245, 245);
+}
+#data #dateslider {
+	min-height: 100px;
+	max-height: 130px;
+	background-color: white;
+}
+
+#home #map {
+	height: 350px;
+}
+
+#home #last_value_container {
+	padding-top: 0px;
+	padding-bottom: 5px;
+}
+
+#home #last_value_container div {
+	height: 130px;
+}
+
+.welcome-heading {
+	padding-bottom: 1em;
+}
+
+#time-info {
+	text-align: center;
+	font-size: 0.8em;
+}

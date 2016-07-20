@@ -86,5 +86,11 @@ class DataController(BaseController):
 		limit = request.args.get('limit')
 		if valid.integer(limit) and int(limit) > 0:
 			args['limit'] = int(limit)
+			if args['limit'] > 10000:
+				args['limit'] = 10000
+
+		page = request.args.get('page')
+		if valid.integer(page) and int(page) > 0:
+			args['page'] = int(page)
 
 		return args

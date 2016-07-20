@@ -53,7 +53,7 @@ class BaseSensor(object):
 	def set_settings(self, settings):
 		self.settings = settings
 		
-	def _round(self, value):
+	def round(self, value):
 		return Transform().round(value, self.high_precision())
 		
 class SensorMeasurement(object):

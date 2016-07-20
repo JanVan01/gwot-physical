@@ -143,7 +143,7 @@ class DistanceSensor(BaseSensor):
 			quality = 0.0
 		else:
 			quality = 1.0
-		value = self._round(value)
+		value = self.round(value)
 		return SensorMeasurement(value, quality)
 
 	def high_precision(self):
@@ -154,23 +154,23 @@ class DistanceSensor(BaseSensor):
 			return True
 
 		weatherSensor = Sensors().get_by_class('sensors.owmrain', 'OwmRainSnow')
-		weatherMeasurements = Measurements().get_last({
-			"sensor": [weatherSensor.get_id()],
-			"limit": 1,
-			"location": [ConfigManager.Instance().get_location()]
-		})
+		if weatherSensor is not None:
+			weatherMeasurements = Measurements().get_last({
+				"sensor": [weatherSensor.get_id()],
+				"limit": 1,
+				"location": [ConfigManager.Instance().get_location()]
+			})
 
+			new_interval = interval
+			if len(weatherMeasurements) > 0:
+				value = weatherMeasurements[0].get_value()
+				if value > 30:
+					new_interval = 2 # Measure every two minutes in case of heavy rain
+				elif value > 0:
+					new_interval = interval/2 # Double the speed in case of light rain
 
-		new_interval = interval
-		if len(weatherMeasurements) > 0:
-			value = weatherMeasurements[0].get_value()
-			if value > 0:
-				new_interval = interval/2 # Double the speed in case of light rain
-			elif value > 30:
-				new_interval = 2 # Measure every two minutes in case of heavy rain
-
-		if new_interval < interval:
-			interval = new_interval
+			if new_interval < interval:
+				interval = new_interval
 
 		return (minutes >= interval)
 
@@ -210,5 +210,5 @@ class GaugeSensor(DistanceSensor):
 			return None
 
 		value = location.get_height() - data.get_value()
-		value = self._round(value)
+		value = self.round(value)
 		return SensorMeasurement(value, data.get_quality())
