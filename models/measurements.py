@@ -138,17 +138,20 @@ class Measurements(BaseMultiModel):
 	def get_all(self, filter = None):
 		filter = self.filter_defaults(filter)
 		filterSql = self.__build_filter(filter, "WHERE")
-		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.id ASC LIMIT " + str(filter['limit']))
+		limitSql = self.__build_limit(filter)
+		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.id ASC " + limitSql)
 
 	def get_last(self, filter = None):
 		filter = self.filter_defaults(filter, 1)
 		filterSql = self.__build_filter(filter, "WHERE")
-		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.id DESC LIMIT " + str(filter['limit']))
+		limitSql = self.__build_limit(filter)
+		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.id DESC " + limitSql)
 
 	def get_min(self, filter = None):
 		filter = self.filter_defaults(filter, 1)
 		filterSql = self.__build_filter(filter, "WHERE")
-		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value ASC LIMIT " + str(filter['limit']))
+		limitSql = self.__build_limit(filter)
+		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value ASC " + limitSql)
 
 	def get_avg(self, filter = None):
 		filter = self.filter_defaults(filter, 1)
@@ -158,7 +161,8 @@ class Measurements(BaseMultiModel):
 	def get_max(self, filter = None):
 		filter = self.filter_defaults(filter, 1)
 		filterSql = self.__build_filter(filter, "WHERE")
-		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value DESC LIMIT " + str(filter['limit']))
+		limitSql = self.__build_limit(filter)
+		return self._get_all("SELECT m.* FROM Measurements m " + filterSql + " ORDER BY m.value DESC " + limitSql)
 
 	def get_time_range(self, filter = None):
 		filter = self.filter_defaults(filter, 1)
@@ -292,12 +296,20 @@ class Measurements(BaseMultiModel):
 			'geometry': None,
 			'quality': None,
 			'sensor': [],
-			'limit': limit
+			'limit': limit,
+			'page': 1
 		}
 		if args is not None:
 			defaults.update(args)
 		return defaults
 
+	def __build_limit(self, args):
+		args = self.filter_defaults(args)
+		if args['page'] < 2:
+			return " LIMIT " + str(args['limit'])
+		else:
+			offset = (args['page'] - 1) * args['limit']
+			return " LIMIT " + str(args['limit']) + " OFFSET " + str(offset)
 
 	def __build_filter(self, args, prefix):
 		args = self.filter_defaults(args)

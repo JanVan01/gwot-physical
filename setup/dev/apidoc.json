@@ -289,6 +289,12 @@
 							"sample": "50",
 							"description": "Maximum number of elements that are returned. Default: 100",
 							"optional": true
+						},
+						"page": {
+							"type": "integer",
+							"sample": "5",
+							"description": "Used together with limit for pagination.",
+							"optional": true
 						}
 					},
                     "response_codes": [{
@@ -361,6 +367,12 @@
 							"sample": "50",
 							"description": "Maximum number of elements that are returned. Default: 100",
 							"optional": true
+						},
+						"page": {
+							"type": "integer",
+							"sample": "5",
+							"description": "Used together with limit for pagination.",
+							"optional": true
 						}
 					},
                     "response_codes": [{
@@ -432,6 +444,12 @@
 							"type": "integer",
 							"sample": "50",
 							"description": "Maximum number of elements that are returned. Default: 100",
+							"optional": true
+						},
+						"page": {
+							"type": "integer",
+							"sample": "5",
+							"description": "Used together with limit for pagination.",
 							"optional": true
 						}
 					},
@@ -570,6 +588,12 @@
 							"type": "integer",
 							"sample": "50",
 							"description": "Maximum number of elements that are returned. Default: 100",
+							"optional": true
+						},
+						"page": {
+							"type": "integer",
+							"sample": "5",
+							"description": "Used together with limit for pagination.",
 							"optional": true
 						}
 					},

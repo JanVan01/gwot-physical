@@ -33,7 +33,7 @@ function getSelectedButtonValue(name) {
 //Signatur: drawGraph: Number, Number, String, String
 //Description: Draws the measurements to a sensor-location - combination for a given timeinterval
 function drawGraph(currentSensor, currentLocation, startDate, endDate) {
-	var url = 'api/1.0/data/list?sensor=' + currentSensor + '&location=' + currentLocation;
+	var url = 'api/1.0/data/list?limit=10000&sensor=' + currentSensor + '&location=' + currentLocation;
 	if (startDate) {
 		startDate = moment(parseInt(startDate)).utc().startOf('date').format();
 		url += '&start=' + startDate;
