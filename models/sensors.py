@@ -7,7 +7,7 @@ from models.notifiers import Notifiers
 from sensors.base import BaseSensor
 
 class Sensor(BaseModel):
-	
+
 	def __init__(self, id = None):
 		super().__init__(['id', 'module', 'class_name', 'type', 'description', 'unit', 'active', 'settings'])
 		self.id = id
@@ -51,7 +51,7 @@ class Sensor(BaseModel):
 			return True
 		else:
 			return False
-	
+
 	def read(self):
 		if self.id is None:
 			return False
@@ -63,7 +63,7 @@ class Sensor(BaseModel):
 			return True
 		else:
 			return False
-	
+
 	def update(self):
 		impl = self.get_sensor_impl()
 		if self.id is None or impl is None or self.active is None:
@@ -75,7 +75,7 @@ class Sensor(BaseModel):
 			return True
 		else:
 			return False
-	
+
 	def delete(self):
 		if self.id is None:
 			return False
@@ -87,13 +87,13 @@ class Sensor(BaseModel):
 			return True
 		else:
 			return False
-		
+
 	def get_id(self):
 		return self.id
-	
+
 	def set_id(self, id):
 		self.id = id
-		
+
 	def get_sensor_impl(self):
 		obj = OS().create_object(self.module, self.class_name)
 		if obj is not None:
@@ -107,39 +107,39 @@ class Sensor(BaseModel):
 
 	def set_module(self, module):
 		self.module = module
-		
+
 	def get_module(self):
 		return self.module
-		
+
 	def get_class(self):
 		return self.class_name
-	
+
 	def get_classpath(self):
 		return self.module + '.' + self.class_name
-	
+
 	def set_class(self, class_name):
 		self.class_name = class_name
-		
+
 	def get_type(self):
 		return self.type
-		
+
 	def get_description(self):
 		return self.description
-	
+
 	def set_description(self, description):
 		self.description = description
-		
+
 	def get_unit(self):
 		return self.unit
-		
+
 	def is_active(self):
 		return self.active
-	
+
 	def set_active(self, active):
 		if self.active is None:
 			return
 		self.active = active
-		
+
 	def get_setting(self, key):
 		if self.settings is not None and key in self.settings:
 			return self.settings[key]
@@ -156,22 +156,22 @@ class Sensor(BaseModel):
 		if isinstance(settings, str):
 			settings = self._settings_load(settings)
 		self.settings = settings
-	
-	
+
+
 class Sensors(BaseMultiModel):
-	
+
 	def create(self, pk = None):
 		return Sensor(pk)
-	
+
 	def get_all(self):
 		return self._get_all("SELECT * FROM Sensors ORDER BY id")
-	
+
 	def get_pending(self):
 		return self._get_all("SELECT s.*, EXTRACT(EPOCH FROM (NOW() - MAX(m.datetime)))/60 AS pending FROM Sensors s LEFT OUTER JOIN Measurements m ON m.sensor = s.id WHERE s.active = TRUE GROUP BY s.id")
 
 	def get_by_class(self, module, class_name):
 		return self._get_one("SELECT * FROM Sensors WHERE module = %s AND class = %s LIMIT 1", [module, class_name])
-		
+
 	def trigger_pending(self):
 		interval = ConfigManager.Instance().get_interval()
 		if interval < 1:
@@ -179,17 +179,17 @@ class Sensors(BaseMultiModel):
 
 		sensors = self.get_pending()
 		return self.__trigger(sensors, True)
-		
+
 	def trigger_all(self):
 		return self.__trigger(self.get_all())
-	
+
 	def trigger_one(self, id):
 		sensors = []
 		sensor = self.get(id)
 		if sensor is not None:
 			sensors.append(sensor)
 		return self.__trigger(sensors)
-	
+
 	def __trigger(self, sensors, pending = False):
 		data = []
 
@@ -198,22 +198,22 @@ class Sensors(BaseMultiModel):
 			interval = ConfigManager.Instance().get_interval()
 			if interval < 1:
 				return [] # No valid interval specified
-		
+
 		location = Locations().get(ConfigManager.Instance().get_location())
 		if location is None:
-			return data; # No location found for this id
+			return data # No location found for this id
 
 		measurements = Measurements()
 		for sensor in sensors:
 			# Sensor is disabled, ignore it
 			if not sensor.is_active():
 				continue
-			
+
 			# Ignore the sensor if no implementation can be found
 			impl = sensor.get_sensor_impl()
 			if impl is None:
 				continue
-				
+
 			# If we want to trigger only pending sensors, check that and ignore sensors that are not pending to their rules
 			if pending is True and impl.is_due(sensor.get_extra('pending'), interval) is False:
 				continue

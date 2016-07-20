@@ -160,7 +160,7 @@ class Notifier(BaseModel):
 
 	def set_public(self, public):
 		if not self.get_notifier_impl().is_public():
-			return;
+			return
 		if self.public is None:
 			return
 		self.public = public
@@ -185,7 +185,7 @@ class Notifiers(BaseMultiModel):
 class NotificationThread(threading.Thread):
 
 	def __init__(self, measurement):
-		super().__init__();
+		super().__init__()
 		self.measurement = measurement
 		ThreadObserver.Instance().add(self)
 
@@ -203,7 +203,6 @@ class NotificationThread(threading.Thread):
 					"model": entry,
 					"impl": impl
 				}
-
 			# Go thorugh all subscribers and send notification
 			for sub in subs:
 				try:
