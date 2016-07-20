@@ -76,3 +76,8 @@ body {
 .welcome-heading {
 	padding-bottom: 1em;
 }
+
+#time-info {
+	text-align: center;
+	font-size: 0.8em;
+}

@@ -9,6 +9,7 @@ from views.html import HtmlView
 from utils.utils import OS
 from flask import request
 import time
+import datetime
 
 class FrontendController(BaseController):
 
@@ -36,7 +37,8 @@ class FrontendController(BaseController):
 			'setup': False,
 			'location': locationObj,
 			'default_sensor': sensor_id,
-			'sensors': {}
+			'sensors': {},
+			'now': datetime.datetime.utcnow().strftime("%a %b %d %Y %H:%M:%S")
 		}
 
 		if locationObj is None or sensor_id is None:

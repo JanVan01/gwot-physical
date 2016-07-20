@@ -22,7 +22,6 @@ function updateData (current_id) {
 
 	$("#last_time").text(sensordata[current_id].datetime);
 	$("#trend").text(sensordata[current_id].trend);
-	$("#curr_time").html("<i>Page generated on " + Date().slice(0,-9) + "</i>");
 
 	if (sensordata[current_id].last === 'None') {
 		$("#last_value_container").hide();
