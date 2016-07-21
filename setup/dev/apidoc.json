@@ -17,6 +17,9 @@
         "Location": {
             "description": "Current and past locations the device was located at"
         },
+        "Notification": {
+            "description": "Available notification services"
+        },
         "Headers": {
             "description": "HTTP headers"
         }
@@ -33,6 +36,24 @@
                     "label": "PUT /config",
                     "uri": "/config",
                     "method": "put",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+                    "response_codes": [{
+                        "code": 204,
+                        "description": "The config is updated",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }],
                     "request_body": {
                         "type": "object",
                         "properties": {
@@ -65,24 +86,14 @@
                             "generic": true
                         }
                     },
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }],
                     "response_body": {
                         "type": "reference",
                         "reference": "config"
-                    }
-                },
-                "getConfigLocation": {
-                    "category": "Config",
-                    "label": "GET /config/location",
-                    "uri": "/config/location",
-                    "method": "get",
-                    "request_headers": {
-                        "Accept": {
-                            "type": "mimeType",
-                            "description": "List of accepted MimeTypes",
-                            "sample": "application/json",
-                            "optional": true,
-                            "generic": true
-                        }
                     }
                 },
                 "putConfigLocation": {
@@ -90,6 +101,15 @@
                     "label": "PUT /config/location",
                     "uri": "/config/location",
                     "method": "put",
+                    "response_codes": [{
+                        "code": 204,
+                        "description": "The location is updated",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }],
                     "request_body": {
                         "type": "object",
                         "properties": {
@@ -117,6 +137,15 @@
                     "label": "POST /config/location",
                     "uri": "/config/location",
                     "method": "post",
+                    "response_codes": [{
+                        "code": 204,
+                        "description": "The location is created",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }],
                     "request_body": {
                         "type": "object",
                         "properties": {
@@ -136,60 +165,321 @@
                         }
                     }
                 },
-                "getConfigSensor": {
+                "deleteConfigLocation": {
                     "category": "Config",
-                    "label": "GET /config/sensor",
-                    "uri": "/config/sensor",
-                    "method": "get",
-                    "request_headers": {
-                        "Accept": {
-                            "type": "mimeType",
-                            "description": "List of accepted MimeTypes",
-                            "sample": "application/json",
-                            "optional": true,
-                            "generic": true
+                    "label": "DELETE /config/location",
+                    "description": "Delete Location",
+                    "uri": "/config/location/{id}",
+                    "method": "delete",
+                    "request_parameters": {
+                        "id": {
+                            "type": "string",
+                            "sample": "1",
+                            "description": "ID of the resource to be deleted",
+                            "optional": true
                         }
-                    }
+                    },
+                    "response_codes": [{
+                        "code": 500,
+                        "description": "Error while deleting the Resource",
+                        "generic": true
+                    }, {
+                        "code": 204,
+                        "description": "The resource is deleted",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }]
                 },
                 "putConfigSensor": {
                     "category": "Config",
                     "label": "PUT /config/sensor",
                     "uri": "/config/sensor",
-                    "method": "put"
+                    "method": "put",
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "number"
+                            },
+                            "module": {
+                                "type": "string"
+                            },
+                            "class_name": {
+                                "type": "string"
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "settings": {
+                                "type": "object"
+                            },
+                            "active": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "response_codes": [{
+                        "code": 204,
+                        "description": "The sensor is updated",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }]
                 },
                 "postConfigSensor": {
                     "category": "Config",
                     "label": "POST /config/sensor",
                     "uri": "/config/sensor",
-                    "method": "post"
+                    "method": "post",
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "module": {
+                                "type": "string"
+                            },
+                            "class_name": {
+                                "type": "string"
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "settings": {
+                                "type": "object"
+                            },
+                            "active": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "response_codes": [{
+                        "code": 204,
+                        "description": "The sensor is created",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }]
                 },
-                "getConfigPassword": {
+                "deleteConfigSensor": {
                     "category": "Config",
-                    "label": "GET /config/password",
-                    "uri": "/config/password",
-                    "method": "get",
-                    "request_headers": {
-                        "Accept": {
-                            "type": "mimeType",
-                            "description": "Accepted MimeTypes: text/html",
-                            "sample": "test/html",
-                            "optional": true,
-                            "generic": true
+                    "label": "DELETE /config/sensor",
+                    "description": "Delete Sensor",
+                    "uri": "/config/sensor/{id}",
+                    "method": "delete",
+                    "request_parameters": {
+                        "id": {
+                            "type": "string",
+                            "sample": "1",
+                            "description": "ID of the resource to be deleted",
+                            "optional": true
+                        }
+                    },
+                    "response_codes": [{
+                        "code": 500,
+                        "description": "Error while deleting the Resource",
+                        "generic": true
+                    }, {
+                        "code": 204,
+                        "description": "The resource is deleted",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }]
+                },
+                "putConfigNotification": {
+                    "category": "Config",
+                    "label": "PUT /config/notification",
+                    "uri": "/config/notification",
+                    "method": "put",
+                    "response_codes": [{
+                        "code": 204,
+                        "description": "The notifivation was updated",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }],
+                    "request_body": {
+                        "type": "reference",
+                        "reference": "notification"
+                    }
+                },
+                "postConfigNotification": {
+                    "category": "Config",
+                    "label": "POST /config/notification",
+                    "uri": "/config/notification",
+                    "method": "post",
+                    "response_codes": [{
+                        "code": 204,
+                        "description": "The notification was created",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }],
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "module": {
+                                "type": "string"
+                            },
+                            "class_name": {
+                                "type": "string"
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "settings": {
+                                "type": "object"
+                            },
+                            "public": {
+                                "type": "boolean"
+                            },
+                            "active": {
+                                "type": "boolean"
+                            }
                         }
                     }
+                },
+                "deleteConfigNotification": {
+                    "category": "Config",
+                    "label": "DELETE /config/notification",
+                    "description": "Delete Notification",
+                    "uri": "/config/notification/{id}",
+                    "method": "delete",
+                    "request_parameters": {
+                        "id": {
+                            "type": "string",
+                            "sample": "1",
+                            "description": "ID of the resource to be deleted",
+                            "optional": true
+                        }
+                    },
+                    "response_codes": [{
+                        "code": 500,
+                        "description": "Error while deleting the Resource",
+                        "generic": true
+                    }, {
+                        "code": 204,
+                        "description": "The resource is deleted",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }]
+                },
+                "putConfigSubscription": {
+                    "category": "Config",
+                    "label": "PUT /config/subscription",
+                    "uri": "/config/subscription",
+                    "method": "put",
+                    "response_codes": [{
+                        "code": 204,
+                        "description": "The sunscription was updated",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }],
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "number"
+                            },
+                            "notifier": {
+                                "type": "number"
+                            },
+                            "sensor": {
+                                "type": "number"
+                            },
+                            "settings": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "postConfigSubscription": {
+                    "category": "Config",
+                    "label": "POST /config/subscription",
+                    "uri": "/config/subscription",
+                    "method": "post",
+                    "response_codes": [{
+                        "code": 204,
+                        "description": "The subscriptions was created",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }],
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "notifier": {
+                                "type": "number"
+                            },
+                            "sensor": {
+                                "type": "number"
+                            },
+                            "settings": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "deleteConfigSubscription": {
+                    "category": "Config",
+                    "label": "DELETE /config/subscription",
+                    "description": "Delete Subscription",
+                    "uri": "/config/subscription/{id}",
+                    "method": "delete",
+                    "request_parameters": {
+                        "id": {
+                            "type": "string",
+                            "sample": "1",
+                            "description": "ID of the resource to be deleted",
+                            "optional": true
+                        }
+                    },
+                    "response_codes": [{
+                        "code": 500,
+                        "description": "Error while deleting the Resource",
+                        "generic": true
+                    }, {
+                        "code": 204,
+                        "description": "The resource is deleted",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }]
                 },
                 "putConfigPassword": {
                     "category": "Config",
                     "label": "PUT /config/password",
                     "uri": "/config/password",
                     "method": "put",
-                    "request_body":{
-                      "type": "object",
-                      "properties":{
-                        "password":{
-                          "type": "string"
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "password": {
+                                "type": "string"
+                            }
                         }
-                      }
                     }
                 },
                 "getDataTrigger": {
@@ -207,14 +497,14 @@
                             "generic": true
                         }
                     },
-					"request_parameters": {
-						"sensor": {
-							"type": "string",
-							"sample": "2",
-							"description": "ID of the sensor to trigger. Triggers all sensors if not specified.",
-							"optional": true
-						}
-					},
+                    "request_parameters": {
+                        "sensor": {
+                            "type": "string",
+                            "sample": "2",
+                            "description": "ID of the sensor to trigger. Triggers all sensors if not specified.",
+                            "optional": true
+                        }
+                    },
                     "response_codes": [{
                         "code": 200,
                         "description": "Requested content is returned",
@@ -227,8 +517,8 @@
                     "response_body": {
                         "type": "array",
                         "items": {
-							"type": "reference",
-							"reference": "measurement"
+                            "type": "reference",
+                            "reference": "measurement"
                         }
                     }
                 },
@@ -247,56 +537,56 @@
                             "generic": true
                         }
                     },
-					"request_parameters": {
-						"start": {
-							"type": "string",
-							"sample": "2016-06-28T13:52:08.504709",
-							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
-							"optional": true
-						},
-						"end": {
-							"type": "string",
-							"sample": "2016-06-28T13:52:08.504709",
-							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
-							"optional": true
-						},
-						"location": {
-							"type": "string",
-							"sample": "1,4",
-							"description": "Comma separated list of IDs from the location relation.",
-							"optional": true
-						},
-						"sensor": {
-							"type": "string",
-							"sample": "1,2,4",
-							"description": "Comma separated list of IDs from the sensor relation.",
-							"optional": true
-						},
-						"geometry": {
+                    "request_parameters": {
+                        "start": {
+                            "type": "string",
+                            "sample": "2016-06-28T13:52:08.504709",
+                            "description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+                            "optional": true
+                        },
+                        "end": {
+                            "type": "string",
+                            "sample": "2016-06-28T13:52:08.504709",
+                            "description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+                            "optional": true
+                        },
+                        "location": {
+                            "type": "string",
+                            "sample": "1,4",
+                            "description": "Comma separated list of IDs from the location relation.",
+                            "optional": true
+                        },
+                        "sensor": {
+                            "type": "string",
+                            "sample": "1,2,4",
+                            "description": "Comma separated list of IDs from the sensor relation.",
+                            "optional": true
+                        },
+                        "geometry": {
                             "type": "string",
                             "sample": "POINT(7.700233161449432 51.973379492826446)",
-							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
-							"optional": true
-						},
-						"quality": {
+                            "description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+                            "optional": true
+                        },
+                        "quality": {
                             "type": "string",
                             "sample": "0.25",
-							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
-							"optional": true
-						},
-						"limit": {
-							"type": "integer",
-							"sample": "50",
-							"description": "Maximum number of elements that are returned. Default: 100",
-							"optional": true
-						},
-						"page": {
-							"type": "integer",
-							"sample": "5",
-							"description": "Used together with limit for pagination.",
-							"optional": true
-						}
-					},
+                            "description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+                            "optional": true
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "sample": "50",
+                            "description": "Maximum number of elements that are returned. Default: 100",
+                            "optional": true
+                        },
+                        "page": {
+                            "type": "integer",
+                            "sample": "5",
+                            "description": "Used together with limit for pagination.",
+                            "optional": true
+                        }
+                    },
                     "response_codes": [{
                         "code": 200,
                         "description": "Requested content is returned",
@@ -305,8 +595,8 @@
                     "response_body": {
                         "type": "array",
                         "items": {
-							"type": "reference",
-							"reference": "measurement"
+                            "type": "reference",
+                            "reference": "measurement"
                         }
                     }
                 },
@@ -325,56 +615,56 @@
                             "generic": true
                         }
                     },
-					"request_parameters": {
-						"start": {
-							"type": "string",
-							"sample": "2016-06-28T13:52:08.504709",
-							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
-							"optional": true
-						},
-						"end": {
-							"type": "string",
-							"sample": "2016-06-28T13:52:08.504709",
-							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
-							"optional": true
-						},
-						"location": {
-							"type": "string",
-							"sample": "1,4",
-							"description": "Comma separated list of IDs from the location relation.",
-							"optional": true
-						},
-						"sensor": {
-							"type": "string",
-							"sample": "1,2,4",
-							"description": "Comma separated list of IDs from the sensor relation.",
-							"optional": true
-						},
-						"geometry": {
+                    "request_parameters": {
+                        "start": {
+                            "type": "string",
+                            "sample": "2016-06-28T13:52:08.504709",
+                            "description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+                            "optional": true
+                        },
+                        "end": {
+                            "type": "string",
+                            "sample": "2016-06-28T13:52:08.504709",
+                            "description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+                            "optional": true
+                        },
+                        "location": {
+                            "type": "string",
+                            "sample": "1,4",
+                            "description": "Comma separated list of IDs from the location relation.",
+                            "optional": true
+                        },
+                        "sensor": {
+                            "type": "string",
+                            "sample": "1,2,4",
+                            "description": "Comma separated list of IDs from the sensor relation.",
+                            "optional": true
+                        },
+                        "geometry": {
                             "type": "string",
                             "sample": "POINT(7.700233161449432 51.973379492826446)",
-							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
-							"optional": true
-						},
-						"quality": {
+                            "description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+                            "optional": true
+                        },
+                        "quality": {
                             "type": "string",
                             "sample": "0.25",
-							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
-							"optional": true
-						},
-						"limit": {
-							"type": "integer",
-							"sample": "50",
-							"description": "Maximum number of elements that are returned. Default: 100",
-							"optional": true
-						},
-						"page": {
-							"type": "integer",
-							"sample": "5",
-							"description": "Used together with limit for pagination.",
-							"optional": true
-						}
-					},
+                            "description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+                            "optional": true
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "sample": "50",
+                            "description": "Maximum number of elements that are returned. Default: 100",
+                            "optional": true
+                        },
+                        "page": {
+                            "type": "integer",
+                            "sample": "5",
+                            "description": "Used together with limit for pagination.",
+                            "optional": true
+                        }
+                    },
                     "response_codes": [{
                         "code": 200,
                         "description": "Requested content is returned",
@@ -383,8 +673,8 @@
                     "response_body": {
                         "type": "array",
                         "items": {
-							"type": "reference",
-							"reference": "measurement"
+                            "type": "reference",
+                            "reference": "measurement"
                         }
                     }
                 },
@@ -403,56 +693,56 @@
                             "generic": true
                         }
                     },
-					"request_parameters": {
-						"start": {
-							"type": "string",
-							"sample": "2016-06-28T13:52:08.504709",
-							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
-							"optional": true
-						},
-						"end": {
-							"type": "string",
-							"sample": "2016-06-28T13:52:08.504709",
-							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
-							"optional": true
-						},
-						"location": {
-							"type": "string",
-							"sample": "1,4",
-							"description": "Comma separated list of IDs from the location relation.",
-							"optional": true
-						},
-						"sensor": {
-							"type": "string",
-							"sample": "1,2,4",
-							"description": "Comma separated list of IDs from the sensor relation.",
-							"optional": true
-						},
-						"geometry": {
+                    "request_parameters": {
+                        "start": {
+                            "type": "string",
+                            "sample": "2016-06-28T13:52:08.504709",
+                            "description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+                            "optional": true
+                        },
+                        "end": {
+                            "type": "string",
+                            "sample": "2016-06-28T13:52:08.504709",
+                            "description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+                            "optional": true
+                        },
+                        "location": {
+                            "type": "string",
+                            "sample": "1,4",
+                            "description": "Comma separated list of IDs from the location relation.",
+                            "optional": true
+                        },
+                        "sensor": {
+                            "type": "string",
+                            "sample": "1,2,4",
+                            "description": "Comma separated list of IDs from the sensor relation.",
+                            "optional": true
+                        },
+                        "geometry": {
                             "type": "string",
                             "sample": "POINT(7.700233161449432 51.973379492826446)",
-							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
-							"optional": true
-						},
-						"quality": {
+                            "description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+                            "optional": true
+                        },
+                        "quality": {
                             "type": "string",
                             "sample": "0.25",
-							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
-							"optional": true
-						},
-						"limit": {
-							"type": "integer",
-							"sample": "50",
-							"description": "Maximum number of elements that are returned. Default: 100",
-							"optional": true
-						},
-						"page": {
-							"type": "integer",
-							"sample": "5",
-							"description": "Used together with limit for pagination.",
-							"optional": true
-						}
-					},
+                            "description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+                            "optional": true
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "sample": "50",
+                            "description": "Maximum number of elements that are returned. Default: 100",
+                            "optional": true
+                        },
+                        "page": {
+                            "type": "integer",
+                            "sample": "5",
+                            "description": "Used together with limit for pagination.",
+                            "optional": true
+                        }
+                    },
                     "response_codes": [{
                         "code": 200,
                         "description": "Requested content is returned",
@@ -461,8 +751,8 @@
                     "response_body": {
                         "type": "array",
                         "items": {
-							"type": "reference",
-							"reference": "measurement"
+                            "type": "reference",
+                            "reference": "measurement"
                         }
                     }
                 },
@@ -481,44 +771,44 @@
                             "generic": true
                         }
                     },
-					"request_parameters": {
-						"start": {
-							"type": "string",
-							"sample": "2016-06-28T13:52:08.504709",
-							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
-							"optional": true
-						},
-						"end": {
-							"type": "string",
-							"sample": "2016-06-28T13:52:08.504709",
-							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
-							"optional": true
-						},
-						"location": {
-							"type": "string",
-							"sample": "1,4",
-							"description": "Comma separated list of IDs from the location relation.",
-							"optional": true
-						},
-						"sensor": {
-							"type": "string",
-							"sample": "1,2,4",
-							"description": "Comma separated list of IDs from the sensor relation.",
-							"optional": true
-						},
-						"quality": {
+                    "request_parameters": {
+                        "start": {
+                            "type": "string",
+                            "sample": "2016-06-28T13:52:08.504709",
+                            "description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+                            "optional": true
+                        },
+                        "end": {
+                            "type": "string",
+                            "sample": "2016-06-28T13:52:08.504709",
+                            "description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+                            "optional": true
+                        },
+                        "location": {
+                            "type": "string",
+                            "sample": "1,4",
+                            "description": "Comma separated list of IDs from the location relation.",
+                            "optional": true
+                        },
+                        "sensor": {
+                            "type": "string",
+                            "sample": "1,2,4",
+                            "description": "Comma separated list of IDs from the sensor relation.",
+                            "optional": true
+                        },
+                        "quality": {
                             "type": "string",
                             "sample": "0.25",
-							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
-							"optional": true
-						},
-						"geometry": {
+                            "description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+                            "optional": true
+                        },
+                        "geometry": {
                             "type": "string",
                             "sample": "POINT(7.700233161449432 51.973379492826446)",
-							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
-							"optional": true
-						}
-					},
+                            "description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+                            "optional": true
+                        }
+                    },
                     "response_codes": [{
                         "code": 200,
                         "description": "Requested content is returned",
@@ -527,8 +817,8 @@
                     "response_body": {
                         "type": "array",
                         "items": {
-							"type": "reference",
-							"reference": "measurement"
+                            "type": "reference",
+                            "reference": "measurement"
                         }
                     }
                 },
@@ -547,56 +837,56 @@
                             "generic": true
                         }
                     },
-					"request_parameters": {
-						"start": {
-							"type": "string",
-							"sample": "2016-06-28T13:52:08.504709",
-							"description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
-							"optional": true
-						},
-						"end": {
-							"type": "string",
-							"sample": "2016-06-28T13:52:08.504709",
-							"description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
-							"optional": true
-						},
-						"location": {
-							"type": "string",
-							"sample": "1,4",
-							"description": "Comma separated list of IDs from the location relation.",
-							"optional": true
-						},
-						"sensor": {
-							"type": "string",
-							"sample": "1,2,4",
-							"description": "Comma separated list of IDs from the sensor relation.",
-							"optional": true
-						},
-						"geometry": {
+                    "request_parameters": {
+                        "start": {
+                            "type": "string",
+                            "sample": "2016-06-28T13:52:08.504709",
+                            "description": "Timestamp specified in ISO 8601 format. The elements queried must be newer than the date specified.",
+                            "optional": true
+                        },
+                        "end": {
+                            "type": "string",
+                            "sample": "2016-06-28T13:52:08.504709",
+                            "description": "Timestamp specified in ISO 8601 format. The elements queried must be older than the date specified.",
+                            "optional": true
+                        },
+                        "location": {
+                            "type": "string",
+                            "sample": "1,4",
+                            "description": "Comma separated list of IDs from the location relation.",
+                            "optional": true
+                        },
+                        "sensor": {
+                            "type": "string",
+                            "sample": "1,2,4",
+                            "description": "Comma separated list of IDs from the sensor relation.",
+                            "optional": true
+                        },
+                        "geometry": {
                             "type": "string",
                             "sample": "POINT(7.700233161449432 51.973379492826446)",
-							"description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
-							"optional": true
-						},
-						"quality": {
+                            "description": "A geometry specified using Well Known Text (WKT). All elements from locations that intersect with this geometry are returned.",
+                            "optional": true
+                        },
+                        "quality": {
                             "type": "string",
                             "sample": "0.25",
-							"description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
-							"optional": true
-						},
-						"limit": {
-							"type": "integer",
-							"sample": "50",
-							"description": "Maximum number of elements that are returned. Default: 100",
-							"optional": true
-						},
-						"page": {
-							"type": "integer",
-							"sample": "5",
-							"description": "Used together with limit for pagination.",
-							"optional": true
-						}
-					},
+                            "description": "Minimum data quality requested. Must be a floating point number between 0.0 (worst quality) and 1.0 (best quality).",
+                            "optional": true
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "sample": "50",
+                            "description": "Maximum number of elements that are returned. Default: 100",
+                            "optional": true
+                        },
+                        "page": {
+                            "type": "integer",
+                            "sample": "5",
+                            "description": "Used together with limit for pagination.",
+                            "optional": true
+                        }
+                    },
                     "response_codes": [{
                         "code": 200,
                         "description": "Requested content is returned",
@@ -605,8 +895,8 @@
                     "response_body": {
                         "type": "array",
                         "items": {
-							"type": "reference",
-							"reference": "measurement"
+                            "type": "reference",
+                            "reference": "measurement"
                         }
                     }
                 },
@@ -625,66 +915,66 @@
                             "generic": true
                         }
                     },
-					"request_parameters": {
-						"location": {
-							"type": "string",
-							"sample": "1",
-							"description": "ID of the location. If no location is given, the current/default location is used.",
-							"optional": true
-						},
-						"sensor": {
-							"type": "string",
-							"sample": "2",
-							"description": "ID of the sensor.",
-							"optional": false
-						}
-					},
+                    "request_parameters": {
+                        "location": {
+                            "type": "string",
+                            "sample": "1",
+                            "description": "ID of the location. If no location is given, the current/default location is used.",
+                            "optional": true
+                        },
+                        "sensor": {
+                            "type": "string",
+                            "sample": "2",
+                            "description": "ID of the sensor.",
+                            "optional": false
+                        }
+                    },
                     "response_codes": [{
                         "code": 200,
                         "description": "Requested content is returned",
                         "generic": true
-                    },{
+                    }, {
                         "code": 400,
                         "description": "Not enough data given. Invalid or no sensor or location id specified?",
                         "generic": true
                     }],
                     "response_body": {
-						"type": "object",
-						"properties": {
-							"since": {
-								"type": "string",
-								"format": "date-time",
-								"sample": "2016-06-28T10:50:77.125489"
-							},
-							"until": {
-								"type": "string",
-								"format": "date-time",
-								"sample": "2016-06-28T13:52:08.504709"
-							},
-							"until": {
-								"type": "string",
-								"format": "time",
-								"sample": "00:50:45.123456"
-							},
-							"change_abs": {
-								"type": "number",
-								"sample": 89.75,
-								"constraints": {
-									"unit": "cm"
-								}
-							},
-							"change_perhour": {
-								"type": "number",
-								"sample": 20.59,
-								"constraints": {
-									"unit": "cm/hour"
-								}
-							},
-							"description": {
-								"type": "string",
-								"sample": "Increasing since 2 hours 5 minutes by 37.8 cm/h"
-							}
-						}
+                        "type": "object",
+                        "properties": {
+                            "since": {
+                                "type": "string",
+                                "format": "date-time",
+                                "sample": "2016-06-28T10:50:77.125489"
+                            },
+                            "until": {
+                                "type": "string",
+                                "format": "date-time",
+                                "sample": "2016-06-28T13:52:08.504709"
+                            },
+                            "until": {
+                                "type": "string",
+                                "format": "time",
+                                "sample": "00:50:45.123456"
+                            },
+                            "change_abs": {
+                                "type": "number",
+                                "sample": 89.75,
+                                "constraints": {
+                                    "unit": "cm"
+                                }
+                            },
+                            "change_perhour": {
+                                "type": "number",
+                                "sample": 20.59,
+                                "constraints": {
+                                    "unit": "cm/hour"
+                                }
+                            },
+                            "description": {
+                                "type": "string",
+                                "sample": "Increasing since 2 hours 5 minutes by 37.8 cm/h"
+                            }
+                        }
                     }
                 },
                 "getLocationList": {
@@ -701,7 +991,7 @@
                             "optional": true,
                             "generic": true
                         }
-					},
+                    },
                     "response_codes": [{
                         "code": 200,
                         "description": "Requested content is returned",
@@ -710,8 +1000,36 @@
                     "response_body": {
                         "type": "array",
                         "items": {
-							"type": "reference",
-							"reference": "location"
+                            "type": "reference",
+                            "reference": "location"
+                        }
+                    }
+                },
+                "getNotificationList": {
+                    "category": "Notification",
+                    "label": "GET /notification/list",
+                    "description": "List of notification services available",
+                    "uri": "/notification/list",
+                    "method": "get",
+                    "request_headers": {
+                        "Accept": {
+                            "type": "mimeType",
+                            "description": "List of accepted MimeTypes",
+                            "sample": "application/json",
+                            "optional": true,
+                            "generic": true
+                        }
+                    },
+                    "response_codes": [{
+                        "code": 200,
+                        "description": "Requested content is returned",
+                        "generic": true
+                    }],
+                    "response_body": {
+                        "type": "array",
+                        "items": {
+                            "type": "reference",
+                            "reference": "notification"
                         }
                     }
                 },
@@ -729,7 +1047,7 @@
                             "optional": true,
                             "generic": true
                         }
-					},
+                    },
                     "response_codes": [{
                         "code": 200,
                         "description": "Requested content is returned",
@@ -738,8 +1056,37 @@
                     "response_body": {
                         "type": "array",
                         "items": {
-							"type": "reference",
-							"reference": "sensor"
+                            "type": "reference",
+                            "reference": "sensor"
+                        }
+                    }
+                },
+                "postNotificationSubscription": {
+                    "category": "Notification",
+                    "label": "POST /notification/subscription",
+                    "uri": "/notification/subscription",
+                    "method": "post",
+                    "response_codes": [{
+                        "code": 204,
+                        "description": "The subscriptions was created",
+                        "generic": true
+                    }, {
+                        "code": 400,
+                        "description": "Bad Request",
+                        "generic": true
+                    }],
+                    "request_body": {
+                        "type": "object",
+                        "properties": {
+                            "notifier": {
+                                "type": "number"
+                            },
+                            "sensor": {
+                                "type": "number"
+                            },
+                            "settings": {
+                                "type": "object"
+                            }
                         }
                     }
                 }
@@ -750,36 +1097,36 @@
                     "properties": {
                         "id": {
                             "type": "integer",
-							"minimum": 1
+                            "minimum": 1
                         },
                         "datetime": {
                             "type": "string",
-							"format": "date-time",
-							"sample": "2016-06-28T13:52:08.504709"
+                            "format": "date-time",
+                            "sample": "2016-06-28T13:52:08.504709"
                         },
                         "value": {
                             "type": "number",
-							"minimum": 0
+                            "minimum": 0
                         },
                         "quality": {
                             "type": "number",
-							"sample": 1.0,
-							"minimum": 0,
-							"maximum": 1
+                            "sample": 1.0,
+                            "minimum": 0,
+                            "maximum": 1
                         },
                         "sensor": {
                             "type": "integer",
-							"minimum": 1,
-							"constraints": {
-								"required": "Valid ID from Sensor relation"
-							}
+                            "minimum": 1,
+                            "constraints": {
+                                "required": "Valid ID from Sensor relation"
+                            }
                         },
                         "location": {
                             "type": "integer",
-							"minimum": 1,
-							"constraints": {
-								"required": "Valid ID from Location relation"
-							}
+                            "minimum": 1,
+                            "constraints": {
+                                "required": "Valid ID from Location relation"
+                            }
                         }
                     }
                 },
@@ -788,15 +1135,15 @@
                     "properties": {
                         "name": {
                             "type": "string",
-							"sample": "Device at Wersehaus"
+                            "sample": "Device at Wersehaus"
+                        },
+                        "interval": {
+                            "type": "integer",
+                            "minimum": 1
                         },
                         "location": {
                             "type": "reference",
                             "reference": "location"
-                        },
-                        "interval": {
-                            "type": "integer",
-							"minimum": 1
                         }
                     }
                 },
@@ -805,7 +1152,7 @@
                     "properties": {
                         "id": {
                             "type": "integer",
-							"minimum": 1
+                            "minimum": 1
                         },
                         "name": {
                             "type": "string",
@@ -814,15 +1161,15 @@
                         "geometry": {
                             "type": "string",
                             "sample": "POINT(7.700233161449432 51.973379492826446)",
-							"constraints": {
-								"format": "Well Known Text (WKT)"
-							}
+                            "constraints": {
+                                "format": "Well Known Text (WKT)"
+                            }
                         },
                         "height": {
                             "type": "number",
-							"constraints": {
-								"unit": "meters"
-							}
+                            "constraints": {
+                                "unit": "meters"
+                            }
                         }
                     }
                 },
@@ -831,19 +1178,50 @@
                     "properties": {
                         "id": {
                             "type": "integer",
-							"minimum": 1
+                            "minimum": 1
                         },
                         "type": {
                             "type": "string",
-							"sample": "HC-SR04"
+                            "sample": "HC-SR04"
                         },
                         "description": {
                             "type": "string",
-							"sample": "Ultrasonic distance sensor"
+                            "sample": "Ultrasonic distance sensor"
                         },
                         "unit": {
                             "type": "string",
-							"sample": "cm"
+                            "sample": "cm"
+                        }
+                    }
+                },
+                "notification": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "number",
+                            "minimum": 1
+                        },
+                        "module": {
+                            "type": "string",
+                            "exmaple":"mqtt"
+                        },
+                        "class_name": {
+                            "type": "string",
+                            "example": "MqttNotifier"
+                        },
+                        "description": {
+                            "type": "string"
+                        },
+                        "settings": {
+                            "type": "object",
+                            "description": "unique properties of a notification service"
+
+                        },
+                        "public": {
+                            "type": "boolean"
+                        },
+                        "active": {
+                            "type": "boolean"
                         }
                     }
                 }
