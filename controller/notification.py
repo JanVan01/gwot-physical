@@ -26,6 +26,7 @@ class NotificationController(BaseController):
 			try:
 				subscription.set_notifier(int(input['notifier']))
 				subscription.set_sensor(int(input['sensor']))
+				# ToDo: Validate subscription settings
 				subscription.set_settings(input['settings'])
 				if not subscription.create():
 					return self.get_view().bad_request('The subscription you are trying to create does not exist try to create it instead')
