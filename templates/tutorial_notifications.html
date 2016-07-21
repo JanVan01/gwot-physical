@@ -181,7 +181,7 @@ from models.measurements import Measurements
 from models.sensors import Sensors
 from utils.utils import SettingManager, Validate
 
-class EmailNotifier(BaseNotifier):
+class EmailThresholdNotifier(BaseNotifier):
 
 	def send(self, notifier, subscriber, measurement):
 		 # Ignore measurements with a bad quality
