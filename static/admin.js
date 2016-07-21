@@ -99,6 +99,29 @@ function change_location(id) {
 
 }
 
+function get_settings() {
+	var data = {};
+	$('.custom-settings').each(function () {
+		var elem = $(this);
+		var value = elem.val();
+
+		var tag = elem.prop("tagName").toLowerCase();
+		if (tag == 'input') {
+			var type = elem.attr("type").toLowerCase();
+			if (type == 'radio') {
+				// ToDo
+				// value = $('input[name=radioName]:checked').val()
+			}
+			else if (type == 'checkbox') {
+				// ToDo
+			}
+		}
+
+		data[elem.attr('id')] = value;
+	});
+	return data;
+}
+
 function change_sensor(id) {
 	var classpath = split_module($('#module').val());
 	var data = {
@@ -106,12 +129,8 @@ function change_sensor(id) {
 		class_name: classpath.class,
 		active: $('#active').is(':checked'),
 		description: $('#description').val(),
-		settings: {}
+		settings: get_settings()
 	};
-	$('.custom-settings').each(function () {
-		var elem = $(this);
-		data.settings[elem.attr('id')] = elem.val();
-	});
 	var method = 'POST'; // Create
 	if (id) {
 		data.id = id;
@@ -134,15 +153,11 @@ function change_notification(id) {
 		active: $('#active').is(':checked'),
 		name: $('#name').val(),
 		description: $('#description').val(),
-		settings: {}
+		settings: get_settings()
 	};
 	if ($('#public').length > 0) {
 		data.public = $('#public').is(':checked');
 	}
-	$('.custom-settings').each(function () {
-		var elem = $(this);
-		data.settings[elem.attr('id')] = elem.val();
-	});
 	var method = 'POST'; // Create
 	if (id) {
 		data.id = id;
@@ -161,12 +176,8 @@ function change_subscription(nid, sid) {
 	var data = {
 		notifier: nid,
 		sensor: $('#sensor').val(),
-		settings: {}
+		settings: get_settings()
 	};
-	$('.custom-settings').each(function () {
-		var elem = $(this);
-		data.settings[elem.attr('id')] = elem.val();
-	});
 	var method = 'POST'; // Create
 	if (sid) {
 		data.id = sid;

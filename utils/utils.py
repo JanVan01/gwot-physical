@@ -168,6 +168,21 @@ class SettingManager:
 			code = 'type="' + type + '"'
 			
 		return '<input ' + code + ' id="' + key + '" name="' + key + '" class="custom-settings form-control" value="' + value + '" />'
+
+	def get_select_field(self, key, values, value = None):
+		if value is None:
+			value = ""
+		else:
+			value = self.htmlspecialchars(value)
+			
+		options = ''
+		for entry in values:
+			selected = ''
+			if value is not None and entry[0] == value:
+				selected = ' selected="selected"'
+			options += '<option'+selected+' value="' + str(entry[0]) + '">' + entry[1] + '</option>'
+			
+		return '<select id="' + key + '" name="' + key + '" class="custom-settings form-control">' + options + "</select>"
 	
 	def htmlspecialchars(self, value):
 		value.replace("&", "&amp;").replace('"', "&quot;").replace("'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")
