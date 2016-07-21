@@ -14,6 +14,14 @@
 <script type="text/javascript" src="{{ url_for('static', filename='noUiSlider/nouislider.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='wnumb/wNumb.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='datahandling.js') }}"></script>
+<script type="text/javascript">
+$(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+	drawBar();
+    $("input:radio[name=sensor]:first").prop('checked', true);
+    $("input:radio[name=location][value={{ data.location }}]").prop('checked', true).trigger('change');
+});
+</script>
 {% endblock resources %}
 
 {% block navigation %}data{% endblock navigation %}

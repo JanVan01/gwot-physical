@@ -241,7 +241,8 @@ class FrontendController(BaseController):
 		data = {
 			'locations': Locations().get_all(),
 			'sensors': Sensors().get_all(),
-			'timerange': Measurements().get_time_range()
+			'timerange': Measurements().get_time_range(),
+			'location': ConfigManager.Instance().get_location()
 		}
 		return self.get_view('data.html').data(data)
 

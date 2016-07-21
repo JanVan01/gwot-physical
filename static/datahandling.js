@@ -35,15 +35,11 @@ function getSelectedButtonValue(name) {
 function drawGraph(currentSensor, currentLocation, startDate, endDate) {
 	var url = 'api/1.0/data/list?limit=10000&sensor=' + currentSensor + '&location=' + currentLocation;
 	if (startDate) {
-		startDate = moment(parseInt(startDate)).utc().startOf('date').format();
+		startDate = moment_fix(parseInt(startDate)).startOf('date').format();
 		url += '&start=' + startDate;
 	}
 	if (endDate) {
-		endDate = moment(parseInt(endDate)).utc().endOf('date').format();
-		url += '&end=' + endDate;
-	}
-	if (endDate) {
-		endDate = moment(parseInt(endDate)).utc().endOf('date').format();
+		endDate = moment_fix(parseInt(endDate)).endOf('date').format();
 		url += '&end=' + endDate;
 	}
 	if($('#outliers').is(':checked')) {
@@ -61,7 +57,7 @@ function drawGraph(currentSensor, currentLocation, startDate, endDate) {
                 var measurementQuality = [];
                 var unit = data[0].sensor.unit;
                 for (i = 0; i < data.length; i++) {
-                    dateTime.push(data[i].datetime);
+                    dateTime.push(moment_fix(data[i].datetime).format());
                     measurements.push(data[i].value);
                     measurementQuality.push(data[i].quality);
                 }
@@ -124,26 +120,22 @@ function filtersChanged() {
     }
 }
 
-
-$(function() {
-    $('[data-toggle="tooltip"]').tooltip();
-	drawBar();
-    $("input:radio[name=sensor]:first").attr('checked', true);
-    $("input:radio[name=location]:first").attr('checked', true).trigger('change');
-});
-
 // Create a string representation of the date.
 function formatDate(date) {
-	return moment.utc(date).format('YYYY-MM-DD')
+	return moment_fix(date).format('YYYY-MM-DD')
 }
 
+
+function moment_fix(time) {
+	return moment(time).utc().add(new Date().getTimezoneOffset(), 'minutes');
+}
 
 //Signatur: drawBar: String
 //Description: Draws a Date-Slider to a given max-Date (String). Min-Value is 2016-06-01
 function drawBar() {
     var dateSlider = document.getElementById('slider');
-	var min_datetime = moment(timerange.min).startOf('date').valueOf();
-	var max_datetime = moment(timerange.max).endOf('date').valueOf();
+	var min_datetime = moment_fix(timerange.min).startOf('date').valueOf();
+	var max_datetime = moment_fix(timerange.max).endOf('date').valueOf();
 	var seconds_per_day = 24 * 60 * 60 * 1000;
 	var start = max_datetime - seconds_per_day * 7;
 	if (min_datetime > start) {
