@@ -3,7 +3,7 @@ body {
 	padding-top: 70px;
 }
 
-#home .home, #data .data, #config .config, #about .about, #subscribe .subscribe,
+#home .home, #data .data, #config .config, #about .about, #subscriptions .subscriptions,
 #api .api, #api .developers, .navbar-brand, .navbar-inverse .navbar-brand,
 #tutorial_sensors .developers, #tutorial_notifications .developers,
 #config_settings .config, #config_password .config,
