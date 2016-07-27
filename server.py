@@ -31,6 +31,10 @@ def frontend_home():
 def frontend_data():
 	return FrontendController().data()
 
+@app.route('/data/statistics')
+def frontend_data_statistics():
+	return FrontendController().statistics()
+
 @app.route('/config')
 @auth.login_required
 def frontend_config():

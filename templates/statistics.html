@@ -1,0 +1,108 @@
+{% extends "base/frontend.html" %}
+
+{% block resources %}
+<!-- Load c3.css -->
+<link href="//cdnjs.cloudflare.com/ajax/libs/c3/0.1.29/c3.css" rel="stylesheet" type="text/css">
+<!-- Load d3.js and c3.js -->
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/c3/0.1.29/c3.js"></script>
+
+<!-- Rangeslider -->
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+<script type="text/javascript">var timerange = {{ data.timerange | json | safe }};</script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='noUiSlider/nouislider.min.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='noUiSlider/nouislider.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='wnumb/wNumb.js') }}"></script>
+
+<script type="text/javascript">
+$(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+	drawBar();
+    $("input:radio[name=sensor]:first").prop('checked', true);
+    $("input:radio[name=location][value={{ data.location }}]").prop('checked', true).trigger('change');
+});
+</script>
+
+{% endblock resources %}
+
+{% block navigation %}data{% endblock navigation %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+		<div class=" col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Locations</h2>
+				</div>
+				<div class="panel-body" id="locations">
+					{% for value in data.locations %}
+					<input type="radio" name="location" value="{{ value.get_id() }}" onchange="locationChanged(this.value)" /> {{ value.get_name() }}<br />
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Sensors</h2>
+				</div>
+				<div class="panel-body" id="sensors">
+					{% for value in data.sensors %}
+					<input type="radio" name="sensor" value="{{ value.get_id() }}" onchange="sensorChanged(this.value)" /> <span data-toggle="tooltip" data-placement="top" title="{{ value.get_description() }}">{{ "" }}</span>
+          <input type="radio" name="sensorCompare" value="{{ value.get_id() }}" onchange="sensorCompareChanged(this.value)" /> <span data-toggle="tooltip" data-placement="top" title="{{ value.get_description()}} ">{{ value.get_type() }}</span><br />
+          {% endfor %}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-default" style="height: 100%;">
+				<div class="panel-heading">
+					<h2 class="panel-title">Time range</h2>
+				</div>
+				<div id="dateslider-container">
+					<div class="panel-body" id="dateslider">
+						<div id="slider"></div>
+						<div class="clearfix">
+							<span class="pull-left" id="eventStart"></span>
+							<span class="pull-right" id="eventEnd"></span>
+						</div>
+					</div>
+					<div class="panel-footer">
+						<h2 class="panel-title"><input type="checkbox" name="outliers" id="outliers" onchange="outlierSelectionChanged(this.checked)" value="0.5" checked="checked" /> Exclude outliers
+
+            <select onchange="analysisSelectionChanged(this.value)" style="position: relative;
+    float: right;">
+                <option value="Correlation" selected="selected">Correlation</option>
+                <option value="Decompose" disabled>Decompose</option>
+            </select>
+            </h2>
+          </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 chart-wrapper">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Chart</h2>
+				</div>
+				<div class="panel-body">
+					<div id="demo" style="height: 500px;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row" id="time-info">All times in UTC</div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='timeseriesPlot.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='fittingTimeseries.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='dataAnalysis.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='correlation.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='Actioncontroler.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='analysisHandler.js') }}"></script>
+
+{% endblock content %}

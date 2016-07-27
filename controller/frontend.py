@@ -67,12 +67,12 @@ class FrontendController(BaseController):
 			'limit': 1
 		}
 		mlist = Measurements().get_last(filterObj)
-		
+
 		if len(mlist) > 0:
 			value = mlist[0].get_value()
 			if value is not None:
 				return {'last': str(value), 'datetime': mlist[0].datetime.strftime("%a %b %d %Y %H:%M:%S")}
-		
+
 		return {'last': self.unknownValue, 'datetime': self.unknownValue}
 
 	def __getminmaxavgvalue(self, start, location, sensor):
@@ -245,6 +245,15 @@ class FrontendController(BaseController):
 			'location': ConfigManager.Instance().get_location()
 		}
 		return self.get_view('data.html').data(data)
+
+	def statistics(self):
+		data = {
+			'locations': Locations().get_all(),
+			'sensors': Sensors().get_all(),
+			'timerange': Measurements().get_time_range(),
+			'location': ConfigManager.Instance().get_location()
+		}
+		return self.get_view('statistics.html').data(data)
 
 	def tutorial_sensors(self):
 		return self.get_view('tutorial_sensors.html').data()
