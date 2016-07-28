@@ -1,9 +1,24 @@
 function plotTimeseries(rval, t1, t2, tSelector, vSelector) {
 
-  if(!t1[0]){
+  if(!t1[0] && !t2[0]){
     $('#demo').text("No data in selected range.");
     return;
   }
+  if(!t1[0] || !t2[0]){
+    if(!t1[0]){
+      var t1 = [];
+      for (var element of t2) {
+        t1.push(element);
+      }
+    }
+    else {
+      var t2 = [];
+      for (var element of t1) {
+        t2.push(element);
+      }
+    }
+  }
+
     // Setting the box
     var margin = {
             top: 30,
@@ -50,8 +65,12 @@ function plotTimeseries(rval, t1, t2, tSelector, vSelector) {
             return y1(d.value);
         });
 
-
-    $('#demo').text("r-Value: " + rval.toFixed(2));
+    try {
+      $('#demo').text("r-Value: " + rval.toFixed(2));
+    }
+    catch (e) {
+      $('#demo').text("r-Value: ?");
+    }
     // Put the area for the graph on the page.
     var svg = d3.select("#demo") // To change to data
         .append("svg")
@@ -109,18 +128,32 @@ function plotTimeseries(rval, t1, t2, tSelector, vSelector) {
         .call(xAxis);
 
     // Add the Y Axis
+    var unit = String(t1[0].sensor.unit);
     svg.append("g")
         .attr("class", "y axis")
         .style("fill", "none")
         .style("stroke", "#000")
-        .call(yAxis);
+        .call(yAxis)
+      .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "-.95em")
+        .style("text-anchor", "end")
+        .text(unit);
 
+      var unit = String(t1[0].sensor.unit);
     svg.append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + width + " ,0)")
         .style("fill", "none")
         .style("stroke", "#cc0033")
-        .call(yAxis2);
+        .call(yAxis2)
+        .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".81em")
+          .style("text-anchor", "end")
+          .text(unit);
 
     svg.append('text')
         .text("")
