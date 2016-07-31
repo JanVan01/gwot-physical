@@ -49,13 +49,7 @@ function correlation(currentSensors, currentLocation, startDate, endDate, outlie
                     return;
                 }
 
-                for (var element in X) {
-
-                }
-
-                for (var element in Y) {
-
-                }
+               
 
                 // now deciding wich elements are to be paired for calculating the correlation
                 // for more information: see corresponding file
